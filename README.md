@@ -3,7 +3,7 @@
 An example of using BFDriver
 You can integrate all the core driver functions into your own projects
 
-点击这里查看中文说明：【https://github.com/BaiFeng666/BFDriverTools/blob/main/README.md】
+点击这里查看中文说明：【[https://github.com/BaiFeng666/BFDriverTools/blob/main/README.md](https://github.com/BaiFeng666/BFDriverTools/blob/main/README%20-%20ZH.md)】
 
 ## Feature
 * Exclusive undisclosed kernel hook communication mode Regardless of speed and concealment, it is far faster than conventional IO communication!
