@@ -3,6 +3,9 @@
 一个使用BFDriver的简单例子
 您可以将所有核心驱动程序功能集成到自己的项目中
 
+
+点击查看最简单的调用例子: 【[https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp](https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp)】
+
 ## 特色
 * 独家未公开内核挂钩通讯模式
 * 无论速度和隐蔽性都远远秒杀常规IO通讯！
