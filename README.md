@@ -5,6 +5,8 @@ You can integrate all the core driver functions into your own projects
 
 点击这里查看中文说明：【[https://github.com/BaiFeng666/BFDriverTools/blob/main/README-ZH.md](https://github.com/BaiFeng666/BFDriverTools/blob/main/README%20-%20ZH.md)】
 
+Check out the simplest call examples: 【[https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp](https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp)】
+
 ## Feature
 * Exclusive undisclosed kernel hook communication mode Regardless of speed and concealment, it is far faster than conventional IO communication!
 * Seamless mapping + cloud-issued decryption call, super shrink-headed tortoise
