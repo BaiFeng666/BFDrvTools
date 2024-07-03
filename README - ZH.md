@@ -1,5 +1,9 @@
 # BFDrvTools
 
+<div align="center">
+
+[English](./README.md) | [简体中文]
+
 一个使用BFDriver的简单例子
 您可以将所有核心驱动程序功能集成到自己的项目中
 
