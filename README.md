@@ -1,9 +1,11 @@
 # BFDrvTools
 
+<div align="center">
+
+English | [简体中文](./README%20-%20ZH.md)
+
 An example of using BFDriver
 You can integrate all the core driver functions into your own projects
-
-点击这里查看中文说明：【[https://github.com/BaiFeng666/BFDriverTools/blob/main/README-ZH.md](https://github.com/BaiFeng666/BFDriverTools/blob/main/README%20-%20ZH.md)】
 
 Check out the simplest call examples: 【[https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp](https://github.com/BaiFeng666/BFDrvTools/blob/main/SimpleExample/SimpleExample.cpp)】
 
