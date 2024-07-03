@@ -1,7 +1,7 @@
 ﻿#include "gui.h"
 #include <thread>
 #include <fstream>
-#include "driver/BFDrvUtils.h"
+#include "../driver/BFDrvUtils.h"
 
 BFDrv driver;
 int selectPid = 0;
@@ -1027,7 +1027,7 @@ void KeyMouse() {
 }
 
 #include <shlobj.h>
-#include "driver/TestDLL.c"
+#include "../driver/TestDLL.c"
 
 void Injector()
 {

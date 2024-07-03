@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BFDrvTools", "BFDrvTools.vcxproj", "{4EE9E5F2-F0DC-49D6-8E65-FF09324FC114}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleExample", "SimpleExample\SimpleExample.vcxproj", "{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{4EE9E5F2-F0DC-49D6-8E65-FF09324FC114}.Release|x64.Build.0 = Release|x64
 		{4EE9E5F2-F0DC-49D6-8E65-FF09324FC114}.Release|x86.ActiveCfg = Release|Win32
 		{4EE9E5F2-F0DC-49D6-8E65-FF09324FC114}.Release|x86.Build.0 = Release|Win32
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Debug|x64.ActiveCfg = Debug|x64
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Debug|x64.Build.0 = Debug|x64
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Debug|x86.ActiveCfg = Debug|Win32
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Debug|x86.Build.0 = Debug|Win32
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Release|x64.ActiveCfg = Release|x64
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Release|x64.Build.0 = Release|x64
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Release|x86.ActiveCfg = Release|Win32
+		{EF4593C6-9BBD-4FD3-855D-E7251521EF1B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
