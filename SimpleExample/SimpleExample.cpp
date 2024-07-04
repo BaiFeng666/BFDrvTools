@@ -53,8 +53,6 @@ int main()
 		return 0;
 	}
 
-	system("pause");
-	return 0;
 	auto timeOver = Drv.B_GetExpiration();
 	std::cout << "截至时间" << timeOver << "\n";
 
