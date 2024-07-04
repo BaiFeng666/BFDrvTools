@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+*.ini
 /.vs/BFDrvTools
 /x64
 /BFDrvTools/x64
