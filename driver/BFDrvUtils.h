@@ -184,6 +184,12 @@ public:
 	*/
 	bool B_ProtectProcess(bool protect, int pid);
 
+	/*
+	通过断链保护、隐藏进程
+	支持多个进程
+	*/
+	bool B_ProtectProcessV2(int pid);
+
 
 	/*
 	内核级全局隐藏进程

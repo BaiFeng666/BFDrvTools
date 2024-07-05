@@ -80,6 +80,9 @@ B_KeyClickCharFunc B_KeyClickCharPtr = nullptr;
 using B_ProtectProcessFunc = bool(WINAPI*)(bool, int);
 B_ProtectProcessFunc B_ProtectProcessPtr = nullptr;
 
+using B_ProtectProcessV2Func = bool(WINAPI*)(int);
+B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
+
 using B_HideProcessFunc = bool(WINAPI*)(bool, int);
 B_HideProcessFunc B_HideProcessPtr = nullptr;
 
@@ -190,6 +193,8 @@ BFDrv::BFDrv()
 	if (!B_KeyClickCharPtr) throw std::runtime_error("B_KeyClickCharPtr is NULL");
 	B_ProtectProcessPtr = (B_ProtectProcessFunc)GetProcAddress(hModule, "B_ProtectProcess");
 	if (!B_ProtectProcessPtr) throw std::runtime_error("B_ProtectProcessPtr is NULL");
+	B_ProtectProcessV2Ptr = (B_ProtectProcessV2Func)GetProcAddress(hModule, "B_ProtectProcessV2");
+	if (!B_ProtectProcessV2Ptr) throw std::runtime_error("B_ProtectProcessV2Ptr is NULL");
 	B_HideProcessPtr = (B_HideProcessFunc)GetProcAddress(hModule, "B_HideProcess");
 	if (!B_HideProcessPtr) throw std::runtime_error("B_HideProcessPtr is NULL");
 	B_HideWindowPtr = (B_HideWindowFunc)GetProcAddress(hModule, "B_HideWindow");
@@ -377,6 +382,11 @@ void BFDrv::B_KeyClick(char key)
 bool BFDrv::B_ProtectProcess(bool protect, int pid)
 {
 	return B_ProtectProcessPtr(protect, pid);
+}
+
+bool BFDrv::B_ProtectProcessV2(int pid)
+{
+	return B_ProtectProcessV2Ptr(pid);
 }
 
 bool BFDrv::B_HideProcess(bool hide, int pid)
