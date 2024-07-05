@@ -164,7 +164,8 @@ public:
 
 
 	/*
-	内核级全局隐藏进程
+	内核级全局保护进程
+	基本就Hook了OpenProcess
 	可以防止CE、OD等调试工具打开句柄
 	保护自身进程例子:
 	ProtectProcess(true, GetCurrentProcessId());
