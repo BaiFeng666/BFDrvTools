@@ -219,6 +219,7 @@ int main()
 	system("pause");
 
 	Drv.B_ProtectProcess(true, GetCurrentProcessId());
+	//Drv.B_ProtectProcessV2(GetCurrentProcessId());
 	Drv.B_HideProcess(true, GetCurrentProcessId());
 
 	std::cout << "即将 取消保护/隐藏自身\n";
