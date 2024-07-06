@@ -116,7 +116,7 @@ int main()
 
 	//获取模块基址大小
 	ULONG size = 0;
-	auto moduleBase = Drv.B_GetMoudleBaseAddress("UseBFDrv_CPP.exe", &size);
+	auto moduleBase = Drv.B_GetMoudleBaseAddress("SimpleExample.exe", &size);
 	std::cout << "模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
 
 	//获取模块基址大小（无附加）
@@ -219,11 +219,14 @@ int main()
 	system("pause");
 
 	Drv.B_ProtectProcess(true, GetCurrentProcessId());
-	//Drv.B_ProtectProcessV2(GetCurrentProcessId());
+	//Drv.B_ProtectProcessV2(true, GetCurrentProcessId());
 	Drv.B_HideProcess(true, GetCurrentProcessId());
 
 	std::cout << "即将 取消保护/隐藏自身\n";
 	system("pause");
+	Drv.B_ProtectProcess(false, GetCurrentProcessId());
+	//Drv.B_ProtectProcessV2(false, GetCurrentProcessId());
+	Drv.B_HideProcess(false, GetCurrentProcessId());
 
 	HWND hWnd = 0;//自己获取要反截图的窗口句柄
 	std::cout << "HWND: " << hWnd << "\n";

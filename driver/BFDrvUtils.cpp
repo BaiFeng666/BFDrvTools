@@ -80,7 +80,7 @@ B_KeyClickCharFunc B_KeyClickCharPtr = nullptr;
 using B_ProtectProcessFunc = bool(WINAPI*)(bool, int);
 B_ProtectProcessFunc B_ProtectProcessPtr = nullptr;
 
-using B_ProtectProcessV2Func = bool(WINAPI*)(int);
+using B_ProtectProcessV2Func = bool(WINAPI*)(bool, int);
 B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
 
 using B_HideProcessFunc = bool(WINAPI*)(bool, int);
@@ -384,9 +384,9 @@ bool BFDrv::B_ProtectProcess(bool protect, int pid)
 	return B_ProtectProcessPtr(protect, pid);
 }
 
-bool BFDrv::B_ProtectProcessV2(int pid)
+bool BFDrv::B_ProtectProcessV2(bool protect, int pid)
 {
-	return B_ProtectProcessV2Ptr(pid);
+	return B_ProtectProcessV2Ptr(protect, pid);
 }
 
 bool BFDrv::B_HideProcess(bool hide, int pid)

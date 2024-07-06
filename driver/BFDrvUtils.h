@@ -185,11 +185,14 @@ public:
 	bool B_ProtectProcess(bool protect, int pid);
 
 	/*
-	断链保护、隐藏进程
+	断链保护+隐藏进程
 	全局句柄表中抹除进程
-	支持多个进程
+
+	在被保护的进程推出前一定要恢复 不然会蓝屏
+
+	建议只保护一个进程 因为恢复时只能恢复最后一个进程 以后会优化这个
 	*/
-	bool B_ProtectProcessV2(int pid);
+	bool B_ProtectProcessV2(bool protect, int pid);
 
 
 	/*
