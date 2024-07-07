@@ -10,6 +10,12 @@ BFDriver官方驱动群 410342663
 #include <string>
 #include <vector>
 
+enum B_InstallMode
+{
+	NtLoadDriver,
+	Normal
+};
+
 enum class RWMode
 {
 	MmCopy,
@@ -60,7 +66,7 @@ public:
 
 	//初始化驱动
 	//参数是卡密
-	bool B_InitDrv(const char* key);
+	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver);
 
 	const char* B_GetInitResult();
 

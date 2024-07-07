@@ -23,7 +23,7 @@ using B_LoadDynamicLibraryFn = bool(WINAPI*)(HMODULE*, LPVOID);
 B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 
 
-using B_InitDrvFunc = bool(WINAPI*)(const char*);
+using B_InitDrvFunc = bool(WINAPI*)(const char*, B_InstallMode);
 B_InitDrvFunc B_InitDrvPtr = nullptr;
 
 using B_GetInitResultFunc = const char* (WINAPI*)();
@@ -279,9 +279,9 @@ BFDrv::BFDrv()
 		};
 }
 
-bool BFDrv::B_InitDrv(const char* key)
+bool BFDrv::B_InitDrv(const char* key, B_InstallMode mode)
 {
-	return B_InitDrvPtr(key);
+	return B_InitDrvPtr(key, mode);
 }
 
 const char* BFDrv::B_GetInitResult()

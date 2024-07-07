@@ -44,7 +44,7 @@ int main()
 	* 其他机器登录会扣2分钟 主要是为了防止开发分享 价格这么低也算是互补了
 	* 你客户量大的话一天24小时也就扣个2左右个小时无所谓 量小的话几乎没什么影响
 	*/
-	auto result = Drv.B_InitDrv("");
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
