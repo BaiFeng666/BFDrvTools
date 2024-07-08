@@ -26,6 +26,9 @@ B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 using B_InitDrvFunc = bool(WINAPI*)(const char*, B_InstallMode);
 B_InitDrvFunc B_InitDrvPtr = nullptr;
 
+using B_AdjustPrivilegeFunc = bool(WINAPI*)();
+B_AdjustPrivilegeFunc B_AdjustPrivilegePtr = nullptr;
+
 using B_GetInitResultFunc = const char* (WINAPI*)();
 B_GetInitResultFunc B_GetInitResultPtr = nullptr;
 
@@ -157,6 +160,8 @@ BFDrv::BFDrv()
 	if (!hModule) throw std::runtime_error("hModule is NULL");
 	B_InitDrvPtr = (B_InitDrvFunc)GetProcAddress(hModule, "B_InitDrv");
 	if (!B_InitDrvPtr) throw std::runtime_error("B_InitDrvPtr is NULL");
+	B_AdjustPrivilegePtr = (B_AdjustPrivilegeFunc)GetProcAddress(hModule, "B_AdjustPrivilege");
+	if (!B_AdjustPrivilegePtr) throw std::runtime_error("B_AdjustPrivilegePtr is NULL");
 	B_GetInitResultPtr = (B_GetInitResultFunc)GetProcAddress(hModule, "B_GetInitResult");
 	if (!B_GetInitResultPtr) throw std::runtime_error("B_GetInitResultPtr is NULL");
 	B_GetExpirationPtr = (B_GetExpirationFunc)GetProcAddress(hModule, "B_GetExpiration");
@@ -277,6 +282,11 @@ BFDrv::BFDrv()
 				start += mbi.RegionSize;
 			}
 		};
+}
+
+bool BFDrv::B_AdjustPrivilege()
+{
+	return B_AdjustPrivilegePtr();
 }
 
 bool BFDrv::B_InitDrv(const char* key, B_InstallMode mode)

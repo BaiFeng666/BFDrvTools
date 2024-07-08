@@ -64,6 +64,9 @@ class BFDrv
 public:
 	BFDrv();
 
+	//提升权限
+	bool B_AdjustPrivilege();
+
 	//初始化驱动
 	//参数是卡密
 	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver);

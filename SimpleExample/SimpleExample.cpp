@@ -32,10 +32,53 @@ DWORD GetProcessID(const char* ProcessName)
 	return 0;
 }
 
+bool SetPrivilegeA(const LPCSTR lpszPrivilege, const BOOL bEnablePrivilege)
+{
+	TOKEN_PRIVILEGES priv = { 0,0,0,0 };
+	HANDLE hToken = nullptr;
+	LUID luid = { 0,0 };
+
+	// 打开当前进程的访问令牌
+	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
+	{
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+
+	// 查找权限的本地唯一标识符 (LUID)
+	if (!LookupPrivilegeValueA(nullptr, lpszPrivilege, &luid))
+	{
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+
+	// 设置权限调整结构
+	priv.PrivilegeCount = 1;
+	priv.Privileges[0].Luid = luid;
+	priv.Privileges[0].Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
+
+	// 调整权限
+	if (!AdjustTokenPrivileges(hToken, false, &priv, 0, nullptr, nullptr))
+	{
+		if (hToken)
+			CloseHandle(hToken);
+		return false;
+	}
+
+	// 关闭访问令牌句柄
+	if (hToken)
+		CloseHandle(hToken);
+	return true;
+}
+
+
 int main()
 {
 	BFDrv Drv;
 
+	Drv.B_AdjustPrivilege();//提升权限 可以忽略
 	/*
 	* 初始化驱动 输入卡密
 	* 原创劫富济贫计费法
@@ -43,6 +86,8 @@ int main()
 	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
 	* 其他机器登录会扣2分钟 主要是为了防止开发分享 价格这么低也算是互补了
 	* 你客户量大的话一天24小时也就扣个2左右个小时无所谓 量小的话几乎没什么影响
+	* 
+	* 首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
 	*/
 	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver);
 
