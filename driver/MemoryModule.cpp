@@ -4,6 +4,7 @@ BFDriver官方驱动群 410342663
 便宜吗？这还不买吗牢底？
 禁止用于违法用途
 */
+#pragma warning(disable:4996)
 #include <windows.h>
 #include <winnt.h>
 #include <stddef.h>
