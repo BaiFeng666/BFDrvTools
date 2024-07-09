@@ -373,5 +373,15 @@ public:
 	//参数1、2 填模块基址和模块大小
 	//filePath 填要保存的文件
 	bool B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode = RWMode::MmCopy);
+
+
+	//读写内核空间 谨慎使用
+	// type: 0 read / type: 1 write
+	bool B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type);
+
+
+	//关闭NMI回调检测
+	//如果返回值是false说明当前系统没有适配，可以把ntoskrnl.exe发给我进行适配
+	bool B_DisableCallback_NMI();
 };
 

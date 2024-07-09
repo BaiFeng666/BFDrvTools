@@ -148,6 +148,12 @@ B_DumpToFileFunc B_DumpToFilePtr = nullptr;
 
 using B_GetDriverBuildTimeFunc = std::string(WINAPI*)();
 B_GetDriverBuildTimeFunc B_GetDriverBuildTimePtr = nullptr;
+
+using B_RWKernelMemoryFunc = bool(WINAPI*)(ULONG64, void*, ULONG, int);
+B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
+
+using B_DisableCallback_NMIFunc = bool(WINAPI*)();
+B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
 BFDrv::BFDrv()
 {
 	HMEMORYMODULE handle = nullptr;
@@ -242,6 +248,10 @@ BFDrv::BFDrv()
 	if (!B_RipInjectDLLV2Ptr) throw std::runtime_error("B_RipInjectDLLV2Ptr is NULL");
 	B_GetDriverBuildTimePtr = (B_GetDriverBuildTimeFunc)GetProcAddress(hModule, "B_GetDriverBuildTime");
 	if (!B_GetDriverBuildTimePtr) throw std::runtime_error("B_GetDriverBuildTimePtr is NULL");
+	B_RWKernelMemoryPtr = (B_RWKernelMemoryFunc)GetProcAddress(hModule, "B_RWKernelMemory");
+	if (!B_RWKernelMemoryPtr) throw std::runtime_error("B_RWKernelMemoryPtr is NULL");
+	B_DisableCallback_NMIPtr = (B_DisableCallback_NMIFunc)GetProcAddress(hModule, "B_DisableCallback_NMI");
+	if (!B_DisableCallback_NMIPtr) throw std::runtime_error("B_DisableCallback_NMIPtr is NULL");
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
 	ClearPEHeadersEx((unsigned char*)module->codeBase);
@@ -546,4 +556,14 @@ bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi)
 bool BFDrv::B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode)
 {
 	return B_DumpToFilePtr(moduleBase, moduleSize, filePath, mode);
+}
+
+bool BFDrv::B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type)
+{
+	return B_RWKernelMemoryPtr(addr, buffer, size, type);
+}
+
+bool BFDrv::B_DisableCallback_NMI()
+{
+	return B_DisableCallback_NMIPtr();
 }
