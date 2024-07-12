@@ -199,7 +199,7 @@ public:
 
 	在被保护的进程推出前一定要恢复 不然会蓝屏
 
-	建议只保护一个进程 因为恢复时只能恢复最后一个进程 以后会优化这个
+	支持多进程保护隐藏 至多支持32个进程
 	*/
 	bool B_ProtectProcessV2(bool protect, int pid);
 

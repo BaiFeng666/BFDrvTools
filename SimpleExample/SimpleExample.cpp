@@ -32,48 +32,6 @@ DWORD GetProcessID(const char* ProcessName)
 	return 0;
 }
 
-bool SetPrivilegeA(const LPCSTR lpszPrivilege, const BOOL bEnablePrivilege)
-{
-	TOKEN_PRIVILEGES priv = { 0,0,0,0 };
-	HANDLE hToken = nullptr;
-	LUID luid = { 0,0 };
-
-	// 打开当前进程的访问令牌
-	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
-	{
-		if (hToken)
-			CloseHandle(hToken);
-		return false;
-	}
-
-	// 查找权限的本地唯一标识符 (LUID)
-	if (!LookupPrivilegeValueA(nullptr, lpszPrivilege, &luid))
-	{
-		if (hToken)
-			CloseHandle(hToken);
-		return false;
-	}
-
-	// 设置权限调整结构
-	priv.PrivilegeCount = 1;
-	priv.Privileges[0].Luid = luid;
-	priv.Privileges[0].Attributes = bEnablePrivilege ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
-
-	// 调整权限
-	if (!AdjustTokenPrivileges(hToken, false, &priv, 0, nullptr, nullptr))
-	{
-		if (hToken)
-			CloseHandle(hToken);
-		return false;
-	}
-
-	// 关闭访问令牌句柄
-	if (hToken)
-		CloseHandle(hToken);
-	return true;
-}
-
-
 int main()
 {
 	BFDrv Drv;
@@ -264,7 +222,7 @@ int main()
 	system("pause");
 
 	Drv.B_ProtectProcess(true, GetCurrentProcessId());
-	//Drv.B_ProtectProcessV2(true, GetCurrentProcessId());
+	//Drv.B_ProtectProcessV2(true, GetCurrentProcessId()); //在进程退出之前一定要恢复！
 	Drv.B_HideProcess(true, GetCurrentProcessId());
 
 	std::cout << "即将 取消保护/隐藏自身\n";
