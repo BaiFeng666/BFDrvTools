@@ -117,6 +117,13 @@ int main()
 	//操作进程前必须要附加
 	Drv.B_AttachProcess(pid);
 
+	//保护、隐藏进程V2
+	/*Drv.B_ProtectProcessV2(true, pid2);
+	system("pause");
+
+	Drv.B_ProtectProcessV2(false, pid2);
+	system("pause");*/
+
 	//获取模块基址大小
 	ULONG size = 0;
 	auto moduleBase = Drv.B_GetMoudleBaseAddress("SimpleExample.exe", &size);
@@ -195,7 +202,7 @@ int main()
 	std::cout << "Fuck CR3 write value: " << std::dec << writeValue << "\n";
 
 	//内核键鼠模拟
-	/*
+	
 	std::cout << "鼠标移动测试 向右移动十次 间隔200ms\n";
 	//鼠标移动
 	for (int i = 0; i < 10; i++) {
@@ -216,7 +223,7 @@ int main()
 		Drv.B_KeyClick('a');
 		//Drv.B_KeyClick(0x61);
 		Sleep(500);
-	}*/
+	}
 
 	std::cout << "即将 保护/隐藏自身 防止CE等调试工具附加程序 任务管理器也无法查看\n";
 	system("pause");
@@ -259,7 +266,11 @@ int main()
 	}
 
 
+	std::cout << "即将 关闭NMI回调检测\n";
+	system("pause");
+	Drv.B_DisableCallback_NMI();
 
+	//如果路径带中文 字符串要转成utf8编码
 	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
 	//	std::cout << "强删文件失败\n";
 	//}
