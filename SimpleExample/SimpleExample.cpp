@@ -90,6 +90,9 @@ int main()
 		printf("notepad pid: %d\n", pid2);
 		Drv.B_AttachProcess(pid2);
 
+		Drv.B_MapDLLV3(TestDLL, sizeof TestDLL, true);
+		system("pause");
+
 		ULONG size = 0;
 		auto moduleBase = Drv.B_GetMoudleBaseAddress("notepad.exe", &size);
 
@@ -116,13 +119,6 @@ int main()
 	}
 	//操作进程前必须要附加
 	Drv.B_AttachProcess(pid);
-
-	//保护、隐藏进程V2
-	/*Drv.B_ProtectProcessV2(true, pid2);
-	system("pause");
-
-	Drv.B_ProtectProcessV2(false, pid2);
-	system("pause");*/
 
 	//获取模块基址大小
 	ULONG size = 0;
@@ -229,13 +225,11 @@ int main()
 	system("pause");
 
 	Drv.B_ProtectProcess(true, GetCurrentProcessId());
-	//Drv.B_ProtectProcessV2(true, GetCurrentProcessId()); //在进程退出之前一定要恢复！
 	Drv.B_HideProcess(true, GetCurrentProcessId());
 
 	std::cout << "即将 取消保护/隐藏自身\n";
 	system("pause");
 	Drv.B_ProtectProcess(false, GetCurrentProcessId());
-	//Drv.B_ProtectProcessV2(false, GetCurrentProcessId());
 	Drv.B_HideProcess(false, GetCurrentProcessId());
 
 	HWND hWnd = 0;//自己获取要反截图的窗口句柄
@@ -263,12 +257,17 @@ int main()
 		std::cout << "即将 取消保护窗口\n";
 		system("pause");
 		Drv.B_ProtectWindow(false, notepadPid);
+
+
+		//保护、隐藏进程V2
+		std::cout << "即将 保护进程V2\n";
+		system("pause");
+		Drv.B_ProtectProcessV2(true, notepadPid);
+
+		std::cout << "即将 取消保护进程V2\n";
+		system("pause");
+		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出之前一定要恢复！
 	}
-
-
-	std::cout << "即将 关闭NMI回调检测\n";
-	system("pause");
-	Drv.B_DisableCallback_NMI();
 
 	//如果路径带中文 字符串要转成utf8编码
 	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
