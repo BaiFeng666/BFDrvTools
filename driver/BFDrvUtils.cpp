@@ -23,7 +23,7 @@ using B_LoadDynamicLibraryFn = bool(WINAPI*)(HMODULE*, LPVOID);
 B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 
 
-using B_InitDrvFunc = bool(WINAPI*)(const char*, B_InstallMode);
+using B_InitDrvFunc = bool(WINAPI*)(const char*, B_InstallMode, bool);
 B_InitDrvFunc B_InitDrvPtr = nullptr;
 
 using B_AdjustPrivilegeFunc = bool(WINAPI*)();
@@ -299,9 +299,9 @@ bool BFDrv::B_AdjustPrivilege()
 	return B_AdjustPrivilegePtr();
 }
 
-bool BFDrv::B_InitDrv(const char* key, B_InstallMode mode)
+bool BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb)
 {
-	return B_InitDrvPtr(key, mode);
+	return B_InitDrvPtr(key, mode, ignorePdb);
 }
 
 const char* BFDrv::B_GetInitResult()

@@ -68,8 +68,10 @@ public:
 	bool B_AdjustPrivilege();
 
 	//初始化驱动
-	//参数是卡密
-	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver);
+	//参数1 卡密
+	//参数2 加载方式 NtLoadDriver更安全 Normal兼容性更好
+	//参数3 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
+	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false);
 
 	const char* B_GetInitResult();
 

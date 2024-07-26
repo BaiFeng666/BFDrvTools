@@ -47,7 +47,7 @@ int main()
 	* 
 	* 首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
 	*/
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver);
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
@@ -82,6 +82,7 @@ int main()
 			system("pause");
 		}
 		printf("DumpToFile 成功\n");
+		system("pause");
 	}*/
 
 	int pid2 = GetProcessID("notepad.exe");
@@ -198,7 +199,7 @@ int main()
 	std::cout << "Fuck CR3 write value: " << std::dec << writeValue << "\n";
 
 	//内核键鼠模拟
-	
+	/*
 	std::cout << "鼠标移动测试 向右移动十次 间隔200ms\n";
 	//鼠标移动
 	for (int i = 0; i < 10; i++) {
@@ -219,7 +220,7 @@ int main()
 		Drv.B_KeyClick('a');
 		//Drv.B_KeyClick(0x61);
 		Sleep(500);
-	}
+	}*/
 
 	std::cout << "即将 保护/隐藏自身 防止CE等调试工具附加程序 任务管理器也无法查看\n";
 	system("pause");
