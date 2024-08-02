@@ -1,0 +1,17 @@
+问题：Download xxx pdb failed
+原因：下载微软的系统PDB符号文件失败，正常网络应该都能下载，少数人无法下载
+
+解决方案1：
+将B_InitDrv函数的参数ignorePdb填true，它会忽视下载pdb失败，缺点是无法使用B_ProtectProcessV2
+
+解决方案2（推荐）：
+挂个梯子让它正常下载一次，在系统不更新的情况下只需要下载一次即可，后续就不用挂梯子了
+
+
+
+
+
+问题：B_InitDrv运行时闪退
+
+解决方案：
+InitDrv的B_InstallMode参数写Normal
