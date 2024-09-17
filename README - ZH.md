@@ -2,7 +2,7 @@
 
 <div align="center">
 
-English | [简体中文](./README%20-%20ZH.md)
+English | [简体中文](./README.md)
 
 An example of using BFDriver
 You can integrate all the core driver functions into your own projects
