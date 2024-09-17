@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[English](./README-ZH.md) | [简体中文]
+[English](./README%20-%20ZH.md) | [简体中文]
 
 一个使用BFDriver的简单例子
 您可以将所有核心驱动程序功能集成到自己的项目中
