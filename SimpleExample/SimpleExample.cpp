@@ -34,13 +34,6 @@ DWORD GetProcessID(const char* ProcessName)
 
 int main()
 {
-	std::string key;
-	
-	printf("请输入卡密:\n");
-	std::cin >> key;
-	
-	printf("key: %s\n", key.c_str());
-
 	BFDrv Drv;
 
 	/*
@@ -53,7 +46,7 @@ int main()
 	* 
 	* 首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
 	*/
-	auto result = Drv.B_InitDrv(key.c_str(), B_InstallMode::NtLoadDriver, false);
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
