@@ -64,42 +64,64 @@ class BFDrv
 public:
 	BFDrv();
 
-	//提升权限
 	bool B_AdjustPrivilege();
 
-	//初始化驱动
-	//参数1 卡密
-	//参数2 加载方式 NtLoadDriver更安全 Normal兼容性更好
-	//参数3 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
+	///初始化驱动
+	///@param key 填写卡密
+	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
+	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
+	///@return 是否初始化成功
 	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false);
 
+	/// <summary>
+	/// 获取初始化结果
+	/// </summary>
+	/// <returns></returns>
 	const char* B_GetInitResult();
 
-	//附加你要操作的进程
+	/// <summary>
+	/// 选择要操作的进程
+	/// </summary>
+	/// <param name="pid">进程ProcessId</param>
+	/// <returns></returns>
 	bool B_AttachProcess(int pid);
 
-	//获取到期时间
+	/// <summary>
+	/// 卡密到期时间
+	/// </summary>
+	/// <returns>时间</returns>
 	const char* B_GetExpiration();
-
-	//获取系统版本
+	
+	/// <summary>
+	/// 获取系统版本
+	/// </summary>
+	/// <returns></returns>
 	int B_GetWindowsBuildNumber();
 
-	//获取驱动最后编译的时间
-	//有时候出问题了可以看看本地版本和云下发的驱动是否不对应 是不是要更新了
+	/// <summary>
+	/// 驱动最后编译时间
+	/// </summary>
+	/// <returns>编译时间</returns>
 	std::string B_GetDriverBuildTime();
 
-	//注意 不要在循环中疯狂调用 不然可能会走异常蓝屏
-	//获取模块基址 大小
-	//如果不需要获取模块大小 那么第二个参数填nullptr
+	/// <summary>
+	/// 获取模块基址、大小 注意不要在循环中疯狂调用 不然可能会走异常蓝屏
+	/// </summary>
+	/// <param name="moduleName">模块名称</param>
+	/// <param name="pSize">如果不需要获取模块大小 那么第二个参数填nullptr</param>
+	/// <returns>模块基址</returns>
 	ULONG64 B_GetMoudleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
 
-	//有bug 暂时不建议使用
+	//有bug 不建议使用
 	//无附加的获取模块基址 有时候会卡住 用有附加的也稳
 	ULONG64 B_GetMoudleBaseAddressNoAttach(const char* moduleName, ULONG* pSize = nullptr);
 
-
-	//获取模块导出函数
-	//参数一 模块基址， 参数二 导出函数名
+	/// <summary>
+	/// 获取模块导出函数
+	/// </summary>
+	/// <param name="moudleAddr">模块基址</param>
+	/// <param name="funcName">导出函数名</param>
+	/// <returns>函数地址</returns>
 	ULONG64 B_GetMoudleExportFuncAddress(ULONG64 moudleAddr, const char* funcName);
 
 	bool B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
@@ -229,52 +251,91 @@ public:
 	//内核反截图
 	bool B_HideWindow(ULONG64 hWnd, HideWindowType type);
 
-	//驱动映射注入 路径
-	//可以注入主流dx11引擎的游戏
+	/// <summary>
+	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <returns></returns>
 	bool B_MapDll(const char* dll_path);
 
-	//驱动映射注入 内存
-	//可以注入主流dx11引擎的游戏
+	/// <summary>
+	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <returns></returns>
 	bool B_MapDll(unsigned char* dll_data, size_t dll_size);
 
-	//通用驱动映射注入 支持x64/x32 内存
+	/// <summary>
+	/// 通用驱动映射注入 支持x64/x32 内存
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <returns></returns>
 	bool B_MapDLLV2(unsigned char* dll_data, size_t dll_size);
-
-	//通用驱动映射注入 支持x64/x32 路径
+	/// <summary>
+	/// 通用驱动映射注入 支持x64/x32 内存
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <returns></returns>
 	bool B_MapDLLV2(const char* dll_path);
 
-	//内核APC注入+隐藏内存 通杀各种游戏
-	//hide_mem 部分游戏如果遇到玩个几十分钟崩溃的情况 hide_mem 填 false
-	bool B_MapDLLV3(unsigned char* dll_data, size_t dll_size, bool hide_mem = true);
+	/// <summary>
+	/// 内核APC注入+隐藏内存 通杀各种游戏
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <returns></returns>
+	bool B_MapDLLV3(unsigned char* dll_data, size_t dll_size, bool hide_mem = false);
 
-	//内核APC注入+隐藏内存 通杀各种游戏
-	//hide_mem 部分游戏如果遇到玩个几十分钟崩溃的情况 hide_mem 填 false
-	bool B_MapDLLV3(const char* dll_path, bool hide_mem = true);
+	/// <summary>
+	/// 内核APC注入+隐藏内存 通杀各种游戏
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <returns></returns>
+	bool B_MapDLLV3(const char* dll_path, bool hide_mem = false);
 
-	//内核RIP劫持注入 + 隐藏内存 内存
-	//该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
-	//如果返回false 可以把该系统的ntoskrnl.exe发给作者进行修复
-	//clear_shellcode如果为true 该函数会延时5秒 用于清理shellcode痕迹
-	bool B_MapDLLV4(unsigned char* dll_data, size_t dll_size, bool hide_mem = true, bool clear_shellcode = true);
+	/// <summary>
+	/// 内核RIP劫持注入
+	/// 该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
+	/// <returns></returns>
+	bool B_MapDLLV4(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
 
-	//内核RIP劫持注入 + 隐藏内存 路径
-	//该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
-	//如果返回false 可以把该系统的ntoskrnl.exe发给作者进行修复
-	//hide_mem 部分游戏如果遇到玩个几十分钟崩溃的情况 hide_mem 填 false
-	//clear_shellcode如果为true 该函数会延时5秒 用于清理shellcode痕迹
-	bool B_MapDLLV4(const char* dll_path, bool hide_mem = true, bool clear_shellcode = true);
+	/// <summary>
+	/// 内核RIP劫持注入
+	/// 该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
+	/// <returns></returns>
+	bool B_MapDLLV4(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
 
-	//内核RIP劫持V2注入 + 隐藏内存 内存
-	//如果返回false 可以把该系统的ntoskrnl.exe发给作者进行修复
-	//hide_mem 部分游戏如果遇到玩个几十分钟崩溃的情况 hide_mem 填 false
-	//clear_shellcode如果为true 该函数会延时5秒 用于清理shellcode痕迹
-	bool B_MapDLLV5(unsigned char* dll_data, size_t dll_size, bool hide_mem = true, bool clear_shellcode = true);
+	/// <summary>
+	/// 内核RIP劫持V2注入
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
+	/// <returns></returns>
+	bool B_MapDLLV5(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
 
-	//内核RIP劫持V2注入 + 隐藏内存 路径
-	//如果返回false 可以把该系统的ntoskrnl.exe发给作者进行修复
-	//hide_mem 部分游戏如果遇到玩个几十分钟崩溃的情况 hide_mem 填 false
-	//clear_shellcode如果为true 该函数会延时5秒 用于清理shellcode痕迹
-	bool B_MapDLLV5(const char* dll_path, bool hide_mem = true, bool clear_shellcode = true);
+	/// <summary>
+	/// 内核RIP劫持V2注入
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
+	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
+	/// <returns></returns>
+	bool B_MapDLLV5(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
 	
 	//调用之前先附加要读写的进程
 	//获取真实进程CR3 主要是为了给B_PhyReadMemoryWithCr3()调用
@@ -383,7 +444,7 @@ public:
 
 
 	//关闭NMI回调检测
-	//如果返回值是false说明当前系统没有适配，可以把ntoskrnl.exe发给我进行适配
+	//关于这个函数的用法，我认为应该几分钟调用一次？
 	bool B_DisableCallback_NMI();
 };
 
