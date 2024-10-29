@@ -31,22 +31,3 @@ The kernel disables the global enumeration window
 * Dump any process module to a file
 * There is a complete call example of C++
 * It is prohibited to use for any illegal purpose
-
-
-# Example Picture
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/40a4a139-f81a-416c-9298-eccf6df5a90a)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/7cfc1645-feb2-4d19-af19-401922cf5d5d)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/e29bc649-aec4-4f5c-864c-41b48b2a7838)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/b3fa8a3c-33d5-4cf3-abc6-e837951c928d)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/75e972a2-47aa-4326-ad9a-94bf6aa36928)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/1f807f73-2140-40b6-9b6b-401dd36bae1e)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/7ab61201-fd17-441c-a858-3b6981401998)
-
-![image](https://github.com/BaiFeng666/BFDriverTools/assets/69395668/dad8a2c0-73a5-4e99-8c3f-ac772ad3f095)
