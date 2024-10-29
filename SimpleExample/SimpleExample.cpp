@@ -162,10 +162,10 @@ int main()
 	//无视CR3加密读取数值 读取被EAC保护的游戏  例如Apex
 	readValue = 0;
 	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	static ULONG64 read_cr3 = Drv.B_GetProcessRealCr3Attach(); //有时候B_GetProcessRealCr3会读错 可以用这个 例如多次进入Apex后
+	static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach(); //有时候B_GetProcessRealCr3会读错 可以用这个 例如多次进入Apex后
 	std::cout << "-----> cr3 value: " << std::hex << cr3 << "\n";
-	std::cout << "-----> read cr3 value: " << std::hex << read_cr3 << "\n";
-	readValue = Drv.B_PhyReadMemWithCr3<uintptr_t>(moduleBase, cr3/*read_cr3*/);
+	std::cout << "-----> read cr3 value: " << std::hex << cr3_attach << "\n";
+	readValue = Drv.B_PhyReadMemWithCr3<uintptr_t>(moduleBase, cr3/*或者cr3_attach*/);
 	std::cout << "Fuck CR3 read value: " << std::hex << readValue << "\n";
 
 	int writeValue = 0;
