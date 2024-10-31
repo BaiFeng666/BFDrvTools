@@ -31,6 +31,7 @@
 *.out
 *.app
 *.ini
+*.TMP
 /.vs/BFDrvTools
 /x64
 /BFDrvTools/x64

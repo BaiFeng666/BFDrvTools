@@ -266,7 +266,7 @@ int main()
 
 		std::cout << "即将 取消保护进程V2\n";
 		system("pause");
-		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出之前一定要恢复！
+		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出前建议恢复
 	}
 
 	//如果路径带中文 字符串要转成utf8编码
