@@ -123,12 +123,11 @@ int main()
 	//获取模块基址大小
 	ULONG size = 0;
 	auto moduleBase = Drv.B_GetMoudleBaseAddress("SimpleExample.exe", &size);
+	auto moduleBase2 = Drv.B_GetMainModuleAddress();
+	//auto moduleBase3 = Drv.B_GetMoudleBaseAddressNoAttach("SimpleExample.exe");
 	std::cout << "模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
-
-	//获取模块基址大小（无附加）
-	//ULONG size2 = 0;
-	//auto moduleBase2 = Drv.B_GetMoudleBaseAddressNoAttach("UseBFDrv_CPP.exe", &size);
-	//std::cout << "模块基址（无附加）: " << std::hex << moduleBase2 << " 大小: " << size << "\n";
+	std::cout << "模块基址2: " << std::hex << moduleBase2 << "\n";
+	//std::cout << "模块基址3: " << std::hex << moduleBase3 << "\n";
 
 	auto kernelDll = Drv.B_GetMoudleBaseAddress("Kernel32.dll");
 	auto IsBadReadPtr = Drv.B_GetMoudleExportFuncAddress(kernelDll, "IsBadReadPtr");
@@ -145,6 +144,10 @@ int main()
 	std::cout << "Ke read value: " << std::hex << readValue << "\n";
 
 	readValue = 0;
+	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::KeSafe);
+	std::cout << "KeSafe read value: " << std::hex << readValue << "\n";
+
+	readValue = 0;
 	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Mdl);
 	std::cout << "Mdl read value: " << std::hex << readValue << "\n";
 
@@ -159,13 +162,13 @@ int main()
 	//readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3);
 	std::cout << "Phy read value: " << std::hex << readValue << "\n";
 
-	//无视CR3加密读取数值 读取被EAC保护的游戏  例如Apex
+	//无视CR3加密读取数值
 	readValue = 0;
 	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach(); //有时候B_GetProcessRealCr3会读错 可以用这个 例如多次进入Apex后
+	static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach();//同上
 	std::cout << "-----> cr3 value: " << std::hex << cr3 << "\n";
 	std::cout << "-----> read cr3 value: " << std::hex << cr3_attach << "\n";
-	readValue = Drv.B_PhyReadMemWithCr3<uintptr_t>(moduleBase, cr3/*或者cr3_attach*/);
+	readValue = Drv.B_PhyReadMemWithCr3<uintptr_t>(moduleBase, cr3/*cr3_attach*/);
 	std::cout << "Fuck CR3 read value: " << std::hex << readValue << "\n";
 
 	int writeValue = 0;
@@ -175,15 +178,19 @@ int main()
 	std::cout << "API write value: " << std::dec << writeValue << "\n";
 
 	writeValue = 0;
+	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy);
 	//也可以这样
 	//ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
 	//Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy, cr3);
-	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy);
 	std::cout << "Phy write value: " << std::dec << writeValue << "\n";
 
 	writeValue = 0;
 	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Ke);
 	std::cout << "Ke write value: " << std::dec << writeValue << "\n";
+
+	writeValue = 0;
+	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::KeSafe);
+	std::cout << "KeSafe write value: " << std::dec << writeValue << "\n";
 
 	writeValue = 0;
 	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Mdl);
@@ -274,9 +281,9 @@ int main()
 	//	std::cout << "强删文件失败\n";
 	//}
 
-	std::cout << "关闭NMI回调检测\n";
-	Drv.B_DisableCallback_NMI();
-	system("pause");
+	//std::cout << "关闭NMI回调检测\n";
+	//Drv.B_DisableCallback_NMI();
+	//system("pause");
 
 	std::cout << "结束\n";
 	system("pause");

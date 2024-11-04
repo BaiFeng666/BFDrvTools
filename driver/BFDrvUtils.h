@@ -18,10 +18,11 @@ enum B_InstallMode
 
 enum class RWMode
 {
-	MmCopy,
-	Mdl,
-	Phy,
-	Ke
+	MmCopy,	//无附加 调用内核Api
+	Mdl,	//附加 MDL
+	Phy,	//无附加 物理地址读写
+	Ke,		//附加
+	KeSafe,	//附加 相比Ke更安全 读取不安全地址不会蓝屏
 };
 
 enum class MoveType
@@ -105,6 +106,13 @@ public:
 	std::string B_GetDriverBuildTime();
 
 	/// <summary>
+	/// 获取主模块基址，何谓主模块？记事本里它是notepad.exe，CS2里它是cs2.exe，以此类推
+	/// 无附加
+	/// </summary>
+	/// <returns></returns>
+	ULONG64 B_GetMainModuleAddress();
+
+	/// <summary>
 	/// 获取模块基址、大小 注意不要在循环中疯狂调用 程序生命周期调用一次即可
 	/// </summary>
 	/// <param name="moduleName">模块名称</param>
@@ -112,8 +120,12 @@ public:
 	/// <returns>模块基址</returns>
 	ULONG64 B_GetMoudleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
 
-	//有bug 不建议使用
-	//无附加的获取模块基址 有时候会卡住 用有附加的也稳
+	/// <summary>
+	/// 获取模块地址 无附加 有时失效？
+	/// </summary>
+	/// <param name="moduleName"></param>
+	/// <param name="pSize"></param>
+	/// <returns></returns>
 	ULONG64 B_GetMoudleBaseAddressNoAttach(const char* moduleName, ULONG* pSize = nullptr);
 
 	/// <summary>
@@ -342,9 +354,7 @@ public:
 	//注意 获取一次就行，你要是每次执行B_PhyReadMemoryWithCr3()都获取一次CR3那你就是傻逼 这个很吃效率
 	ULONG64 B_GetProcessRealCr3();
 
-	//依旧是读取一次即可
-	//有时候当你第多次进入一个游戏时 B_GetProcessRealCr3()会读取老的CR3值 这会导致B_PhyReadMemoryWithCr3()失效
-	//这时候你就可以使用B_GetProcessRealCr3Attach() 它能始终获取正确的CR3值 尽量少用
+	//依旧是读取一次即可 但是会附加
 	ULONG64 B_GetProcessRealCr3Attach();
 
 	//物理读写进阶版 无视EAC的CR3加密且不限速 最后一个参数需要调用B_GetProcessRealCr3()获取
@@ -413,16 +423,14 @@ public:
 	ULONG64 B_FindPatternV2(ULONG64 addr, ULONG64 size, const char* pattern, RWMode mode = RWMode::Phy);
 
 	/*特征码定位
-	* CE源码里CV过来的
-	* 啥也别说了 用就完了
+	* CE源码里CV过来的 用就完了
 	* 举例:
 	* auto result = B_AOBScanV1("\xE8\x70\x02\x00\x00\x48\x8B\x4C\x24\x70", "xxx??xxxxx", moduleBase, size, RWMode::Phy);
 	*/
 	std::vector<ULONG64> B_AOBScanV1(const char* pattern, const char* mask, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
 
 	/*特征码定位
-	* CE源码里CV过来的
-	* 啥也别说了 用就完了
+	* CE源码里CV过来的 用就完了
 	* 举例:
 	* auto result = B_AOBScanV2("E8 70 02 ? ? 48 8B 4C 24 70", moduleBase, size);
 	*/

@@ -41,6 +41,9 @@ B_AttachProcessFunc B_AttachProcessPtr = nullptr;
 using B_GetWindowsBuildNumberFunc = int(WINAPI*)();
 B_GetWindowsBuildNumberFunc B_GetWindowsBuildNumberPtr = nullptr;
 
+using B_GetMainModuleAddressFunc = ULONG64(WINAPI*)();
+B_GetMainModuleAddressFunc B_GetMainModuleAddressPtr = nullptr;
+
 using B_GetMoudleBaseAddressFunc = ULONG64(WINAPI*)(const char*, ULONG*);
 B_GetMoudleBaseAddressFunc B_GetMoudleBaseAddressPtr = nullptr;
 
@@ -176,6 +179,8 @@ BFDrv::BFDrv()
 	if (!B_AttachProcessPtr) throw std::runtime_error("B_AttachProcessPtr is NULL");
 	B_GetWindowsBuildNumberPtr = (B_GetWindowsBuildNumberFunc)GetProcAddress(hModule, "B_GetWindowsBuildNumber");
 	if (!B_GetWindowsBuildNumberPtr) throw std::runtime_error("B_GetWindowsBuildNumberPtr is NULL");
+	B_GetMainModuleAddressPtr = (B_GetMainModuleAddressFunc)GetProcAddress(hModule, "B_GetMainModuleAddress");
+	if (!B_GetMainModuleAddressPtr) throw std::runtime_error("B_GetMainModuleAddressPtr is NULL");
 	B_GetMoudleBaseAddressPtr = (B_GetMoudleBaseAddressFunc)GetProcAddress(hModule, "B_GetMoudleBaseAddress");
 	if (!B_GetMoudleBaseAddressPtr) throw std::runtime_error("B_GetMoudleBaseAddressPtr is NULL");
 	B_GetMoudleBaseAddressNoAttachPtr = (B_GetMoudleBaseAddressNoAttachFunc)GetProcAddress(hModule, "B_GetMoudleBaseAddressNoAttach");
@@ -260,38 +265,6 @@ BFDrv::BFDrv()
 	UnlinkModule((unsigned char*)module->codeBase);
 	UnlinkModule((unsigned char*)hModule);
 #endif
-
-	auto ClearDLL = [](unsigned char* base) -> void
-		{
-			PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)base;
-			PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)((PBYTE)pDosHeader + pDosHeader->e_lfanew);
-			size_t size = pNtHeader->OptionalHeader.SizeOfImage;
-
-			ULONG64 start = (ULONG64)base;
-			ULONG64 end = (ULONG64)base + size;
-
-			while (start < end)
-			{
-				MEMORY_BASIC_INFORMATION mbi;
-				VirtualQuery((PVOID)start, &mbi, sizeof(mbi));
-				if (!mbi.RegionSize)
-					return;
-
-				if (mbi.Protect != PAGE_READWRITE && mbi.Protect != PAGE_EXECUTE_READWRITE)
-				{
-					DWORD Protect;
-					if (VirtualProtect((void*)start, mbi.RegionSize, PAGE_EXECUTE_READWRITE, &Protect)) {
-						RtlZeroMemory((void*)start, mbi.RegionSize);
-						VirtualProtect((void*)start, mbi.RegionSize, Protect, &Protect);
-					}
-				}
-				else {
-					RtlZeroMemory((void*)start, mbi.RegionSize);
-				}
-
-				start += mbi.RegionSize;
-			}
-		};
 }
 
 bool BFDrv::B_AdjustPrivilege()
@@ -327,6 +300,11 @@ int BFDrv::B_GetWindowsBuildNumber()
 std::string BFDrv::B_GetDriverBuildTime()
 {
 	return B_GetDriverBuildTimePtr();
+}
+
+ULONG64 BFDrv::B_GetMainModuleAddress()
+{
+	return B_GetMainModuleAddressPtr();
 }
 
 ULONG64 BFDrv::B_GetMoudleBaseAddress(const char* moduleName, ULONG* pSize)
