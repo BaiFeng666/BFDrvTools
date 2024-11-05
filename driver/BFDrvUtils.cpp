@@ -324,11 +324,13 @@ ULONG64 BFDrv::B_GetMoudleExportFuncAddress(ULONG64 moudleAddr, const char* func
 
 bool BFDrv::B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
 {
+	if((addr & 0xFFFF000000000000) != 0) return false;
 	return B_ReadMemoryPtr(addr, buffer, size, mode, cr3);
 }
 
 bool BFDrv::B_WriteMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
 {
+	if ((addr & 0xFFFF000000000000) != 0) return false;
 	return B_WriteMemoryPtr(addr, buffer, size, mode, cr3);
 }
 
