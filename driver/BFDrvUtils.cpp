@@ -19,251 +19,132 @@ BFDriver官方驱动群 410342663
 #include "x86/BFDrv_Dynamic.c"
 #endif // _WIN64
 
-using B_LoadDynamicLibraryFn = bool(WINAPI*)(HMODULE*, LPVOID);
-B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
+template<typename Ret, typename... Args>
+using FunctionPtr = Ret(WINAPI*)(Args...);
 
+using B_LoadDynamicLibraryFn = FunctionPtr<bool, HMODULE*, LPVOID>; B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 
-using B_InitDrvFunc = bool(WINAPI*)(const char*, B_InstallMode, bool);
-B_InitDrvFunc B_InitDrvPtr = nullptr;
+using B_InitDrvFunc = FunctionPtr<bool, const char*, B_InstallMode, bool>; B_InitDrvFunc B_InitDrvPtr = nullptr;
+using B_AdjustPrivilegeFunc = FunctionPtr<bool>; B_AdjustPrivilegeFunc B_AdjustPrivilegePtr = nullptr;
+using B_GetInitResultFunc = FunctionPtr<const char*>; B_GetInitResultFunc B_GetInitResultPtr = nullptr;
+using B_GetExpirationFunc = FunctionPtr<const char*>; B_GetExpirationFunc B_GetExpirationPtr = nullptr;
+using B_AttachProcessFunc = FunctionPtr<bool, int>; B_AttachProcessFunc B_AttachProcessPtr = nullptr;
+using B_GetWindowsBuildNumberFunc = FunctionPtr<int>; B_GetWindowsBuildNumberFunc B_GetWindowsBuildNumberPtr = nullptr;
+using B_GetMainModuleAddressFunc = FunctionPtr<ULONG64>; B_GetMainModuleAddressFunc B_GetMainModuleAddressPtr = nullptr;
+using B_GetMoudleBaseAddressFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetMoudleBaseAddressFunc B_GetMoudleBaseAddressPtr = nullptr;
+using B_GetMoudleBaseAddressNoAttachFunc = B_GetMoudleBaseAddressFunc; B_GetMoudleBaseAddressNoAttachFunc B_GetMoudleBaseAddressNoAttachPtr = nullptr;
+using B_ReadMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_ReadMemoryFunc B_ReadMemoryPtr = nullptr;
+using B_WriteMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_WriteMemoryFunc B_WriteMemoryPtr = nullptr;
+using B_AllocMemoryFunc = FunctionPtr<ULONG64, size_t>; B_AllocMemoryFunc B_AllocMemoryPtr = nullptr;
+using B_FreeMemoryFunc = FunctionPtr<bool, ULONG64>; B_FreeMemoryFunc B_FreeMemoryPtr = nullptr;
+using B_ProtectMemoryFunc = FunctionPtr<bool, ULONG64, DWORD, DWORD64>; B_ProtectMemoryFunc B_ProtectMemoryPtr = nullptr;
+using B_MouseMoveFunc = FunctionPtr<void, int, int, MoveType>; B_MouseMoveFunc B_MouseMovePtr = nullptr;
+using B_MouseCtlFunc = FunctionPtr<void, MouseKey, MouseStatus>; B_MouseCtlFunc B_MouseCtlPtr = nullptr;
+using B_KeyCtlFunc = FunctionPtr<void, int, KeyStatus>; B_KeyCtlFunc B_KeyCtlPtr = nullptr;
+using B_KeyCtlCharFunc = FunctionPtr<void, char, KeyStatus>; B_KeyCtlCharFunc B_KeyCtlCharPtr = nullptr;
+using B_KeyClickFunc = FunctionPtr<void, int>; B_KeyClickFunc B_KeyClickPtr = nullptr;
+using B_KeyClickCharFunc = FunctionPtr<void, char>; B_KeyClickCharFunc B_KeyClickCharPtr = nullptr;
+using B_ProtectProcessFunc = FunctionPtr<bool, bool, int>; B_ProtectProcessFunc B_ProtectProcessPtr = nullptr;
+using B_ProtectProcessV2Func = B_ProtectProcessFunc; B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
+using B_HideProcessFunc = FunctionPtr<bool, bool, int>; B_HideProcessFunc B_HideProcessPtr = nullptr;
+using B_HideWindowFunc = FunctionPtr<bool, ULONG64, HideWindowType>; B_HideWindowFunc B_HideWindowPtr = nullptr;
+using B_GetMoudleExportFuncAddressFunc = FunctionPtr<ULONG64, ULONG64, const char*>; B_GetMoudleExportFuncAddressFunc B_GetMoudleExportFuncAddressPtr = nullptr;
+using B_ManualMapDllMemoryFunc = FunctionPtr<bool, const void*, size_t>; B_ManualMapDllMemoryFunc B_ManualMapDllMemoryPtr = nullptr;
+using B_ProtectWindowFunc = FunctionPtr<void, bool, ULONG, bool>; B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
+using B_GetProcessRealCr3Func = FunctionPtr<ULONG64>; B_GetProcessRealCr3Func B_GetProcessRealCr3Ptr = nullptr;
+using B_GetProcessRealCr3AttachFunc = FunctionPtr<ULONG64>; B_GetProcessRealCr3AttachFunc B_GetProcessRealCr3AttachPtr = nullptr;
+using B_PhyReadMemoryWithCr3Func = FunctionPtr<bool, ULONG64, void*, size_t, ULONG64>; B_PhyReadMemoryWithCr3Func B_PhyReadMemoryWithCr3Ptr = nullptr;
+using B_PhyWriteMemoryWithCr3Func = FunctionPtr<bool, ULONG64, void*, size_t, ULONG64>; B_PhyWriteMemoryWithCr3Func B_PhyWriteMemoryWithCr3Ptr = nullptr;
+using B_ForceDeleteFileFunc = FunctionPtr<bool, const char*>; B_ForceDeleteFileFunc B_ForceDeleteFilePtr = nullptr;
+using B_FindPatternV1Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode>; B_FindPatternV1Func B_FindPatternV1Ptr = nullptr;
+using B_FindPatternV2Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, RWMode>; B_FindPatternV2Func B_FindPatternV2Ptr = nullptr;
+using B_AOBScanV1Func = FunctionPtr<std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV1Func B_AOBScanV1Ptr = nullptr;
+using B_AOBScanV2Func = FunctionPtr<std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV2Func B_AOBScanV2Ptr = nullptr;
+using B_QueryMemoryFunc = FunctionPtr<bool, ULONG64, MEMORY_BASIC_INFORMATION*>; B_QueryMemoryFunc B_QueryMemoryPtr = nullptr;
+using B_MapDLLFunc = FunctionPtr<bool, unsigned char*, size_t>; B_MapDLLFunc B_MapDLLPtr = nullptr;
+using B_APCInjectDLLFunc = FunctionPtr<bool, unsigned char*, size_t, bool>; B_APCInjectDLLFunc B_APCInjectDLLPtr = nullptr;
+using B_RipInjectDLLFunc = FunctionPtr<bool, unsigned char*, size_t, bool, bool>; B_RipInjectDLLFunc B_RipInjectDLLPtr = nullptr;
+using B_RipInjectDLLV2Func = FunctionPtr<bool, unsigned char*, size_t, bool, bool>; B_RipInjectDLLV2Func B_RipInjectDLLV2Ptr = nullptr;
+using B_DumpToFileFunc = FunctionPtr<bool, ULONG64, ULONG64, const char*, RWMode>; B_DumpToFileFunc B_DumpToFilePtr = nullptr;
+using B_GetDriverBuildTimeFunc = FunctionPtr<std::string>; B_GetDriverBuildTimeFunc B_GetDriverBuildTimePtr = nullptr;
+using B_RWKernelMemoryFunc = FunctionPtr<bool, ULONG64, void*, ULONG, int>; B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
+using B_HideMemoryFunc = FunctionPtr<bool, ULONG64, ULONG64, HideMem>; B_HideMemoryFunc B_HideMemoryPtr = nullptr;
+using B_DisableCallback_NMIFunc = FunctionPtr<bool>; B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
 
-using B_AdjustPrivilegeFunc = bool(WINAPI*)();
-B_AdjustPrivilegeFunc B_AdjustPrivilegePtr = nullptr;
-
-using B_GetInitResultFunc = const char* (WINAPI*)();
-B_GetInitResultFunc B_GetInitResultPtr = nullptr;
-
-using B_GetExpirationFunc = const char* (WINAPI*)();
-B_GetExpirationFunc B_GetExpirationPtr = nullptr;
-
-using B_AttachProcessFunc = bool(WINAPI*)(int);
-B_AttachProcessFunc B_AttachProcessPtr = nullptr;
-
-using B_GetWindowsBuildNumberFunc = int(WINAPI*)();
-B_GetWindowsBuildNumberFunc B_GetWindowsBuildNumberPtr = nullptr;
-
-using B_GetMainModuleAddressFunc = ULONG64(WINAPI*)();
-B_GetMainModuleAddressFunc B_GetMainModuleAddressPtr = nullptr;
-
-using B_GetMoudleBaseAddressFunc = ULONG64(WINAPI*)(const char*, ULONG*);
-B_GetMoudleBaseAddressFunc B_GetMoudleBaseAddressPtr = nullptr;
-
-using B_GetMoudleBaseAddressNoAttachFunc = ULONG64(WINAPI*)(const char*, ULONG*);
-B_GetMoudleBaseAddressNoAttachFunc B_GetMoudleBaseAddressNoAttachPtr = nullptr;
-
-using B_ReadMemoryFunc = bool(WINAPI*)(ULONG64, void*, size_t, RWMode, ULONG64);
-B_ReadMemoryFunc B_ReadMemoryPtr = nullptr;
-
-using B_WriteMemoryFunc = bool(WINAPI*)(ULONG64, void*, size_t, RWMode, ULONG64);
-B_WriteMemoryFunc B_WriteMemoryPtr = nullptr;
-
-using B_AllocMemoryFunc = ULONG64(WINAPI*)(size_t);
-B_AllocMemoryFunc B_AllocMemoryPtr = nullptr;
-
-using B_FreeMemoryFunc = bool(WINAPI*)(ULONG64);
-B_FreeMemoryFunc B_FreeMemoryPtr = nullptr;
-
-using B_ProtectMemoryFunc = bool(WINAPI*)(ULONG64, DWORD, DWORD64);
-B_ProtectMemoryFunc B_ProtectMemoryPtr = nullptr;
-
-using B_MouseMoveFunc = void(WINAPI*)(int, int, MoveType);
-B_MouseMoveFunc B_MouseMovePtr = nullptr;
-
-using B_MouseCtlFunc = void(WINAPI*)(MouseKey, MouseStatus);
-B_MouseCtlFunc B_MouseCtlPtr = nullptr;
-
-using B_KeyCtlFunc = void(WINAPI*)(int, KeyStatus);
-B_KeyCtlFunc B_KeyCtlPtr = nullptr;
-
-using B_KeyCtlCharFunc = void(WINAPI*)(char, KeyStatus);
-B_KeyCtlCharFunc B_KeyCtlCharPtr = nullptr;
-
-using B_KeyClickFunc = void(WINAPI*)(int);
-B_KeyClickFunc B_KeyClickPtr = nullptr;
-
-using B_KeyClickCharFunc = void(WINAPI*)(char);
-B_KeyClickCharFunc B_KeyClickCharPtr = nullptr;
-
-using B_ProtectProcessFunc = bool(WINAPI*)(bool, int);
-B_ProtectProcessFunc B_ProtectProcessPtr = nullptr;
-
-using B_ProtectProcessV2Func = bool(WINAPI*)(bool, int);
-B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
-
-using B_HideProcessFunc = bool(WINAPI*)(bool, int);
-B_HideProcessFunc B_HideProcessPtr = nullptr;
-
-using B_HideWindowFunc = bool(WINAPI*)(ULONG64, HideWindowType);
-B_HideWindowFunc B_HideWindowPtr = nullptr;
-
-using B_GetMoudleExportFuncAddressFunc = ULONG64(WINAPI*)(ULONG64, const char*);
-B_GetMoudleExportFuncAddressFunc B_GetMoudleExportFuncAddressPtr = nullptr;
-
-using B_ManualMapDllMemoryFunc = bool(WINAPI*)(const void*, size_t);
-B_ManualMapDllMemoryFunc B_ManualMapDllMemoryPtr = nullptr;
-
-using B_ProtectWindowFunc = void(WINAPI*)(bool, ULONG, bool);
-B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
-
-using B_GetProcessRealCr3Func = ULONG64(WINAPI*)();
-B_GetProcessRealCr3Func B_GetProcessRealCr3Ptr = nullptr;
-
-using B_GetProcessRealCr3AttachFunc = ULONG64(WINAPI*)();
-B_GetProcessRealCr3AttachFunc B_GetProcessRealCr3AttachPtr = nullptr;
-
-using B_PhyReadMemoryWithCr3Func = bool(WINAPI*)(ULONG64, void*, size_t, ULONG64);
-B_PhyReadMemoryWithCr3Func B_PhyReadMemoryWithCr3Ptr = nullptr;
-
-using B_PhyWriteMemoryWithCr3Func = bool(WINAPI*)(ULONG64, void*, size_t, ULONG64);
-B_PhyWriteMemoryWithCr3Func B_PhyWriteMemoryWithCr3Ptr = nullptr;
-
-using B_ForceDeleteFileFunc = bool(WINAPI*)(const char*);
-B_ForceDeleteFileFunc B_ForceDeleteFilePtr = nullptr;
-
-using B_FindPatternV1Func = ULONG64(WINAPI*)(ULONG64, ULONG64, const char*, const char*, RWMode);
-B_FindPatternV1Func B_FindPatternV1Ptr = nullptr;
-
-using B_FindPatternV2Func = ULONG64(WINAPI*)(ULONG64, ULONG64, const char*, RWMode);
-B_FindPatternV2Func B_FindPatternV2Ptr = nullptr;
-
-using B_AOBScanV1Func = std::vector<ULONG64>(WINAPI*)(const char*, const char*, ULONG64, ULONG64, RWMode);
-B_AOBScanV1Func B_AOBScanV1Ptr = nullptr;
-
-using B_AOBScanV2Func = std::vector<ULONG64>(WINAPI*)(const char*, ULONG64, ULONG64, RWMode);
-B_AOBScanV2Func B_AOBScanV2Ptr = nullptr;
-
-using B_QueryMemoryFunc = bool(WINAPI*)(ULONG64, MEMORY_BASIC_INFORMATION*);
-B_QueryMemoryFunc B_QueryMemoryPtr = nullptr;
-
-using B_MapDLLFunc = bool(WINAPI*)(unsigned char*, size_t);
-B_MapDLLFunc B_MapDLLPtr = nullptr;
-
-using B_APCInjectDLLFunc = bool(WINAPI*)(unsigned char*, size_t, bool);
-B_APCInjectDLLFunc B_APCInjectDLLPtr = nullptr;
-
-using B_RipInjectDLLFunc = bool(WINAPI*)(unsigned char*, size_t, bool, bool);
-B_RipInjectDLLFunc B_RipInjectDLLPtr = nullptr;
-
-using B_RipInjectDLLV2Func = bool(WINAPI*)(unsigned char*, size_t, bool, bool);
-B_RipInjectDLLV2Func B_RipInjectDLLV2Ptr = nullptr;
-
-using B_DumpToFileFunc = bool(WINAPI*)(ULONG64, ULONG64, const char*, RWMode);
-B_DumpToFileFunc B_DumpToFilePtr = nullptr;
-
-using B_GetDriverBuildTimeFunc = std::string(WINAPI*)();
-B_GetDriverBuildTimeFunc B_GetDriverBuildTimePtr = nullptr;
-
-using B_RWKernelMemoryFunc = bool(WINAPI*)(ULONG64, void*, ULONG, int);
-B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
-
-using B_DisableCallback_NMIFunc = bool(WINAPI*)();
-B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
 BFDrv::BFDrv()
 {
-	HMEMORYMODULE handle = nullptr;
-	HMODULE hModule = nullptr;
-	handle = MemoryLoadLibrary(B_MemoryModule, sizeof B_MemoryModule);
+	HMEMORYMODULE handle = MemoryLoadLibrary(B_MemoryModule, sizeof B_MemoryModule);
 	if (!handle) throw std::runtime_error("Dll Load is NULL");
-	B_LoadDynamicLibraryPtr = (B_LoadDynamicLibraryFn)MemoryGetProcAddress(handle, "B_LoadDynamicLibrary");
-	if (!B_LoadDynamicLibraryPtr) throw std::runtime_error("B_LoadDynamicLibraryPtr is NULL");
-	if (!B_LoadDynamicLibraryPtr(&hModule, BFDrv_Dynamic)) throw std::runtime_error("Load Dll Failed");
-	if (!hModule) throw std::runtime_error("hModule is NULL");
-	B_InitDrvPtr = (B_InitDrvFunc)GetProcAddress(hModule, "B_InitDrv");
-	if (!B_InitDrvPtr) throw std::runtime_error("B_InitDrvPtr is NULL");
-	B_AdjustPrivilegePtr = (B_AdjustPrivilegeFunc)GetProcAddress(hModule, "B_AdjustPrivilege");
-	if (!B_AdjustPrivilegePtr) throw std::runtime_error("B_AdjustPrivilegePtr is NULL");
-	B_GetInitResultPtr = (B_GetInitResultFunc)GetProcAddress(hModule, "B_GetInitResult");
-	if (!B_GetInitResultPtr) throw std::runtime_error("B_GetInitResultPtr is NULL");
-	B_GetExpirationPtr = (B_GetExpirationFunc)GetProcAddress(hModule, "B_GetExpiration");
-	if (!B_GetExpirationPtr) throw std::runtime_error("B_GetExpirationPtr is NULL");
-	B_AttachProcessPtr = (B_AttachProcessFunc)GetProcAddress(hModule, "B_AttachProcess");
-	if (!B_AttachProcessPtr) throw std::runtime_error("B_AttachProcessPtr is NULL");
-	B_GetWindowsBuildNumberPtr = (B_GetWindowsBuildNumberFunc)GetProcAddress(hModule, "B_GetWindowsBuildNumber");
-	if (!B_GetWindowsBuildNumberPtr) throw std::runtime_error("B_GetWindowsBuildNumberPtr is NULL");
-	B_GetMainModuleAddressPtr = (B_GetMainModuleAddressFunc)GetProcAddress(hModule, "B_GetMainModuleAddress");
-	if (!B_GetMainModuleAddressPtr) throw std::runtime_error("B_GetMainModuleAddressPtr is NULL");
-	B_GetMoudleBaseAddressPtr = (B_GetMoudleBaseAddressFunc)GetProcAddress(hModule, "B_GetMoudleBaseAddress");
-	if (!B_GetMoudleBaseAddressPtr) throw std::runtime_error("B_GetMoudleBaseAddressPtr is NULL");
-	B_GetMoudleBaseAddressNoAttachPtr = (B_GetMoudleBaseAddressNoAttachFunc)GetProcAddress(hModule, "B_GetMoudleBaseAddressNoAttach");
-	if (!B_GetMoudleBaseAddressNoAttachPtr) throw std::runtime_error("B_GetMoudleBaseAddressNoAttachPtr is NULL");
-	B_ReadMemoryPtr = (B_ReadMemoryFunc)GetProcAddress(hModule, "B_ReadMemory");
-	if (!B_ReadMemoryPtr) throw std::runtime_error("B_ReadMemoryPtr is NULL");
-	B_WriteMemoryPtr = (B_WriteMemoryFunc)GetProcAddress(hModule, "B_WriteMemory");
-	if (!B_WriteMemoryPtr) throw std::runtime_error("B_WriteMemoryPtr is NULL");
-	B_AllocMemoryPtr = (B_AllocMemoryFunc)GetProcAddress(hModule, "B_AllocMemory");
-	if (!B_AllocMemoryPtr) throw std::runtime_error("B_AllocMemoryPtr is NULL");
-	B_FreeMemoryPtr = (B_FreeMemoryFunc)GetProcAddress(hModule, "B_FreeMemory");
-	if (!B_FreeMemoryPtr) throw std::runtime_error("B_FreeMemoryPtr is NULL");
-	B_ProtectMemoryPtr = (B_ProtectMemoryFunc)GetProcAddress(hModule, "B_ProtectMemory");
-	if (!B_ProtectMemoryPtr) throw std::runtime_error("B_ProtectMemoryPtr is NULL");
-	B_MouseMovePtr = (B_MouseMoveFunc)GetProcAddress(hModule, "B_MouseMove");
-	if (!B_MouseMovePtr) throw std::runtime_error("B_MouseMovePtr is NULL");
-	B_MouseCtlPtr = (B_MouseCtlFunc)GetProcAddress(hModule, "B_MouseCtl");
-	if (!B_MouseCtlPtr) throw std::runtime_error("B_MouseCtlPtr is NULL");
-	B_KeyCtlPtr = (B_KeyCtlFunc)GetProcAddress(hModule, "B_KeyCtl");
-	if (!B_KeyCtlPtr) throw std::runtime_error("B_KeyCtlPtr is NULL");
-	B_KeyCtlCharPtr = (B_KeyCtlCharFunc)GetProcAddress(hModule, "B_KeyCtlChar");
-	if (!B_KeyCtlCharPtr) throw std::runtime_error("B_KeyCtlCharPtr is NULL");
-	B_KeyClickPtr = (B_KeyClickFunc)GetProcAddress(hModule, "B_KeyClick");
-	if (!B_KeyClickPtr) throw std::runtime_error("B_KeyClickPtr is NULL");
-	B_KeyClickCharPtr = (B_KeyClickCharFunc)GetProcAddress(hModule, "B_KeyClickChar");
-	if (!B_KeyClickCharPtr) throw std::runtime_error("B_KeyClickCharPtr is NULL");
-	B_ProtectProcessPtr = (B_ProtectProcessFunc)GetProcAddress(hModule, "B_ProtectProcess");
-	if (!B_ProtectProcessPtr) throw std::runtime_error("B_ProtectProcessPtr is NULL");
-	B_ProtectProcessV2Ptr = (B_ProtectProcessV2Func)GetProcAddress(hModule, "B_ProtectProcessV2");
-	if (!B_ProtectProcessV2Ptr) throw std::runtime_error("B_ProtectProcessV2Ptr is NULL");
-	B_HideProcessPtr = (B_HideProcessFunc)GetProcAddress(hModule, "B_HideProcess");
-	if (!B_HideProcessPtr) throw std::runtime_error("B_HideProcessPtr is NULL");
-	B_HideWindowPtr = (B_HideWindowFunc)GetProcAddress(hModule, "B_HideWindow");
-	if (!B_HideWindowPtr) throw std::runtime_error("B_HideWindowPtr is NULL");
-	B_GetMoudleExportFuncAddressPtr = (B_GetMoudleExportFuncAddressFunc)GetProcAddress(hModule, "B_GetMoudleExportFuncAddress");
-	if (!B_GetMoudleExportFuncAddressPtr) throw std::runtime_error("B_GetMoudleExportFuncAddressPtr is NULL");
-	B_ManualMapDllMemoryPtr = (B_ManualMapDllMemoryFunc)GetProcAddress(hModule, "B_ManualMapDllMemory");
-	if (!B_ManualMapDllMemoryPtr) throw std::runtime_error("B_ManualMapDllMemoryPtr is NULL");
-	B_ProtectWindowPtr = (B_ProtectWindowFunc)GetProcAddress(hModule, "B_ProtectWindow");
-	if (!B_ProtectWindowPtr) throw std::runtime_error("B_ProtectWindowPtr is NULL");
-	B_GetProcessRealCr3Ptr = (B_GetProcessRealCr3Func)GetProcAddress(hModule, "B_GetProcessRealCr3");
-	if (!B_GetProcessRealCr3Ptr) throw std::runtime_error("B_GetProcessRealCr3Ptr is NULL");
-	B_GetProcessRealCr3AttachPtr = (B_GetProcessRealCr3AttachFunc)GetProcAddress(hModule, "B_GetProcessRealCr3Attach");
-	if (!B_GetProcessRealCr3AttachPtr) throw std::runtime_error("B_GetProcessRealCr3AttachPtr is NULL");
-	B_PhyReadMemoryWithCr3Ptr = (B_PhyReadMemoryWithCr3Func)GetProcAddress(hModule, "B_PhyReadMemoryWithCr3");
-	if (!B_PhyReadMemoryWithCr3Ptr) throw std::runtime_error("B_PhyReadMemoryWithCr3Ptr is NULL");
-	B_PhyWriteMemoryWithCr3Ptr = (B_PhyWriteMemoryWithCr3Func)GetProcAddress(hModule, "B_PhyWriteMemoryWithCr3");
-	if (!B_PhyWriteMemoryWithCr3Ptr) throw std::runtime_error("B_PhyWriteMemoryWithCr3Ptr is NULL");
-	B_ForceDeleteFilePtr = (B_ForceDeleteFileFunc)GetProcAddress(hModule, "B_ForceDeleteFile");
-	if (!B_ForceDeleteFilePtr) throw std::runtime_error("B_ForceDeleteFilePtr is NULL");
-	B_FindPatternV1Ptr = (B_FindPatternV1Func)GetProcAddress(hModule, "B_FindPatternV1");
-	if (!B_FindPatternV1Ptr) throw std::runtime_error("B_FindPatternV1Ptr is NULL");
-	B_FindPatternV2Ptr = (B_FindPatternV2Func)GetProcAddress(hModule, "B_FindPatternV2");
-	if (!B_FindPatternV2Ptr) throw std::runtime_error("B_FindPatternV2Ptr is NULL");
-	B_AOBScanV1Ptr = (B_AOBScanV1Func)GetProcAddress(hModule, "B_AOBScanV1");
-	if (!B_AOBScanV1Ptr) throw std::runtime_error("B_AOBScanV1Ptr is NULL");
-	B_AOBScanV2Ptr = (B_AOBScanV2Func)GetProcAddress(hModule, "B_AOBScanV2");
-	if (!B_AOBScanV2Ptr) throw std::runtime_error("B_AOBScanV2Ptr is NULL");
-	B_QueryMemoryPtr = (B_QueryMemoryFunc)GetProcAddress(hModule, "B_QueryMemory");
-	if (!B_QueryMemoryPtr) throw std::runtime_error("B_QueryMemoryPtr is NULL");
-	B_MapDLLPtr = (B_MapDLLFunc)GetProcAddress(hModule, "B_MapDLL");
-	if (!B_MapDLLPtr) throw std::runtime_error("B_MapDLLPtr is NULL");
-	B_APCInjectDLLPtr = (B_APCInjectDLLFunc)GetProcAddress(hModule, "B_APCInjectDLL");
-	if (!B_APCInjectDLLPtr) throw std::runtime_error("B_APCInjectDLLPtr is NULL");
-	B_DumpToFilePtr = (B_DumpToFileFunc)GetProcAddress(hModule, "B_DumpToFile");
-	if (!B_DumpToFilePtr) throw std::runtime_error("B_DumpToFilePtr is NULL");
-	B_RipInjectDLLPtr = (B_RipInjectDLLFunc)GetProcAddress(hModule, "B_RipInjectDLL");
-	if (!B_RipInjectDLLPtr) throw std::runtime_error("B_RipInjectDLLPtr is NULL");
-	B_RipInjectDLLV2Ptr = (B_RipInjectDLLV2Func)GetProcAddress(hModule, "B_RipInjectDLLV2");
-	if (!B_RipInjectDLLV2Ptr) throw std::runtime_error("B_RipInjectDLLV2Ptr is NULL");
-	B_GetDriverBuildTimePtr = (B_GetDriverBuildTimeFunc)GetProcAddress(hModule, "B_GetDriverBuildTime");
-	if (!B_GetDriverBuildTimePtr) throw std::runtime_error("B_GetDriverBuildTimePtr is NULL");
-	B_RWKernelMemoryPtr = (B_RWKernelMemoryFunc)GetProcAddress(hModule, "B_RWKernelMemory");
-	if (!B_RWKernelMemoryPtr) throw std::runtime_error("B_RWKernelMemoryPtr is NULL");
-	B_DisableCallback_NMIPtr = (B_DisableCallback_NMIFunc)GetProcAddress(hModule, "B_DisableCallback_NMI");
-	if (!B_DisableCallback_NMIPtr) throw std::runtime_error("B_DisableCallback_NMIPtr is NULL");
+
+	HMODULE hModule = nullptr;
+	B_LoadDynamicLibraryPtr = reinterpret_cast<B_LoadDynamicLibraryFn>(MemoryGetProcAddress(handle, "B_LoadDynamicLibrary"));
+	if (!B_LoadDynamicLibraryPtr) throw std::runtime_error("LDL is NULL");
+
+	if (!B_LoadDynamicLibraryPtr(&hModule, BFDrv_Dynamic) || !hModule)
+		throw std::runtime_error("Failed to load DLL");
+
+	auto setFunctionPtr = [&](auto& funcPtr, const char* funcName) {
+		funcPtr = reinterpret_cast<std::decay_t<decltype(funcPtr)>>(GetProcAddress(hModule, funcName));
+		return funcPtr != nullptr;
+		};
+
+
+	bool succeed = true;
+	succeed &= setFunctionPtr(B_InitDrvPtr, "B_InitDrv");
+	succeed &= setFunctionPtr(B_AdjustPrivilegePtr, "B_AdjustPrivilege");
+	succeed &= setFunctionPtr(B_GetInitResultPtr, "B_GetInitResult");
+	succeed &= setFunctionPtr(B_GetExpirationPtr, "B_GetExpiration");
+	succeed &= setFunctionPtr(B_AttachProcessPtr, "B_AttachProcess");
+	succeed &= setFunctionPtr(B_GetWindowsBuildNumberPtr, "B_GetWindowsBuildNumber");
+	succeed &= setFunctionPtr(B_GetMainModuleAddressPtr, "B_GetMainModuleAddress");
+	succeed &= setFunctionPtr(B_GetMoudleBaseAddressPtr, "B_GetMoudleBaseAddress");
+	succeed &= setFunctionPtr(B_GetMoudleBaseAddressNoAttachPtr, "B_GetMoudleBaseAddressNoAttach");
+	succeed &= setFunctionPtr(B_ReadMemoryPtr, "B_ReadMemory");
+	succeed &= setFunctionPtr(B_WriteMemoryPtr, "B_WriteMemory");
+	succeed &= setFunctionPtr(B_AllocMemoryPtr, "B_AllocMemory");
+	succeed &= setFunctionPtr(B_FreeMemoryPtr, "B_FreeMemory");
+	succeed &= setFunctionPtr(B_ProtectMemoryPtr, "B_ProtectMemory");
+	succeed &= setFunctionPtr(B_MouseMovePtr, "B_MouseMove");
+	succeed &= setFunctionPtr(B_MouseCtlPtr, "B_MouseCtl");
+	succeed &= setFunctionPtr(B_KeyCtlPtr, "B_KeyCtl");
+	succeed &= setFunctionPtr(B_KeyCtlCharPtr, "B_KeyCtlChar");
+	succeed &= setFunctionPtr(B_KeyClickPtr, "B_KeyClick");
+	succeed &= setFunctionPtr(B_KeyClickCharPtr, "B_KeyClickChar");
+	succeed &= setFunctionPtr(B_ProtectProcessPtr, "B_ProtectProcess");
+	succeed &= setFunctionPtr(B_ProtectProcessV2Ptr, "B_ProtectProcessV2");
+	succeed &= setFunctionPtr(B_HideProcessPtr, "B_HideProcess");
+	succeed &= setFunctionPtr(B_HideWindowPtr, "B_HideWindow");
+	succeed &= setFunctionPtr(B_GetMoudleExportFuncAddressPtr, "B_GetMoudleExportFuncAddress");
+	succeed &= setFunctionPtr(B_ManualMapDllMemoryPtr, "B_ManualMapDllMemory");
+	succeed &= setFunctionPtr(B_ProtectWindowPtr, "B_ProtectWindow");
+	succeed &= setFunctionPtr(B_GetProcessRealCr3Ptr, "B_GetProcessRealCr3");
+	succeed &= setFunctionPtr(B_GetProcessRealCr3AttachPtr, "B_GetProcessRealCr3Attach");
+	succeed &= setFunctionPtr(B_PhyReadMemoryWithCr3Ptr, "B_PhyReadMemoryWithCr3");
+	succeed &= setFunctionPtr(B_PhyWriteMemoryWithCr3Ptr, "B_PhyWriteMemoryWithCr3");
+	succeed &= setFunctionPtr(B_ForceDeleteFilePtr, "B_ForceDeleteFile");
+	succeed &= setFunctionPtr(B_FindPatternV1Ptr, "B_FindPatternV1");
+	succeed &= setFunctionPtr(B_FindPatternV2Ptr, "B_FindPatternV2");
+	succeed &= setFunctionPtr(B_AOBScanV1Ptr, "B_AOBScanV1");
+	succeed &= setFunctionPtr(B_AOBScanV2Ptr, "B_AOBScanV2");
+	succeed &= setFunctionPtr(B_DumpToFilePtr, "B_DumpToFile");
+	succeed &= setFunctionPtr(B_QueryMemoryPtr, "B_QueryMemory");
+	succeed &= setFunctionPtr(B_MapDLLPtr, "B_MapDLL");
+	succeed &= setFunctionPtr(B_APCInjectDLLPtr, "B_APCInjectDLL");
+	succeed &= setFunctionPtr(B_RipInjectDLLPtr, "B_RipInjectDLL");
+	succeed &= setFunctionPtr(B_RipInjectDLLV2Ptr, "B_RipInjectDLLV2");
+	succeed &= setFunctionPtr(B_GetDriverBuildTimePtr, "B_GetDriverBuildTime");
+	succeed &= setFunctionPtr(B_RWKernelMemoryPtr, "B_RWKernelMemory");
+	succeed &= setFunctionPtr(B_HideMemoryPtr, "B_HideMemory");
+	succeed &= setFunctionPtr(B_DisableCallback_NMIPtr, "B_DisableCallback_NMI");
+
+	if (!succeed) throw std::runtime_error("Failed to set function");
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
-	ClearPEHeadersEx((unsigned char*)module->codeBase);
-	ClearPEHeadersEx((unsigned char*)hModule);
+	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(module->codeBase));
+	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(hModule));
 #ifdef _WIN64
-	UnlinkModule((unsigned char*)module->codeBase);
-	UnlinkModule((unsigned char*)hModule);
+	UnlinkModule(reinterpret_cast<unsigned char*>(module->codeBase));
+	UnlinkModule(reinterpret_cast<unsigned char*>(hModule));
 #endif
 }
 
@@ -324,7 +205,7 @@ ULONG64 BFDrv::B_GetMoudleExportFuncAddress(ULONG64 moudleAddr, const char* func
 
 bool BFDrv::B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
 {
-	if((addr & 0xFFFF000000000000) != 0) return false;
+	if ((addr & 0xFFFF000000000000) != 0) return false;
 	return B_ReadMemoryPtr(addr, buffer, size, mode, cr3);
 }
 
@@ -541,6 +422,11 @@ bool BFDrv::B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* fil
 bool BFDrv::B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type)
 {
 	return B_RWKernelMemoryPtr(addr, buffer, size, type);
+}
+
+bool BFDrv::B_HideMemory(ULONG64 addr, ULONG64 size, HideMem attr)
+{
+	return B_HideMemoryPtr(addr, size, attr);
 }
 
 bool BFDrv::B_DisableCallback_NMI()

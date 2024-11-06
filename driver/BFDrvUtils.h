@@ -60,6 +60,20 @@ enum class HideWindowType
 };
 
 
+enum HideMem : ULONG
+{
+	HM_READONLY = 1,
+	HM_EXECUTE = 2,
+	HM_EXECUTE_READ = 3,
+	HM_READWRITE = 4,
+	HM_WRITECOPY = 5,
+	HM_EXECUTE_READWRITE = 6,
+	HM_EXECUTE_WRITECOPY = 7,
+	HM_NOCACHE = 0x8,
+	HM_DECOMMIT = 0x10,
+	HM_NOACCESS = 0x18,
+};
+
 class BFDrv
 {
 public:
@@ -450,6 +464,9 @@ public:
 	// type: 0 read / type: 1 write
 	bool B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type);
 
+	//隐藏内存 注意隐藏的内存是以页面对齐(0x1000) 
+	//比如改为只读：HM_READONLY 或者不可访问 HM_NOACCESS
+	bool B_HideMemory(ULONG64 addr, ULONG64 size, HideMem attr);
 
 	//关闭NMI回调检测
 	//关于这个函数的用法，我认为应该几分钟调用一次？

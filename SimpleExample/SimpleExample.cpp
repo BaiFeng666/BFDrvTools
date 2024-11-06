@@ -64,14 +64,14 @@ int main()
 	auto lastBuildTime = Drv.B_GetDriverBuildTime();
 	std::cout << "最后编译时间: " << lastBuildTime << "\n";
 
-	int pid = GetCurrentProcessId();
+	int localPid = GetCurrentProcessId();
 	HANDLE hProcess = GetCurrentProcess();
 
 	/* Dump模块至文件
 	int valorant = GetProcessID("VALORANT-Win64-Shipping.exe");
 	if (valorant) {
 		std::cout << "Dump模块至文件" << "\n";
-		printf("VALORANT pid: %d\n", valorant);
+		printf("VALORANT localPid: %d\n", valorant);
 		Drv.B_AttachProcess(valorant);
 		ULONG size = 0;
 		auto base = Drv.B_GetMoudleBaseAddress("VALORANT-Win64-Shipping.exe", &size);
@@ -83,42 +83,8 @@ int main()
 		printf("DumpToFile 成功\n");
 		system("pause");
 	}*/
-
-	int pid2 = GetProcessID("notepad.exe");
-	if (pid2) {
-
-		printf("notepad pid: %d\n", pid2);
-		Drv.B_AttachProcess(pid2);
-
-		Drv.B_MapDLLV3(TestDLL, sizeof TestDLL, true);
-		system("pause");
-
-		ULONG size = 0;
-		auto moduleBase = Drv.B_GetMoudleBaseAddress("notepad.exe", &size);
-
-		auto r3 = Drv.B_AOBScanV1("\xBF\x00\x00\x00\x00\x8B\x05", "x????xx",
-			moduleBase, size);
-
-		auto r4 = Drv.B_AOBScanV2("BF ? ? ? ? 8B 05", moduleBase, size);
-
-		for (auto x : r3)
-			printf("B_AOBScanV1 搜索结果: %llx\n", x);
-
-		for (auto x : r4)
-			printf("B_AOBScanV2 搜索结果: %llx\n", x);
-		/////////////////////////驱动注入测试///////////////////////////r5apex.exe
-		/*
-		if (Drv.B_MapDLLV3(TestDLL, sizeof TestDLL)) {	//内存注入
-			printf("Dll 注入成功\n");
-		}
-		else {
-			printf("Dll 注入失败\n");
-		}
-		*/
-		///////////////////////////驱动注入测试///////////////////////////
-	}
 	//操作进程前必须要附加
-	Drv.B_AttachProcess(pid);
+	Drv.B_AttachProcess(localPid);
 
 	//获取模块基址大小
 	ULONG size = 0;
@@ -240,8 +206,8 @@ int main()
 	Drv.B_HideProcess(false, GetCurrentProcessId());
 
 	HWND hWnd = 0;//自己获取要反截图的窗口句柄
-	std::cout << "HWND: " << hWnd << "\n";
 	if (hWnd) {
+		std::cout << "HWND: " << hWnd << "\n";
 		std::cout << "即将 内核反截图\n";
 		system("pause");
 		if (!Drv.B_HideWindow((ULONG64)hWnd, HideWindowType::Excludefromcapture)) {
@@ -255,6 +221,31 @@ int main()
 
 	int notepadPid = GetProcessID("notepad.exe");
 	if (notepadPid) {
+		printf("notepad localPid: %d\n", notepadPid);
+		Drv.B_AttachProcess(notepadPid);
+
+		if (Drv.B_MapDLLV3(TestDLL, sizeof TestDLL)) {	//内存注入
+			printf("Dll 注入成功\n");
+		}
+		else {
+			printf("Dll 注入失败\n");
+		}
+		system("pause");
+
+		ULONG size = 0;
+		auto moduleBase = Drv.B_GetMoudleBaseAddress("notepad.exe", &size);
+
+		auto r3 = Drv.B_AOBScanV1("\xBF\x00\x00\x00\x00\x8B\x05", "x????xx",
+			moduleBase, size);
+
+		auto r4 = Drv.B_AOBScanV2("BF ? ? ? ? 8B 05", moduleBase, size);
+
+		for (auto x : r3)
+			printf("B_AOBScanV1 搜索结果: %llx\n", x);
+
+		for (auto x : r4)
+			printf("B_AOBScanV2 搜索结果: %llx\n", x);
+
 		//保护窗口注意 写的是窗口的进程的PID
 		//有时候会有多个同名进程 窗口各自属于的进程不相同 例如控制台 别写错PID了
 		std::cout << "即将 保护窗口\n";
@@ -284,6 +275,19 @@ int main()
 	//std::cout << "关闭NMI回调检测\n";
 	//Drv.B_DisableCallback_NMI();
 	//system("pause");
+
+	Drv.B_AttachProcess(localPid);
+	PVOID allocMem = VirtualAlloc(NULL, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	if (allocMem) {
+		printf("即将隐藏内存 allocMem: %p\n", allocMem);
+		system("pause");
+		printf("内存改为只读属性\n");
+		Drv.B_HideMemory((ULONG64)allocMem, 0x1000, HideMem::HM_READONLY);
+		system("pause");
+		printf("恢复内存可读可写可执行\n");
+		Drv.B_HideMemory((ULONG64)allocMem, 0x1000, HideMem::HM_EXECUTE_READWRITE);
+		system("pause");
+	}
 
 	std::cout << "结束\n";
 	system("pause");
