@@ -38,15 +38,22 @@ int main()
 
 	/*
 	* 初始化驱动 输入卡密
-	* 原创劫富济贫计费法
+	* 为了更多人能用上驱动 所以是自适应式计费法
 	* 卡密计时方式： 时间 + 异地登录扣时
 	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
-	* 其他机器登录会扣2分钟 主要是为了防止开发分享 价格这么低也算是互补了
-	* 你客户量大的话一天24小时也就扣个2左右个小时无所谓 量小的话几乎没什么影响
+	* 其他机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
 	* 
-	* 首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
+	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
 	*/
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
+
+
+	//首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
+	//如果你无所谓 那么把B_InitDrv的参数delectDrivers填false即可忽视
+
+	//可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配
+	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
+
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false, true, delectDriverList);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
