@@ -13,11 +13,7 @@ BFDriver官方驱动群 410342663
 #include <stdexcept>
 #include <fstream>
 #include "B_MemoryModule.c"
-#ifdef _WIN64
 #include "BFDrv_Dynamic.c"
-#else
-#include "x86/BFDrv_Dynamic.c"
-#endif // _WIN64
 
 template<typename Ret, typename... Args>
 using FunctionPtr = Ret(WINAPI*)(Args...);
