@@ -237,7 +237,6 @@ int main()
 		else {
 			printf("Dll 注入失败\n");
 		}
-		system("pause");
 
 		ULONG size = 0;
 		auto moduleBase = Drv.B_GetMoudleBaseAddress("notepad.exe", &size);
