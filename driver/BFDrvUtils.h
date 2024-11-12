@@ -286,7 +286,7 @@ public:
 	/// </summary>
 	/// <param name="dll_path">dll路径</param>
 	/// <returns></returns>
-	bool B_MapDll(const char* dll_path);
+	bool B_MapDll(const char* dll_path, bool clear_pe);
 
 	/// <summary>
 	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
@@ -294,7 +294,7 @@ public:
 	/// <param name="dll_data">dll内存</param>
 	/// <param name="dll_size">dll大小</param>
 	/// <returns></returns>
-	bool B_MapDll(unsigned char* dll_data, size_t dll_size);
+	bool B_MapDll(unsigned char* dll_data, bool clear_pe);
 
 	/// <summary>
 	/// 通用驱动映射注入 支持x64/x32 内存
@@ -302,13 +302,13 @@ public:
 	/// <param name="dll_data">dll内存</param>
 	/// <param name="dll_size">dll大小</param>
 	/// <returns></returns>
-	bool B_MapDLLV2(unsigned char* dll_data, size_t dll_size);
+	bool B_MapDllV2(unsigned char* dll_data, size_t dll_size);
 	/// <summary>
 	/// 通用驱动映射注入 支持x64/x32 内存
 	/// </summary>
 	/// <param name="dll_path">dll路径</param>
 	/// <returns></returns>
-	bool B_MapDLLV2(const char* dll_path);
+	bool B_MapDllV2(const char* dll_path);
 
 	/// <summary>
 	/// 内核APC注入+隐藏内存 通杀各种游戏
@@ -317,7 +317,7 @@ public:
 	/// <param name="dll_size">dll大小</param>
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <returns></returns>
-	bool B_MapDLLV3(unsigned char* dll_data, size_t dll_size, bool hide_mem = false);
+	bool B_MapDllV3(unsigned char* dll_data, size_t dll_size, bool hide_mem = false);
 
 	/// <summary>
 	/// 内核APC注入+隐藏内存 通杀各种游戏
@@ -325,7 +325,7 @@ public:
 	/// <param name="dll_path">dll路径</param>
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <returns></returns>
-	bool B_MapDLLV3(const char* dll_path, bool hide_mem = false);
+	bool B_MapDllV3(const char* dll_path, bool hide_mem = false);
 
 	/// <summary>
 	/// 内核RIP劫持注入
@@ -336,7 +336,7 @@ public:
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
 	/// <returns></returns>
-	bool B_MapDLLV4(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
+	bool B_MapDllV4(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
 
 	/// <summary>
 	/// 内核RIP劫持注入
@@ -346,7 +346,7 @@ public:
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
 	/// <returns></returns>
-	bool B_MapDLLV4(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
+	bool B_MapDllV4(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
 
 	/// <summary>
 	/// 内核RIP劫持V2注入
@@ -356,7 +356,7 @@ public:
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
 	/// <returns></returns>
-	bool B_MapDLLV5(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
+	bool B_MapDllV5(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
 
 	/// <summary>
 	/// 内核RIP劫持V2注入
@@ -365,7 +365,22 @@ public:
 	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
 	/// <returns></returns>
-	bool B_MapDLLV5(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
+	bool B_MapDllV5(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
+
+	/// <summary>
+	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
+	/// </summary>
+	/// <param name="dll_path">dll路径</param>
+	/// <returns></returns>
+	bool B_MapDllV6(const char* dll_path, bool clear_pe);
+
+	/// <summary>
+	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <returns></returns>
+	bool B_MapDllV6(unsigned char* dll_data, bool clear_pe);
 	
 	//调用之前先附加要读写的进程
 	//获取真实进程CR3 主要是为了给B_PhyReadMemoryWithCr3()调用

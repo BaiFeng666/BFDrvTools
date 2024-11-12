@@ -49,7 +49,8 @@ using B_ProtectProcessV2Func = B_ProtectProcessFunc; B_ProtectProcessV2Func B_Pr
 using B_HideProcessFunc = FunctionPtr<bool, bool, int>; B_HideProcessFunc B_HideProcessPtr = nullptr;
 using B_HideWindowFunc = FunctionPtr<bool, ULONG64, HideWindowType>; B_HideWindowFunc B_HideWindowPtr = nullptr;
 using B_GetMoudleExportFuncAddressFunc = FunctionPtr<ULONG64, ULONG64, const char*>; B_GetMoudleExportFuncAddressFunc B_GetMoudleExportFuncAddressPtr = nullptr;
-using B_ManualMapDllMemoryFunc = FunctionPtr<bool, const void*, size_t>; B_ManualMapDllMemoryFunc B_ManualMapDllMemoryPtr = nullptr;
+using B_DX11_HijackMapDllFunc = FunctionPtr<bool, const void*, bool>; B_DX11_HijackMapDllFunc B_DX11_HijackMapDllPtr = nullptr;
+using B_DX12_HijackMapDllFunc = FunctionPtr<bool, const void*, bool>; B_DX12_HijackMapDllFunc B_DX12_HijackMapDllPtr = nullptr;
 using B_ProtectWindowFunc = FunctionPtr<void, bool, ULONG, bool>; B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
 using B_GetProcessRealCr3Func = FunctionPtr<ULONG64>; B_GetProcessRealCr3Func B_GetProcessRealCr3Ptr = nullptr;
 using B_GetProcessRealCr3AttachFunc = FunctionPtr<ULONG64>; B_GetProcessRealCr3AttachFunc B_GetProcessRealCr3AttachPtr = nullptr;
@@ -115,7 +116,8 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_HideProcessPtr, "B_HideProcess");
 	succeed &= setFunctionPtr(B_HideWindowPtr, "B_HideWindow");
 	succeed &= setFunctionPtr(B_GetMoudleExportFuncAddressPtr, "B_GetMoudleExportFuncAddress");
-	succeed &= setFunctionPtr(B_ManualMapDllMemoryPtr, "B_ManualMapDllMemory");
+	succeed &= setFunctionPtr(B_DX11_HijackMapDllPtr, "B_DX11_HijackMapDll");
+	succeed &= setFunctionPtr(B_DX12_HijackMapDllPtr, "B_DX12_HijackMapDll");
 	succeed &= setFunctionPtr(B_ProtectWindowPtr, "B_ProtectWindow");
 	succeed &= setFunctionPtr(B_GetProcessRealCr3Ptr, "B_GetProcessRealCr3");
 	succeed &= setFunctionPtr(B_GetProcessRealCr3AttachPtr, "B_GetProcessRealCr3Attach");
@@ -280,27 +282,27 @@ bool BFDrv::B_HideWindow(ULONG64 hWnd, HideWindowType type)
 	return B_HideWindowPtr(hWnd, type);
 }
 
-bool BFDrv::B_MapDll(const char* dll_path)
+bool BFDrv::B_MapDll(const char* dll_path, bool clear_pe)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
 		return false;
 	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	file.close();
-	return B_ManualMapDllMemoryPtr(str.data(), str.size());
+	return B_DX11_HijackMapDllPtr(str.data(), clear_pe);
 }
 
-bool BFDrv::B_MapDll(unsigned char* dll_data, size_t dll_size)
+bool BFDrv::B_MapDll(unsigned char* dll_data, bool clear_pe)
 {
-	return B_ManualMapDllMemoryPtr(dll_data, dll_size);
+	return B_DX11_HijackMapDllPtr(dll_data, clear_pe);
 }
 
-bool BFDrv::B_MapDLLV2(unsigned char* dll_data, size_t dll_size)
+bool BFDrv::B_MapDllV2(unsigned char* dll_data, size_t dll_size)
 {
 	return B_MapDLLPtr(dll_data, dll_size);
 }
 
-bool BFDrv::B_MapDLLV2(const char* dll_path)
+bool BFDrv::B_MapDllV2(const char* dll_path)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
@@ -311,12 +313,12 @@ bool BFDrv::B_MapDLLV2(const char* dll_path)
 	return B_MapDLLPtr((unsigned char*)str.data(), str.size());
 }
 
-bool BFDrv::B_MapDLLV3(unsigned char* dll_data, size_t dll_size, bool hide_mem)
+bool BFDrv::B_MapDllV3(unsigned char* dll_data, size_t dll_size, bool hide_mem)
 {
 	return B_APCInjectDLLPtr(dll_data, dll_size, hide_mem);
 }
 
-bool BFDrv::B_MapDLLV3(const char* dll_path, bool hide_mem)
+bool BFDrv::B_MapDllV3(const char* dll_path, bool hide_mem)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
@@ -327,12 +329,12 @@ bool BFDrv::B_MapDLLV3(const char* dll_path, bool hide_mem)
 	return B_APCInjectDLLPtr((unsigned char*)str.data(), str.size(), hide_mem);
 }
 
-bool BFDrv::B_MapDLLV4(unsigned char* dll_data, size_t dll_size, bool hide_mem, bool clear_shellcode)
+bool BFDrv::B_MapDllV4(unsigned char* dll_data, size_t dll_size, bool hide_mem, bool clear_shellcode)
 {
 	return B_RipInjectDLLPtr(dll_data, dll_size, hide_mem, clear_shellcode);
 }
 
-bool BFDrv::B_MapDLLV4(const char* dll_path, bool hide_mem, bool clear_shellcode)
+bool BFDrv::B_MapDllV4(const char* dll_path, bool hide_mem, bool clear_shellcode)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
@@ -343,12 +345,12 @@ bool BFDrv::B_MapDLLV4(const char* dll_path, bool hide_mem, bool clear_shellcode
 	return B_RipInjectDLLPtr((unsigned char*)str.data(), str.size(), hide_mem, clear_shellcode);
 }
 
-bool BFDrv::B_MapDLLV5(unsigned char* dll_data, size_t dll_size, bool hide_mem, bool clear_shellcode)
+bool BFDrv::B_MapDllV5(unsigned char* dll_data, size_t dll_size, bool hide_mem, bool clear_shellcode)
 {
 	return B_RipInjectDLLV2Ptr(dll_data, dll_size, hide_mem, clear_shellcode);
 }
 
-bool BFDrv::B_MapDLLV5(const char* dll_path, bool hide_mem, bool clear_shellcode)
+bool BFDrv::B_MapDllV5(const char* dll_path, bool hide_mem, bool clear_shellcode)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
@@ -357,6 +359,21 @@ bool BFDrv::B_MapDLLV5(const char* dll_path, bool hide_mem, bool clear_shellcode
 	file.close();
 
 	return B_RipInjectDLLV2Ptr((unsigned char*)str.data(), str.size(), hide_mem, clear_shellcode);
+}
+
+bool BFDrv::B_MapDllV6(const char* dll_path, bool clear_pe)
+{
+	std::fstream file(dll_path, std::ios::in | std::ios::binary);
+	if (!file.is_open())
+		return false;
+	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	file.close();
+	return B_DX12_HijackMapDllPtr(str.data(), clear_pe);
+}
+
+bool BFDrv::B_MapDllV6(unsigned char* dll_data, bool clear_pe)
+{
+	return B_DX12_HijackMapDllPtr(dll_data, clear_pe);
 }
 
 ULONG64 BFDrv::B_GetProcessRealCr3()

@@ -46,7 +46,7 @@ int main()
 	* 卡密计时方式： 时间 + 异地登录扣时
 	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
 	* 其他机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
-	* 
+	*
 	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
 	*/
 
@@ -58,7 +58,7 @@ int main()
 	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
 
 	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false, true, delectDriverList);
-	
+
 	std::cout << Drv.B_GetInitResult() << "\n";
 
 	if (!result) {
@@ -235,7 +235,8 @@ int main()
 		printf("notepad localPid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
-		if (Drv.B_MapDLLV3(TestDLL, sizeof TestDLL)) {	//内存注入
+		if (Drv.B_MapDllV3(TestDLL, sizeof TestDLL)) {	//内存注入
+		//if (Drv.B_MapDllV3("C:\\TestDll.dll")) {	//路径注入
 			printf("Dll 注入成功\n");
 		}
 		else {
