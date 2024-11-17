@@ -12,11 +12,10 @@
 #include <Windows.h>
 #include <iostream>
 #include <string.h>
-#include "../driver/BFDrvUtils.h"
-#include "../driver/TestDLL.c"
-#include <chrono>
 #include <TlHelp32.h>
 #include <atlconv.h>
+#include "../driver/BFDrvUtils.h"
+#include "../driver/TestDLL.c"
 
 DWORD GetProcessID(const char* ProcessName)
 {
@@ -40,21 +39,18 @@ int main()
 {
 	BFDrv Drv;
 
-	/*
-	* 初始化驱动 输入卡密
+	//Drv.B_DisablePrint(true);//禁用一些提示输出
+
+	/*初始化驱动 输入卡密
 	* 为了更多人能用上驱动 所以是自适应式计费法
 	* 卡密计时方式： 时间 + 异地登录扣时
 	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
 	* 其他机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
-	*
-	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限
-	*/
+	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限*/
 
-
-	//首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
-	//如果你无所谓 那么把B_InitDrv的参数delectDrivers填false即可忽视
-
-	//可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配
+	/*首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
+	* 如果你无所谓 那么把B_InitDrv的参数delectDrivers填false即可忽视
+	* 可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配*/
 	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
 
 	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false, true, delectDriverList);
@@ -278,15 +274,6 @@ int main()
 		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出前建议恢复
 	}
 
-	//如果路径带中文 字符串要转成utf8编码
-	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
-	//	std::cout << "强删文件失败\n";
-	//}
-
-	//std::cout << "关闭NMI回调检测\n";
-	//Drv.B_DisableCallback_NMI();
-	//system("pause");
-
 	Drv.B_AttachProcess(localPid);
 	PVOID allocMem = VirtualAlloc(NULL, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 	if (allocMem) {
@@ -299,6 +286,23 @@ int main()
 		Drv.B_HideMemory((ULONG64)allocMem, 0x1000, HideMem::HM_EXECUTE_READWRITE);
 		system("pause");
 	}
+
+	//如果路径带中文 字符串要转成utf8编码
+	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
+	//	std::cout << "强删文件失败\n";
+	//}
+
+	//std::cout << "关闭NMI回调检测\n";
+	//Drv.B_DisableCallback_NMI();
+	//system("pause");
+
+	//关闭指定驱动内核回调 可以同时关闭多个驱动 目前限制了最大关闭的回调数量是32个
+	//注意：有的驱动会检测自身回调是否存在、修改，所以隔一段时间可能会被他恢复过去
+	//Drv.B_DisableCallback("xxx.sys");
+	//Drv.B_DisableCallback("xxx2.sys");
+	//Drv.B_DisableCallback("xxx3.sys");
+	//恢复所有关闭的内核回调
+	//Drv.B_RestoreCallback();
 
 	std::cout << "结束\n";
 	system("pause");

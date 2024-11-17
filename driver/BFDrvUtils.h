@@ -285,6 +285,7 @@ public:
 	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
 	/// </summary>
 	/// <param name="dll_path">dll路径</param>
+	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <returns></returns>
 	bool B_MapDll(const char* dll_path, bool clear_pe);
 
@@ -292,7 +293,7 @@ public:
 	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
 	/// </summary>
 	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
+	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <returns></returns>
 	bool B_MapDll(unsigned char* dll_data, bool clear_pe);
 
@@ -371,6 +372,7 @@ public:
 	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
 	/// </summary>
 	/// <param name="dll_path">dll路径</param>
+	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <returns></returns>
 	bool B_MapDllV6(const char* dll_path, bool clear_pe);
 
@@ -378,7 +380,7 @@ public:
 	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
 	/// </summary>
 	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
+	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <returns></returns>
 	bool B_MapDllV6(unsigned char* dll_data, bool clear_pe);
 	
@@ -478,7 +480,6 @@ public:
 	//filePath 填要保存的文件
 	bool B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode = RWMode::MmCopy);
 
-
 	//读写内核空间 谨慎使用
 	// type: 0 read / type: 1 write
 	bool B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type);
@@ -490,5 +491,29 @@ public:
 	//关闭NMI回调检测
 	//关于这个函数的用法，我认为应该几分钟调用一次？
 	bool B_DisableCallback_NMI();
+
+	//关闭一些相关提示输出
+	void B_DisablePrint(bool value);
+
+	void B_TestMode(bool value);
+
+	/// <summary>
+	/// 关闭指定驱动的内核回调
+	/// 目前支持关闭的回调有:
+	/// LoadImageCallback,
+	/// ProcessCreationCallback,
+	/// ThreadCreationCallback,
+	/// ProcessObjectCreationCallback,
+	/// ThreadObjectCreationCallback,
+	/// RegistryCallback,
+	/// DriverVerificationCallback
+	/// </summary>
+	/// <param name="driver_name">指定要关闭回调的驱动</param>
+	void B_DisableCallback(const char* driver_name);
+
+	/// <summary>
+	/// 恢复所有由B_DisableCallback关闭的内核回调
+	/// </summary>
+	void B_RestoreCallback();
 };
 

@@ -71,6 +71,10 @@ using B_GetDriverBuildTimeFunc = FunctionPtr<std::string>; B_GetDriverBuildTimeF
 using B_RWKernelMemoryFunc = FunctionPtr<bool, ULONG64, void*, ULONG, int>; B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
 using B_HideMemoryFunc = FunctionPtr<bool, ULONG64, ULONG64, HideMem>; B_HideMemoryFunc B_HideMemoryPtr = nullptr;
 using B_DisableCallback_NMIFunc = FunctionPtr<bool>; B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
+using B_DisablePrintFunc = FunctionPtr<void, bool>; B_DisablePrintFunc B_DisablePrintPtr = nullptr;
+using B_TestModeFunc = FunctionPtr<void, bool>; B_TestModeFunc B_TestModePtr = nullptr;
+using B_DisableCallbackFunc = FunctionPtr<void, const char*>; B_DisableCallbackFunc B_DisableCallbackPtr = nullptr;
+using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_RestoreCallbackPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -138,6 +142,10 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_RWKernelMemoryPtr, "B_RWKernelMemory");
 	succeed &= setFunctionPtr(B_HideMemoryPtr, "B_HideMemory");
 	succeed &= setFunctionPtr(B_DisableCallback_NMIPtr, "B_DisableCallback_NMI");
+	succeed &= setFunctionPtr(B_DisablePrintPtr, "B_DisablePrint");
+	succeed &= setFunctionPtr(B_TestModePtr, "B_TestMode");
+	succeed &= setFunctionPtr(B_DisableCallbackPtr, "B_DisableCallback");
+	succeed &= setFunctionPtr(B_RestoreCallbackPtr, "B_RestoreCallback");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -449,4 +457,24 @@ bool BFDrv::B_HideMemory(ULONG64 addr, ULONG64 size, HideMem attr)
 bool BFDrv::B_DisableCallback_NMI()
 {
 	return B_DisableCallback_NMIPtr();
+}
+
+void BFDrv::B_DisablePrint(bool value)
+{
+	return B_DisablePrintPtr(value);
+}
+
+void BFDrv::B_TestMode(bool value)
+{
+	return B_TestModePtr(value);
+}
+
+void BFDrv::B_DisableCallback(const char* driver_name)
+{
+	return B_DisableCallbackPtr(driver_name);
+}
+
+void BFDrv::B_RestoreCallback()
+{
+	return B_RestoreCallbackPtr();
 }
