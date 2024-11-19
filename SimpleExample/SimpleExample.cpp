@@ -38,7 +38,6 @@ DWORD GetProcessID(const char* ProcessName)
 int main()
 {
 	BFDrv Drv;
-
 	//Drv.B_DisablePrint(true);//禁用一些提示输出
 
 	/*初始化驱动 输入卡密
@@ -57,7 +56,8 @@ int main()
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
-	if (!result) {
+	if (result != BF_OK) {
+		std::cout << "初始化失败, 原因: 0x" << result << "\n";
 		system("pause");
 		return 0;
 	}

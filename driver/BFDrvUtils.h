@@ -14,6 +14,16 @@
 #include <string>
 #include <vector>
 
+enum B_STATUS : ULONG
+{
+	BF_OK = 0,				//成功
+	BF_ERR_AUTH_INIT,		//连接服务器失败，国外无法连接服务器可以挂代理
+	BF_ERR_LOGIN,			//登录失败，具体原因查看调用B_GetInitResult()
+	BF_ERR_COMM,			//通信初始化失败
+	BF_ERR_DETECT_DRIVER,	//检测到监管驱动在运行
+	BF_ERR_INIT_DRIVER,		//初始化驱动失败，具体原因查看调用B_GetInitResult()
+};
+
 enum B_InstallMode
 {
 	NtLoadDriver,
@@ -90,7 +100,7 @@ public:
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
 	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
 	///@return 是否初始化成功
-	bool B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false, bool delectDrivers = true, std::vector<const char*> delectList = {});
+	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false, bool delectDrivers = true, std::vector<const char*> delectList = {});
 
 	/// <summary>
 	/// 获取初始化结果

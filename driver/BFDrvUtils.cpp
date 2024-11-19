@@ -24,7 +24,7 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
 
 using B_LoadDynamicLibraryFn = FunctionPtr<bool, HMODULE*, LPVOID>; B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 
-using B_InitDrvFunc = FunctionPtr<bool, const char*, B_InstallMode, bool, bool, std::vector<const char*>>; B_InitDrvFunc B_InitDrvPtr = nullptr;
+using B_InitDrvFunc = FunctionPtr<B_STATUS, const char*, B_InstallMode, bool, bool, std::vector<const char*>>; B_InitDrvFunc B_InitDrvPtr = nullptr;
 using B_AdjustPrivilegeFunc = FunctionPtr<bool>; B_AdjustPrivilegeFunc B_AdjustPrivilegePtr = nullptr;
 using B_GetInitResultFunc = FunctionPtr<const char*>; B_GetInitResultFunc B_GetInitResultPtr = nullptr;
 using B_GetExpirationFunc = FunctionPtr<const char*>; B_GetExpirationFunc B_GetExpirationPtr = nullptr;
@@ -163,7 +163,7 @@ bool BFDrv::B_AdjustPrivilege()
 	return B_AdjustPrivilegePtr();
 }
 
-bool BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb, bool delectDrivers, std::vector<const char*> delectList)
+B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb, bool delectDrivers, std::vector<const char*> delectList)
 {
 	return B_InitDrvPtr(key, mode, ignorePdb, delectDrivers, delectList);
 }
