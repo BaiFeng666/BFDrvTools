@@ -146,7 +146,7 @@ public:
 	/// <param name="moduleName">模块名称</param>
 	/// <param name="pSize">如果不需要获取模块大小 那么第二个参数填nullptr</param>
 	/// <returns>模块基址</returns>
-	ULONG64 B_GetMoudleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
+	ULONG64 B_GetModuleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
 
 	/// <summary>
 	/// 获取模块地址 无附加 有时失效？
@@ -154,15 +154,15 @@ public:
 	/// <param name="moduleName"></param>
 	/// <param name="pSize"></param>
 	/// <returns></returns>
-	ULONG64 B_GetMoudleBaseAddressNoAttach(const char* moduleName, ULONG* pSize = nullptr);
+	ULONG64 B_GetModuleBaseAddressNoAttach(const char* moduleName, ULONG* pSize = nullptr);
 
 	/// <summary>
 	/// 获取模块导出函数
 	/// </summary>
-	/// <param name="moudleAddr">模块基址</param>
+	/// <param name="ModuleAddr">模块基址</param>
 	/// <param name="funcName">导出函数名</param>
 	/// <returns>函数地址</returns>
-	ULONG64 B_GetMoudleExportFuncAddress(ULONG64 moudleAddr, const char* funcName);
+	ULONG64 B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char* funcName);
 
 	bool B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
 	bool B_WriteMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
@@ -490,7 +490,11 @@ public:
 	//filePath 填要保存的文件
 	bool B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode = RWMode::MmCopy);
 
-	//读写内核空间 谨慎使用
+
+	// 获取内核模块基址、大小
+	ULONG64 B_GetKernelModule(const char* moduleName, ULONG* pSize = nullptr);
+
+	//读写内核空间
 	// type: 0 read / type: 1 write
 	bool B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type);
 
@@ -499,7 +503,6 @@ public:
 	bool B_HideMemory(ULONG64 addr, ULONG64 size, HideMem attr);
 
 	//关闭NMI回调检测
-	//关于这个函数的用法，我认为应该几分钟调用一次？
 	bool B_DisableCallback_NMI();
 
 	//关闭一些相关提示输出

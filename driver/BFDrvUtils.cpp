@@ -31,8 +31,9 @@ using B_GetExpirationFunc = FunctionPtr<const char*>; B_GetExpirationFunc B_GetE
 using B_AttachProcessFunc = FunctionPtr<bool, int>; B_AttachProcessFunc B_AttachProcessPtr = nullptr;
 using B_GetWindowsBuildNumberFunc = FunctionPtr<int>; B_GetWindowsBuildNumberFunc B_GetWindowsBuildNumberPtr = nullptr;
 using B_GetMainModuleAddressFunc = FunctionPtr<ULONG64>; B_GetMainModuleAddressFunc B_GetMainModuleAddressPtr = nullptr;
-using B_GetMoudleBaseAddressFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetMoudleBaseAddressFunc B_GetMoudleBaseAddressPtr = nullptr;
-using B_GetMoudleBaseAddressNoAttachFunc = B_GetMoudleBaseAddressFunc; B_GetMoudleBaseAddressNoAttachFunc B_GetMoudleBaseAddressNoAttachPtr = nullptr;
+using B_GetModuleBaseAddressFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetModuleBaseAddressFunc B_GetModuleBaseAddressPtr = nullptr;
+using B_GetKernelModuleFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetKernelModuleFunc B_GetKernelModulePtr = nullptr;
+using B_GetModuleBaseAddressNoAttachFunc = B_GetModuleBaseAddressFunc; B_GetModuleBaseAddressNoAttachFunc B_GetModuleBaseAddressNoAttachPtr = nullptr;
 using B_ReadMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_ReadMemoryFunc B_ReadMemoryPtr = nullptr;
 using B_WriteMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_WriteMemoryFunc B_WriteMemoryPtr = nullptr;
 using B_AllocMemoryFunc = FunctionPtr<ULONG64, size_t>; B_AllocMemoryFunc B_AllocMemoryPtr = nullptr;
@@ -48,7 +49,7 @@ using B_ProtectProcessFunc = FunctionPtr<bool, bool, int>; B_ProtectProcessFunc 
 using B_ProtectProcessV2Func = B_ProtectProcessFunc; B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
 using B_HideProcessFunc = FunctionPtr<bool, bool, int>; B_HideProcessFunc B_HideProcessPtr = nullptr;
 using B_HideWindowFunc = FunctionPtr<bool, ULONG64, HideWindowType>; B_HideWindowFunc B_HideWindowPtr = nullptr;
-using B_GetMoudleExportFuncAddressFunc = FunctionPtr<ULONG64, ULONG64, const char*>; B_GetMoudleExportFuncAddressFunc B_GetMoudleExportFuncAddressPtr = nullptr;
+using B_GetModuleExportFuncAddressFunc = FunctionPtr<ULONG64, ULONG64, const char*>; B_GetModuleExportFuncAddressFunc B_GetModuleExportFuncAddressPtr = nullptr;
 using B_DX11_HijackMapDllFunc = FunctionPtr<bool, const void*, bool>; B_DX11_HijackMapDllFunc B_DX11_HijackMapDllPtr = nullptr;
 using B_DX12_HijackMapDllFunc = FunctionPtr<bool, const void*, bool>; B_DX12_HijackMapDllFunc B_DX12_HijackMapDllPtr = nullptr;
 using B_ProtectWindowFunc = FunctionPtr<void, bool, ULONG, bool>; B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
@@ -102,8 +103,9 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_AttachProcessPtr, "B_AttachProcess");
 	succeed &= setFunctionPtr(B_GetWindowsBuildNumberPtr, "B_GetWindowsBuildNumber");
 	succeed &= setFunctionPtr(B_GetMainModuleAddressPtr, "B_GetMainModuleAddress");
-	succeed &= setFunctionPtr(B_GetMoudleBaseAddressPtr, "B_GetMoudleBaseAddress");
-	succeed &= setFunctionPtr(B_GetMoudleBaseAddressNoAttachPtr, "B_GetMoudleBaseAddressNoAttach");
+	succeed &= setFunctionPtr(B_GetModuleBaseAddressPtr, "B_GetModuleBaseAddress");
+	succeed &= setFunctionPtr(B_GetKernelModulePtr, "B_GetKernelModule");
+	succeed &= setFunctionPtr(B_GetModuleBaseAddressNoAttachPtr, "B_GetModuleBaseAddressNoAttach");
 	succeed &= setFunctionPtr(B_ReadMemoryPtr, "B_ReadMemory");
 	succeed &= setFunctionPtr(B_WriteMemoryPtr, "B_WriteMemory");
 	succeed &= setFunctionPtr(B_AllocMemoryPtr, "B_AllocMemory");
@@ -119,7 +121,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_ProtectProcessV2Ptr, "B_ProtectProcessV2");
 	succeed &= setFunctionPtr(B_HideProcessPtr, "B_HideProcess");
 	succeed &= setFunctionPtr(B_HideWindowPtr, "B_HideWindow");
-	succeed &= setFunctionPtr(B_GetMoudleExportFuncAddressPtr, "B_GetMoudleExportFuncAddress");
+	succeed &= setFunctionPtr(B_GetModuleExportFuncAddressPtr, "B_GetModuleExportFuncAddress");
 	succeed &= setFunctionPtr(B_DX11_HijackMapDllPtr, "B_DX11_HijackMapDll");
 	succeed &= setFunctionPtr(B_DX12_HijackMapDllPtr, "B_DX12_HijackMapDll");
 	succeed &= setFunctionPtr(B_ProtectWindowPtr, "B_ProtectWindow");
@@ -198,19 +200,19 @@ ULONG64 BFDrv::B_GetMainModuleAddress()
 	return B_GetMainModuleAddressPtr();
 }
 
-ULONG64 BFDrv::B_GetMoudleBaseAddress(const char* moduleName, ULONG* pSize)
+ULONG64 BFDrv::B_GetModuleBaseAddress(const char* moduleName, ULONG* pSize)
 {
-	return B_GetMoudleBaseAddressPtr(moduleName, pSize);
+	return B_GetModuleBaseAddressPtr(moduleName, pSize);
 }
 
-ULONG64 BFDrv::B_GetMoudleBaseAddressNoAttach(const char* moduleName, ULONG* pSize)
+ULONG64 BFDrv::B_GetModuleBaseAddressNoAttach(const char* moduleName, ULONG* pSize)
 {
-	return B_GetMoudleBaseAddressNoAttachPtr(moduleName, pSize);
+	return B_GetModuleBaseAddressNoAttachPtr(moduleName, pSize);
 }
 
-ULONG64 BFDrv::B_GetMoudleExportFuncAddress(ULONG64 moudleAddr, const char* funcName)
+ULONG64 BFDrv::B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char* funcName)
 {
-	return B_GetMoudleExportFuncAddressPtr(moudleAddr, funcName);
+	return B_GetModuleExportFuncAddressPtr(ModuleAddr, funcName);
 }
 
 bool BFDrv::B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
@@ -442,6 +444,11 @@ bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi)
 bool BFDrv::B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode)
 {
 	return B_DumpToFilePtr(moduleBase, moduleSize, filePath, mode);
+}
+
+ULONG64 BFDrv::B_GetKernelModule(const char* moduleName, ULONG* pSize)
+{
+	return B_GetKernelModulePtr(moduleName, pSize);
 }
 
 bool BFDrv::B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type)

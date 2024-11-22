@@ -81,7 +81,7 @@ int main()
 		printf("VALORANT localPid: %d\n", valorant);
 		Drv.B_AttachProcess(valorant);
 		ULONG size = 0;
-		auto base = Drv.B_GetMoudleBaseAddress("VALORANT-Win64-Shipping.exe", &size);
+		auto base = Drv.B_GetModuleBaseAddress("VALORANT-Win64-Shipping.exe", &size);
 		printf("valorant base: %llx, size: %lx\n", base, size);
 		if (!Drv.B_DumpToFile(base, size, "D:\\桌面\\VALORANT_Dump.exe", RWMode::MmCopy)) {
 			printf("DumpToFile 失败\n");
@@ -95,15 +95,15 @@ int main()
 
 	//获取模块基址大小
 	ULONG size = 0;
-	auto moduleBase = Drv.B_GetMoudleBaseAddress("SimpleExample.exe", &size);
+	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);
 	auto moduleBase2 = Drv.B_GetMainModuleAddress();
-	//auto moduleBase3 = Drv.B_GetMoudleBaseAddressNoAttach("SimpleExample.exe");
+	//auto moduleBase3 = Drv.B_GetModuleBaseAddressNoAttach("SimpleExample.exe");
 	std::cout << "模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
 	std::cout << "模块基址2: " << std::hex << moduleBase2 << "\n";
 	//std::cout << "模块基址3: " << std::hex << moduleBase3 << "\n";
 
-	auto kernelDll = Drv.B_GetMoudleBaseAddress("Kernel32.dll");
-	auto IsBadReadPtr = Drv.B_GetMoudleExportFuncAddress(kernelDll, "IsBadReadPtr");
+	auto kernelDll = Drv.B_GetModuleBaseAddress("Kernel32.dll");
+	auto IsBadReadPtr = Drv.B_GetModuleExportFuncAddress(kernelDll, "IsBadReadPtr");
 	printf("获取模块导出函数 IsbadReadPtr: %llx\n", IsBadReadPtr);
 
 	//读写测试
@@ -240,7 +240,7 @@ int main()
 		}
 
 		ULONG size = 0;
-		auto moduleBase = Drv.B_GetMoudleBaseAddress("notepad.exe", &size);
+		auto moduleBase = Drv.B_GetModuleBaseAddress("notepad.exe", &size);
 
 		auto r3 = Drv.B_AOBScanV1("\xBF\x00\x00\x00\x00\x8B\x05", "x????xx",
 			moduleBase, size);
@@ -286,6 +286,15 @@ int main()
 		Drv.B_HideMemory((ULONG64)allocMem, 0x1000, HideMem::HM_EXECUTE_READWRITE);
 		system("pause");
 	}
+
+
+	ULONG ksize;
+	auto kernelBase = Drv.B_GetKernelModule("ntoskrnl.exe", &ksize);
+	std::cout << "ntoskrnl.exe模块基址: " << std::hex << kernelBase << " 大小: " << ksize << "\n";
+
+	int kvalue;
+	Drv.B_RWKernelMemory(kernelBase, &kvalue, 4, 0);
+	std::cout << "read ntoskrnl.exe 4 bytes value: " << kvalue << "\n";
 
 	//如果路径带中文 字符串要转成utf8编码
 	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
