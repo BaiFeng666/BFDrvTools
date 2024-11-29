@@ -54,7 +54,7 @@ int main()
 	*/
 	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
 
-	auto result = Drv.B_InitDrv("xPvUDY-MdVjlB-JJ4hgi-mVpD3H-JMYPGh-IIog7q", B_InstallMode::Normal, false, delectDriverList);
+	auto result = Drv.B_InitDrv("", B_InstallMode::Normal, false, delectDriverList);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
