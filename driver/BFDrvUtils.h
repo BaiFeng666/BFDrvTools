@@ -88,6 +88,16 @@ enum HideMem : ULONG
 	HM_NOACCESS = 0x18,
 };
 
+enum InjectType : ULONG
+{
+	IT_NORMAL = 0,//支持x64/x32 通用驱动映射注入
+	IT_APC,//支持x64 内核APC注入+隐藏内存 通杀各种游戏
+	IT_RIP,//支持x64 内核RIP劫持注入 注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD
+	IT_RIPV2,//支持x64 内核RIP劫持注入
+	IT_DX11,//支持x64 劫持dx11注入 可以注入主流dx11引擎的游戏
+	IT_DX12//支持x64 劫持dx12注入 可以注入主流dx12引擎的游戏
+};
+
 class BFDrv
 {
 public:
@@ -99,8 +109,9 @@ public:
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
 	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
+	///@param delectList 加载时检测到关键驱动取消加载，不需要就不用填
 	///@return 是否初始化成功
-	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false, bool delectDrivers = true, std::vector<const char*> delectList = {});
+	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false, std::vector<const char*> delectList = {});
 
 	/// <summary>
 	/// 获取初始化结果
@@ -292,108 +303,30 @@ public:
 	bool B_HideWindow(ULONG64 hWnd, HideWindowType type);
 
 	/// <summary>
-	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
+	/// 注入 传入路径
 	/// </summary>
 	/// <param name="dll_path">dll路径</param>
+	/// <param name="type">注入类型</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它认为是无效地址）</param>
 	/// <param name="clear_pe">清理PE痕迹</param>
-	/// <returns></returns>
-	bool B_MapDll(const char* dll_path, bool clear_pe);
-
-	/// <summary>
-	/// 劫持dx11注入 可以注入主流dx11引擎的游戏
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="clear_pe">清理PE痕迹</param>
-	/// <returns></returns>
-	bool B_MapDll(unsigned char* dll_data, bool clear_pe);
-
-	/// <summary>
-	/// 通用驱动映射注入 支持x64/x32 内存
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
-	/// <returns></returns>
-	bool B_MapDllV2(unsigned char* dll_data, size_t dll_size);
-	/// <summary>
-	/// 通用驱动映射注入 支持x64/x32 内存
-	/// </summary>
-	/// <param name="dll_path">dll路径</param>
-	/// <returns></returns>
-	bool B_MapDllV2(const char* dll_path);
-
-	/// <summary>
-	/// 内核APC注入+隐藏内存 通杀各种游戏
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <returns></returns>
-	bool B_MapDllV3(unsigned char* dll_data, size_t dll_size, bool hide_mem = false);
-
-	/// <summary>
-	/// 内核APC注入+隐藏内存 通杀各种游戏
-	/// </summary>
-	/// <param name="dll_path">dll路径</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <returns></returns>
-	bool B_MapDllV3(const char* dll_path, bool hide_mem = false);
-
-	/// <summary>
-	/// 内核RIP劫持注入
-	/// 该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
-	/// <returns></returns>
-	bool B_MapDllV4(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
-
-	/// <summary>
-	/// 内核RIP劫持注入
-	/// 该注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD，不然会蓝屏
-	/// </summary>
-	/// <param name="dll_path">dll路径</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
-	/// <returns></returns>
-	bool B_MapDllV4(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
-
-	/// <summary>
-	/// 内核RIP劫持V2注入
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="dll_size">dll大小</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
-	/// <returns></returns>
-	bool B_MapDllV5(unsigned char* dll_data, size_t dll_size, bool hide_mem = false, bool clear_shellcode = true);
-
-	/// <summary>
-	/// 内核RIP劫持V2注入
-	/// </summary>
-	/// <param name="dll_path">dll路径</param>
-	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它以为是无效地址），eac游戏过30分钟左右崩溃</param>
-	/// <param name="clear_shellcode">清理shellcode痕迹 启用会使该函数会延时5秒返回</param>
-	/// <returns></returns>
-	bool B_MapDllV5(const char* dll_path, bool hide_mem = false, bool clear_shellcode = true);
-
-	/// <summary>
-	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
-	/// </summary>
-	/// <param name="dll_path">dll路径</param>
-	/// <param name="clear_pe">清理PE痕迹</param>
-	/// <returns></returns>
-	bool B_MapDllV6(const char* dll_path, bool clear_pe);
-
-	/// <summary>
-	/// 劫持dx12注入 可以注入主流dx12引擎的游戏
-	/// </summary>
-	/// <param name="dll_data">dll内存</param>
-	/// <param name="clear_pe">清理PE痕迹</param>
-	/// <returns></returns>
-	bool B_MapDllV6(unsigned char* dll_data, bool clear_pe);
+	/// <param name="clear_shellcode">清理shellcode痕迹 针对rip注入</param>
+	/// <returns>dll在目标进程中的基址、大小，失败则返回0，你可以手动调用B_HideMemory来改变注入dll的隐藏属性</returns>
+	std::pair<ULONG64, ULONG64> B_InjectDll(const char* dll_path, InjectType type,
+		bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
 	
+	/// <summary>
+	/// 注入 传入内存
+	/// </summary>
+	/// <param name="dll_data">dll内存</param>
+	/// <param name="dll_size">dll大小</param>
+	/// <param name="type">注入类型</param>
+	/// <param name="hide_mem">隐藏注入的dll内存，会影响一些游戏或者操作，需要动脑筋解决，例如：minhook无法hook（隐藏了内存它认为是无效地址）</param>
+	/// <param name="clear_pe">清理PE痕迹</param>
+	/// <param name="clear_shellcode">清理shellcode痕迹 针对rip注入</param>
+	/// <returns>dll在目标进程中的基址、大小，失败则返回0，你可以手动调用B_HideMemory来改变注入dll的隐藏属性</returns>
+	std::pair<ULONG64, ULONG64> B_InjectDll(unsigned char* dll_data, ULONG64 dll_size, InjectType type,
+		bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
+
 	//调用之前先附加要读写的进程
 	//获取真实进程CR3 主要是为了给B_PhyReadMemoryWithCr3()调用
 	//注意 获取一次就行，你要是每次执行B_PhyReadMemoryWithCr3()都获取一次CR3那你就是傻逼 这个很吃效率

@@ -49,10 +49,12 @@ int main()
 
 	/*首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
 	* 如果你无所谓 那么把B_InitDrv的参数delectDrivers填false即可忽视
-	* 可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配*/
+	* 可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配
+	* 不需要的话该参数直接不填
+	*/
 	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
 
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false, true, delectDriverList);
+	auto result = Drv.B_InitDrv("xPvUDY-MdVjlB-JJ4hgi-mVpD3H-JMYPGh-IIog7q", B_InstallMode::Normal, false, delectDriverList);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
@@ -231,9 +233,11 @@ int main()
 		printf("notepad localPid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
-		if (Drv.B_MapDllV3(TestDLL, sizeof TestDLL)) {	//内存注入
-		//if (Drv.B_MapDllV3("C:\\TestDll.dll")) {	//路径注入
+		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC);//内存注入
+		//Drv.B_InjectDll("C:\\TestDll.dll", IT_APC)	//路径注入
+		if (inject_result.first != 0) {	
 			printf("Dll 注入成功\n");
+			printf("dll在目标进程中的基址：%llx，大小：%llx\n", inject_result.first, inject_result.second);
 		}
 		else {
 			printf("Dll 注入失败\n");
