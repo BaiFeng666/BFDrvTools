@@ -132,19 +132,16 @@ int main()
 
 	readValue = 0;
 	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy);
-	//也可以这样
-	//static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	//readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3);
 	std::cout << "Phy read value: " << std::hex << readValue << "\n";
 
 	//无视CR3加密读取数值
 	readValue = 0;
 	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach();//同上
 	std::cout << "-----> cr3 value: " << std::hex << cr3 << "\n";
-	std::cout << "-----> read cr3 value: " << std::hex << cr3_attach << "\n";
-	readValue = Drv.B_PhyReadMemWithCr3<uintptr_t>(moduleBase, cr3/*cr3_attach*/);
-	std::cout << "Fuck CR3 read value: " << std::hex << readValue << "\n";
+	//static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach();//同上 但是会附加 尽量别用
+	//std::cout << "-----> cr3 (attach) value: " << std::hex << cr3_attach << "\n";
+	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3/*cr3_attach*/);
+	std::cout << "Fake CR3 read value: " << std::hex << readValue << "\n";
 
 	int writeValue = 0;
 	const int newValue = 100;
@@ -154,9 +151,6 @@ int main()
 
 	writeValue = 0;
 	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy);
-	//也可以这样
-	//ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	//Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy, cr3);
 	std::cout << "Phy write value: " << std::dec << writeValue << "\n";
 
 	writeValue = 0;
@@ -176,8 +170,8 @@ int main()
 	std::cout << "MmCopy write value: " << std::dec << writeValue << "\n";
 
 	writeValue = 0;
-	Drv.B_PhyWriteMemoryWithCr3((ULONG64)&writeValue, (void*)&newValue, sizeof(newValue), cr3/*read_cr3*/);
-	std::cout << "Fuck CR3 write value: " << std::dec << writeValue << "\n";
+	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy, cr3);
+	std::cout << "Fake CR3 write value: " << std::dec << writeValue << "\n";
 
 	//内核键鼠模拟
 	/*

@@ -188,8 +188,7 @@ public:
 	*如果你不加载Pdb符号文件，那么KE和MDL在读取长度过大的数据（例如字符串）或者不安全的地址时可能会蓝屏*
 
 	最后一个参数是cr3 仅当使用PHY时它才有用 可以忽略
-	如果有的游戏有cr3加密 请用B_GetProcessRealCr3获取正确的cr3传入
-	（EAC游戏建议用B_PhyReadMemoryWithCr3，因为这里的PHYCR3没有处理EAC的限速问题）
+	如果有的游戏有cr3加密 请用B_GetProcessRealCr3获取正确的cr3传入 比如满血EAC的游戏
 	*/
 	template <typename type>
 	type B_ReadMem(ULONG64 addr, RWMode mode, ULONG64 cr3 = 0)
@@ -328,39 +327,11 @@ public:
 		bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
 
 	//调用之前先附加要读写的进程
-	//获取真实进程CR3 主要是为了给B_PhyReadMemoryWithCr3()调用
-	//注意 获取一次就行，你要是每次执行B_PhyReadMemoryWithCr3()都获取一次CR3那你就是傻逼 这个很吃效率
+	//注意 获取一次就行，除非你的游戏像EAC一样动态加密CR3，那就开个while(true) Sleep(1) 线程持续获取 赋值给一个全局变量
 	ULONG64 B_GetProcessRealCr3();
 
-	//依旧是读取一次即可 但是会附加
+	//依旧是读取一次即可 但是会附加 少用
 	ULONG64 B_GetProcessRealCr3Attach();
-
-	//物理读写进阶版 无视EAC的CR3加密且不限速 最后一个参数需要调用B_GetProcessRealCr3()获取
-	bool B_PhyReadMemoryWithCr3(ULONG64 addr, void* buffer, size_t size, ULONG64 cr3);
-
-	bool B_PhyWriteMemoryWithCr3(ULONG64 addr, void* buffer, size_t size, ULONG64 cr3);
-
-	//物理读写进阶版 无视EAC的CR3加密且不限速 最后一个参数需要调用B_GetProcessRealCr3()获取
-	//多线程读写时记得加锁
-	template <typename type>
-	type B_PhyReadMemWithCr3(ULONG64 addr, ULONG64 cr3)
-	{
-		type buff{};
-
-		B_PhyReadMemoryWithCr3(addr, &buff, sizeof(type), cr3);
-		return buff;
-	}
-
-	//物理读写进阶版 无视EAC的CR3加密且不限速 最后一个参数需要调用B_GetProcessRealCr3()获取
-	//多线程读写时记得加锁
-	template <typename type>
-	type B_PhyReadMemWithCr3(ULONG64 addr, size_t size, ULONG64 cr3)
-	{
-		type buff{};
-
-		B_PhyReadMemoryWithCr3(addr, &buff, size, cr3);
-		return buff;
-	}
 
 	/*
 	内核保护窗口 内核hook多个重要函数 全面保护窗口

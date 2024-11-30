@@ -54,8 +54,6 @@ using B_InjectDllFunc = FunctionPtr<std::pair<ULONG64, ULONG64>, unsigned char*,
 using B_ProtectWindowFunc = FunctionPtr<void, bool, ULONG, bool>; B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
 using B_GetProcessRealCr3Func = FunctionPtr<ULONG64>; B_GetProcessRealCr3Func B_GetProcessRealCr3Ptr = nullptr;
 using B_GetProcessRealCr3AttachFunc = FunctionPtr<ULONG64>; B_GetProcessRealCr3AttachFunc B_GetProcessRealCr3AttachPtr = nullptr;
-using B_PhyReadMemoryWithCr3Func = FunctionPtr<bool, ULONG64, void*, size_t, ULONG64>; B_PhyReadMemoryWithCr3Func B_PhyReadMemoryWithCr3Ptr = nullptr;
-using B_PhyWriteMemoryWithCr3Func = FunctionPtr<bool, ULONG64, void*, size_t, ULONG64>; B_PhyWriteMemoryWithCr3Func B_PhyWriteMemoryWithCr3Ptr = nullptr;
 using B_ForceDeleteFileFunc = FunctionPtr<bool, const char*>; B_ForceDeleteFileFunc B_ForceDeleteFilePtr = nullptr;
 using B_FindPatternV1Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode>; B_FindPatternV1Func B_FindPatternV1Ptr = nullptr;
 using B_FindPatternV2Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, RWMode>; B_FindPatternV2Func B_FindPatternV2Ptr = nullptr;
@@ -122,8 +120,6 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_ProtectWindowPtr, "B_ProtectWindow");
 	succeed &= setFunctionPtr(B_GetProcessRealCr3Ptr, "B_GetProcessRealCr3");
 	succeed &= setFunctionPtr(B_GetProcessRealCr3AttachPtr, "B_GetProcessRealCr3Attach");
-	succeed &= setFunctionPtr(B_PhyReadMemoryWithCr3Ptr, "B_PhyReadMemoryWithCr3");
-	succeed &= setFunctionPtr(B_PhyWriteMemoryWithCr3Ptr, "B_PhyWriteMemoryWithCr3");
 	succeed &= setFunctionPtr(B_ForceDeleteFilePtr, "B_ForceDeleteFile");
 	succeed &= setFunctionPtr(B_FindPatternV1Ptr, "B_FindPatternV1");
 	succeed &= setFunctionPtr(B_FindPatternV2Ptr, "B_FindPatternV2");
@@ -307,16 +303,6 @@ ULONG64 BFDrv::B_GetProcessRealCr3()
 ULONG64 BFDrv::B_GetProcessRealCr3Attach()
 {
 	return B_GetProcessRealCr3AttachPtr();
-}
-
-bool BFDrv::B_PhyReadMemoryWithCr3(ULONG64 addr, void* buffer, size_t size, ULONG64 cr3)
-{
-	return B_PhyReadMemoryWithCr3Ptr(addr, buffer, size, cr3);
-}
-
-bool BFDrv::B_PhyWriteMemoryWithCr3(ULONG64 addr, void* buffer, size_t size, ULONG64 cr3)
-{
-	return B_PhyWriteMemoryWithCr3Ptr(addr, buffer, size, cr3);
 }
 
 void BFDrv::B_ProtectWindow(bool protectWindow, ULONG protectWindowPid, bool protectGlobal)
