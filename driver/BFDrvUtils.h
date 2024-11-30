@@ -461,5 +461,13 @@ public:
 	/// 恢复所有由B_DisableCallback关闭的内核回调
 	/// </summary>
 	void B_RestoreCallback();
+
+	/// <summary>
+	/// 在APC注入之前设置它
+	/// 危险操作，如果你不知道你在做什么，不要调用它
+	/// 当APC注入时，隐藏内存的同时将移除分配的内存VAD节点
+	/// 已知被移除VAD节点的进程关闭时会蓝屏，不知道会不会触发PG
+	/// </summary>
+	void B_RemoveVAD(bool enable);
 };
 

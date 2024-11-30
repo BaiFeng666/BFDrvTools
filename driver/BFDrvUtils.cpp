@@ -71,6 +71,7 @@ using B_DisablePrintFunc = FunctionPtr<void, bool>; B_DisablePrintFunc B_Disable
 using B_TestModeFunc = FunctionPtr<void, bool>; B_TestModeFunc B_TestModePtr = nullptr;
 using B_DisableCallbackFunc = FunctionPtr<void, const char*>; B_DisableCallbackFunc B_DisableCallbackPtr = nullptr;
 using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_RestoreCallbackPtr = nullptr;
+using B_RemoveVADFunc = FunctionPtr<void, bool>; B_RemoveVADFunc B_RemoveVADPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -138,6 +139,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_TestModePtr, "B_TestMode");
 	succeed &= setFunctionPtr(B_DisableCallbackPtr, "B_DisableCallback");
 	succeed &= setFunctionPtr(B_RestoreCallbackPtr, "B_RestoreCallback");
+	succeed &= setFunctionPtr(B_RemoveVADPtr, "B_RemoveVAD");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -395,4 +397,9 @@ void BFDrv::B_DisableCallback(const char* driver_name)
 void BFDrv::B_RestoreCallback()
 {
 	return B_RestoreCallbackPtr();
+}
+
+void BFDrv::B_RemoveVAD(bool enable)
+{
+	return B_RemoveVADPtr(enable);
 }
