@@ -233,7 +233,7 @@ int main()
 		printf("notepad localPid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
-		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC);//内存注入
+		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC, true, true, true);//内存注入
 		//Drv.B_InjectDll("C:\\TestDll.dll", IT_APC)	//路径注入
 		if (inject_result.first != 0) {	
 			printf("Dll 注入成功\n");
