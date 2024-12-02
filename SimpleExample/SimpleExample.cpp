@@ -137,11 +137,10 @@ int main()
 	//无视CR3加密读取数值
 	readValue = 0;
 	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
+	//static ULONG64 cr3 = Drv.B_GetProcessRealCr3Attach();//同上 但是会附加 尽量别用
 	std::cout << "-----> cr3 value: " << std::hex << cr3 << "\n";
-	//static ULONG64 cr3_attach = Drv.B_GetProcessRealCr3Attach();//同上 但是会附加 尽量别用
-	//std::cout << "-----> cr3 (attach) value: " << std::hex << cr3_attach << "\n";
-	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3/*cr3_attach*/);
-	std::cout << "Fake CR3 read value: " << std::hex << readValue << "\n";
+	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3);
+	std::cout << "Phy CR3 read value: " << std::hex << readValue << "\n";
 
 	int writeValue = 0;
 	const int newValue = 100;
@@ -230,10 +229,14 @@ int main()
 		//Drv.B_RemoveVAD(true);//移除VAD，如果你不知道它的作用不要调用它
 		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC, true, true, true);//内存注入
 		//Drv.B_InjectDll("C:\\TestDll.dll", IT_APC, true, true, true)	//路径注入
-		//Drv.B_RemoveVAD(false);//恢复VAD
+		//Drv.B_RemoveVAD(false);//关闭移除VAD
 		if (inject_result.first != 0) {	
 			printf("Dll 注入成功\n");
 			printf("dll在目标进程中的基址：%llx，大小：%llx\n", inject_result.first, inject_result.second);
+
+			//如果你参数开启了hide_mem 那么会将dll内存改为只读类型
+			//你可以手动修改它的内存属性 例如我改成不可访问类型
+			//Drv.B_HideMemory(inject_result.first, inject_result.second, HideMem::HM_NOACCESS);
 		}
 		else {
 			printf("Dll 注入失败\n");
