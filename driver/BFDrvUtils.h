@@ -152,7 +152,8 @@ public:
 	ULONG64 B_GetMainModuleAddress();
 
 	/// <summary>
-	/// 获取模块基址、大小 注意不要在循环中疯狂调用 程序生命周期调用一次即可
+	/// 获取模块基址、大小  会附加不建议用
+	/// 注意不要在循环中疯狂调用 程序生命周期调用一次即可 比较耗时
 	/// </summary>
 	/// <param name="moduleName">模块名称</param>
 	/// <param name="pSize">如果不需要获取模块大小 那么第二个参数填nullptr</param>
@@ -160,7 +161,8 @@ public:
 	ULONG64 B_GetModuleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
 
 	/// <summary>
-	/// 获取模块地址 无附加 有时失效？
+	/// 无附加获取模块基址、大小  建议用这个
+	/// 注意不要在循环中疯狂调用 程序生命周期调用一次即可 比较耗时
 	/// </summary>
 	/// <param name="moduleName"></param>
 	/// <param name="pSize"></param>
@@ -434,10 +436,10 @@ public:
 	void B_RestoreCallback();
 
 	/// <summary>
-	/// 在APC注入之前设置它
+	/// 在APC注入之前设置它（需要参数hide_mem开启）
 	/// 危险操作，如果你不知道你在做什么，不要调用它
 	/// 当APC注入时，隐藏内存的同时将移除分配的内存VAD节点
-	/// 已知被移除VAD节点的进程关闭时会蓝屏，不知道会不会触发PG
+	/// 已知关闭被移除VAD节点的进程会蓝屏，不知道长时间会不会触发PG
 	/// </summary>
 	void B_RemoveVAD(bool enable);
 };

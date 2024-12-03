@@ -97,12 +97,13 @@ int main()
 
 	//获取模块基址大小
 	ULONG size = 0;
-	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);
+	ULONG size2 = 0;
+	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);//会附加 不推荐用
 	auto moduleBase2 = Drv.B_GetMainModuleAddress();
-	//auto moduleBase3 = Drv.B_GetModuleBaseAddressNoAttach("SimpleExample.exe");
-	std::cout << "模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
-	std::cout << "模块基址2: " << std::hex << moduleBase2 << "\n";
-	//std::cout << "模块基址3: " << std::hex << moduleBase3 << "\n";
+	auto moduleBase3 = Drv.B_GetModuleBaseAddressNoAttach("SimpleExample.exe", &size2);//推荐用这个
+	std::cout << "附加模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
+	std::cout << "无附加获取模块基址2: " << std::hex << moduleBase2 << "\n";
+	std::cout << "无附加获取模块基址3: " << std::hex << moduleBase3 << "大小: " << size2 << "\n";
 
 	auto kernelDll = Drv.B_GetModuleBaseAddress("Kernel32.dll");
 	auto IsBadReadPtr = Drv.B_GetModuleExportFuncAddress(kernelDll, "IsBadReadPtr");
