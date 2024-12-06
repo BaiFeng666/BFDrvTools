@@ -292,7 +292,14 @@ std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(const char* dll_path, InjectType 
 
 std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(unsigned char* dll_data, ULONG64 dll_size, InjectType type, bool hide_mem, bool clear_pe, bool clear_shellcode)
 {
-	return B_InjectDllPtr(dll_data, dll_size, type, hide_mem, clear_pe, clear_shellcode);
+	auto result = B_InjectDllPtr(dll_data, dll_size, type, hide_mem, clear_pe, clear_shellcode);
+	if (result.first && result.second) {
+		if (hide_mem && type != IT_APC) {//APC的隐藏在内核中进行
+			//开始隐藏 可以根据需要修改内存的属性HideMem
+			B_HideMemory(result.first, result.second, HideMem::HM_READONLY);
+		}
+	}
+	return { 0,0 };
 }
 
 ULONG64 BFDrv::B_GetProcessRealCr3()

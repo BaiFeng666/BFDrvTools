@@ -48,8 +48,7 @@ int main()
 	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限*/
 
 	/*首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
-	* 如果你无所谓 那么把B_InitDrv的参数delectDrivers填false即可忽视
-	* 可以自定义修改 我这里随意写了几个 要检测哪些驱动正在运行 模糊匹配
+	* 这里随意写了几个 根据你的需要自定义填写 模糊匹配
 	* 不需要的话该参数直接不填 例如 std::vector<const char*> delectDriverList = { };
 	*/
 	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
