@@ -70,6 +70,7 @@ using B_TestModeFunc = FunctionPtr<void, bool>; B_TestModeFunc B_TestModePtr = n
 using B_DisableCallbackFunc = FunctionPtr<void, const char*>; B_DisableCallbackFunc B_DisableCallbackPtr = nullptr;
 using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_RestoreCallbackPtr = nullptr;
 using B_RemoveVADFunc = FunctionPtr<void, bool>; B_RemoveVADFunc B_RemoveVADPtr = nullptr;
+using B_CheckCr3ValidWithPhyFunc = FunctionPtr<void, bool>; B_CheckCr3ValidWithPhyFunc B_CheckCr3ValidWithPhyPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -136,6 +137,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_DisableCallbackPtr, "B_DisableCallback");
 	succeed &= setFunctionPtr(B_RestoreCallbackPtr, "B_RestoreCallback");
 	succeed &= setFunctionPtr(B_RemoveVADPtr, "B_RemoveVAD");
+	succeed &= setFunctionPtr(B_CheckCr3ValidWithPhyPtr, "B_CheckCr3ValidWithPhy");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -395,4 +397,9 @@ void BFDrv::B_RestoreCallback()
 void BFDrv::B_RemoveVAD(bool enable)
 {
 	return B_RemoveVADPtr(enable);
+}
+
+void BFDrv::B_CheckCr3ValidWithPhy(bool enable)
+{
+	return B_CheckCr3ValidWithPhyPtr(enable);
 }

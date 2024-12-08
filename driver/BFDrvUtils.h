@@ -442,5 +442,13 @@ public:
 	/// 已知关闭被移除VAD节点的进程会蓝屏，不知道长时间会不会触发PG
 	/// </summary>
 	void B_RemoveVAD(bool enable);
+
+	/// <summary>
+	/// Phy读写是是否检查CR3有效性（默认关闭）
+	/// 优点：对于EAC动态CR3能增加稳定减少蓝屏几率
+	/// 缺点：导致极少数电脑无法使用Phy读写
+	/// </summary>
+	/// <param name="enable"></param>
+	void B_CheckCr3ValidWithPhy(bool enable);
 };
 
