@@ -299,7 +299,7 @@ std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(unsigned char* dll_data, ULONG64 
 			B_HideMemory(result.first, result.second, HideMem::HM_READONLY);
 		}
 	}
-	return { 0,0 };
+	return result;
 }
 
 ULONG64 BFDrv::B_GetProcessRealCr3()
