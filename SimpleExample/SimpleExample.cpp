@@ -75,22 +75,6 @@ int main()
 	int localPid = GetCurrentProcessId();
 	HANDLE hProcess = GetCurrentProcess();
 
-	/* Dump模块至文件
-	int valorant = GetProcessID("VALORANT-Win64-Shipping.exe");
-	if (valorant) {
-		std::cout << "Dump模块至文件" << "\n";
-		printf("VALORANT localPid: %d\n", valorant);
-		Drv.B_AttachProcess(valorant);
-		ULONG size = 0;
-		auto base = Drv.B_GetModuleBaseAddress("VALORANT-Win64-Shipping.exe", &size);
-		printf("valorant base: %llx, size: %lx\n", base, size);
-		if (!Drv.B_DumpToFile(base, size, "D:\\桌面\\VALORANT_Dump.exe", RWMode::MmCopy)) {
-			printf("DumpToFile 失败\n");
-			system("pause");
-		}
-		printf("DumpToFile 成功\n");
-		system("pause");
-	}*/
 	//操作进程前必须要附加
 	Drv.B_AttachProcess(localPid);
 
