@@ -210,6 +210,13 @@ int main()
 		printf("notepad localPid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
+		std::cout << "即将 暂停进程\n";
+		system("pause");
+		Drv.B_SuspendProcess(true, notepadPid);
+		std::cout << "即将 恢复进程\n";
+		system("pause");
+		Drv.B_SuspendProcess(false, notepadPid);
+
 		//Drv.B_RemoveVAD(true);//移除VAD，如果你不知道它的作用不要调用它
 		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC, true, true, true);//内存注入
 		//Drv.B_InjectDll("C:\\TestDll.dll", IT_APC, true, true, true)	//路径注入

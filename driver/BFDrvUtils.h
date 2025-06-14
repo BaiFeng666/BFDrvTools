@@ -450,5 +450,13 @@ public:
 	/// </summary>
 	/// <param name="enable"></param>
 	void B_CheckCr3ValidWithPhy(bool enable);
+
+	/// <summary>
+	/// 暂停、恢复进程
+	/// </summary>
+	/// <param name="is_suspend">true暂停，false恢复</param>
+	/// <param name="pid">进程pid</param>
+	/// <returns></returns>
+	bool B_SuspendProcess(bool is_suspend, int pid);
 };
 
