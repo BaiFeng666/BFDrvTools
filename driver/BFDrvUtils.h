@@ -216,7 +216,10 @@ public:
 		return B_WriteMemory(addr, (void*)type, size, mode, cr3);
 	}
 
-	//分配内存
+	// 分配内存
+	// 刚分配出来的内存你使用Phy读写是无效的，因为它没有物理地址
+	// 分配的内存，将会在首次访问才分配物理地址（Windows机制 按需分配 缺页异常）
+	// 建议：刚分配的内存使用Ke读一下值，这样可以触发缺页从而让系统分配物理地址，后续就可以使用Phy了
 	ULONG64 B_AllocMemory(size_t size);
 
 	//释放内存

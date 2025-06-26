@@ -13,6 +13,8 @@
 #include <winnt.h>
 #include <stddef.h>
 #include <tchar.h>
+#include <corecrt_malloc.h>
+#include <corecrt_search.h>
 #ifdef DEBUG_OUTPUT
 #include <stdio.h>
 #endif
