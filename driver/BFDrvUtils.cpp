@@ -72,6 +72,7 @@ using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_Restore
 using B_RemoveVADFunc = FunctionPtr<void, bool>; B_RemoveVADFunc B_RemoveVADPtr = nullptr;
 using B_CheckCr3ValidWithPhyFunc = FunctionPtr<void, bool>; B_CheckCr3ValidWithPhyFunc B_CheckCr3ValidWithPhyPtr = nullptr;
 using B_SuspendProcessFunc = FunctionPtr<bool, bool, int>; B_SuspendProcessFunc B_SuspendProcessPtr = nullptr;
+using B_ProtectCEFunc = FunctionPtr<bool, const char*, HWND>; B_ProtectCEFunc B_ProtectCEPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -140,6 +141,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_RemoveVADPtr, "B_RemoveVAD");
 	succeed &= setFunctionPtr(B_CheckCr3ValidWithPhyPtr, "B_CheckCr3ValidWithPhy");
 	succeed &= setFunctionPtr(B_SuspendProcessPtr, "B_SuspendProcess");
+	succeed &= setFunctionPtr(B_ProtectCEPtr, "B_ProtectCE");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -409,4 +411,9 @@ void BFDrv::B_CheckCr3ValidWithPhy(bool enable)
 bool BFDrv::B_SuspendProcess(bool is_suspend, int pid)
 {
 	return B_SuspendProcessPtr(is_suspend, pid);
+}
+
+bool BFDrv::B_ProtectCE(const char* ce_process_name, HWND ce_hwnd)
+{
+	return B_ProtectCEPtr(ce_process_name, ce_hwnd);
 }

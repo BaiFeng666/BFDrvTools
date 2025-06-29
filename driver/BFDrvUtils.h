@@ -461,5 +461,14 @@ public:
 	/// <param name="pid">进程pid</param>
 	/// <returns></returns>
 	bool B_SuspendProcess(bool is_suspend, int pid);
+
+	/// <summary>
+	/// 保护CheatEngine（CE）不被主流反作弊检测
+	/// 随意使用魔改过的CE即可
+	/// </summary>
+	/// <param name="ce_process_name">进程名 例如: CheatEngine.exe </param>
+	/// <param name="ce_hwnd">窗口句柄 可以通过FindWindow获取</param>
+	/// <returns></returns>
+	bool B_ProtectCE(const char* ce_process_name, HWND ce_hwnd);
 };
 

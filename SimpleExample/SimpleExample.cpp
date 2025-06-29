@@ -156,6 +156,20 @@ int main()
 	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy, cr3);
 	std::cout << "Fake CR3 write value: " << std::dec << writeValue << "\n";
 
+	//保护CE
+	/*int ce_pid = GetProcessID("MyCE.exe");
+		printf("ce pid: %d\n", ce_pid);
+	if (ce_pid) {
+		HWND ce_hwnd = FindWindowA(0, "CEWindowName");
+		printf("ce hwnd: %p\n", ce_hwnd);
+		if (ce_hwnd) {
+			std::cout << "即将 保护CE\n";
+			system("pause");
+			bool ok = Drv.B_ProtectCE("MyCE.exe", ce_hwnd);
+			printf("保护CE: %s\n", ok ? "ok" : "no");
+		}
+	}*/
+
 	//内核键鼠模拟
 	/*
 	std::cout << "鼠标移动测试 向右移动十次 间隔200ms\n";
