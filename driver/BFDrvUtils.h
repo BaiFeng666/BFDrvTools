@@ -395,10 +395,9 @@ public:
 	bool B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi);
 
 	//dump模块到文件
-	//参数1、2 填模块基址和模块大小
+	//参数1填模块基址
 	//filePath 填要保存的文件
-	bool B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode = RWMode::MmCopy);
-
+	bool B_DumpToFile(ULONG64 moduleBase, const char* filePath, RWMode mode = RWMode::MmCopy);
 
 	// 获取内核模块基址、大小
 	ULONG64 B_GetKernelModule(const char* moduleName, ULONG* pSize = nullptr);

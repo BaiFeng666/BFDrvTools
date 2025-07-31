@@ -60,7 +60,7 @@ using B_FindPatternV2Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, 
 using B_AOBScanV1Func = FunctionPtr<std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV1Func B_AOBScanV1Ptr = nullptr;
 using B_AOBScanV2Func = FunctionPtr<std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV2Func B_AOBScanV2Ptr = nullptr;
 using B_QueryMemoryFunc = FunctionPtr<bool, ULONG64, MEMORY_BASIC_INFORMATION*>; B_QueryMemoryFunc B_QueryMemoryPtr = nullptr;
-using B_DumpToFileFunc = FunctionPtr<bool, ULONG64, ULONG64, const char*, RWMode>; B_DumpToFileFunc B_DumpToFilePtr = nullptr;
+using B_DumpToFileFunc = FunctionPtr<bool, ULONG64, const char*, RWMode>; B_DumpToFileFunc B_DumpToFilePtr = nullptr;
 using B_GetDriverBuildTimeFunc = FunctionPtr<std::string>; B_GetDriverBuildTimeFunc B_GetDriverBuildTimePtr = nullptr;
 using B_RWKernelMemoryFunc = FunctionPtr<bool, ULONG64, void*, ULONG, int>; B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
 using B_HideMemoryFunc = FunctionPtr<bool, ULONG64, ULONG64, HideMem>; B_HideMemoryFunc B_HideMemoryPtr = nullptr;
@@ -353,9 +353,9 @@ bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi)
 	return B_QueryMemoryPtr(addr, mbi);
 }
 
-bool BFDrv::B_DumpToFile(ULONG64 moduleBase, ULONG64 moduleSize, const char* filePath, RWMode mode)
+bool BFDrv::B_DumpToFile(ULONG64 moduleBase, const char* filePath, RWMode mode)
 {
-	return B_DumpToFilePtr(moduleBase, moduleSize, filePath, mode);
+	return B_DumpToFilePtr(moduleBase, filePath, mode);
 }
 
 ULONG64 BFDrv::B_GetKernelModule(const char* moduleName, ULONG* pSize)
