@@ -51,7 +51,8 @@ enum class MouseKey
 	RIGHT,
 	MIDDLE,
 	X1,
-	X2
+	X2,
+	WHEEL
 };
 
 enum class MouseStatus
@@ -233,7 +234,8 @@ public:
 	void B_MouseMove(int x, int y, MoveType type);
 
 	//鼠标控制
-	//鼠标按键选项 按下/弹起
+	//鼠标按键选项 UP弹起/DOWN按下
+	//MouseKey为WHEEL时 UP往上滚动  DOWN往下滚动
 	void B_MouseCtl(MouseKey key, MouseStatus status);
 
 	//VK虚拟键值
