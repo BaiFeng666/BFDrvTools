@@ -73,6 +73,7 @@ using B_RemoveVADFunc = FunctionPtr<void, bool>; B_RemoveVADFunc B_RemoveVADPtr 
 using B_CheckCr3ValidWithPhyFunc = FunctionPtr<void, bool>; B_CheckCr3ValidWithPhyFunc B_CheckCr3ValidWithPhyPtr = nullptr;
 using B_SuspendProcessFunc = FunctionPtr<bool, bool, int>; B_SuspendProcessFunc B_SuspendProcessPtr = nullptr;
 using B_ProtectCEFunc = FunctionPtr<bool, const char*, HWND>; B_ProtectCEFunc B_ProtectCEPtr = nullptr;
+using B_GetAllTebFunc = FunctionPtr<std::vector<ULONG64>>; B_GetAllTebFunc B_GetAllTebPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -142,6 +143,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_CheckCr3ValidWithPhyPtr, "B_CheckCr3ValidWithPhy");
 	succeed &= setFunctionPtr(B_SuspendProcessPtr, "B_SuspendProcess");
 	succeed &= setFunctionPtr(B_ProtectCEPtr, "B_ProtectCE");
+	succeed &= setFunctionPtr(B_GetAllTebPtr, "B_GetAllTeb");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -416,4 +418,9 @@ bool BFDrv::B_SuspendProcess(bool is_suspend, int pid)
 bool BFDrv::B_ProtectCE(const char* ce_process_name, HWND ce_hwnd)
 {
 	return B_ProtectCEPtr(ce_process_name, ce_hwnd);
+}
+
+std::vector<ULONG64> BFDrv::B_GetAllTeb()
+{
+	return B_GetAllTebPtr();
 }

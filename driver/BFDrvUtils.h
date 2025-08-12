@@ -471,5 +471,11 @@ public:
 	/// <param name="ce_hwnd">窗口句柄 可以通过FindWindow获取</param>
 	/// <returns></returns>
 	bool B_ProtectCE(const char* ce_process_name, HWND ce_hwnd);
+
+	/// <summary>
+	/// 获取进程每条线程的Teb
+	/// </summary>
+	/// <returns></returns>
+	std::vector<ULONG64> B_GetAllTeb();
 };
 
