@@ -25,7 +25,6 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
 using B_LoadDynamicLibraryFn = FunctionPtr<bool, HMODULE*, LPVOID>; B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
 
 using B_InitDrvFunc = FunctionPtr<B_STATUS, const char*, B_InstallMode, bool, std::vector<const char*>>; B_InitDrvFunc B_InitDrvPtr = nullptr;
-using B_AdjustPrivilegeFunc = FunctionPtr<bool>; B_AdjustPrivilegeFunc B_AdjustPrivilegePtr = nullptr;
 using B_GetInitResultFunc = FunctionPtr<const char*>; B_GetInitResultFunc B_GetInitResultPtr = nullptr;
 using B_GetExpirationFunc = FunctionPtr<const char*>; B_GetExpirationFunc B_GetExpirationPtr = nullptr;
 using B_AttachProcessFunc = FunctionPtr<bool, int>; B_AttachProcessFunc B_AttachProcessPtr = nullptr;
@@ -95,7 +94,6 @@ BFDrv::BFDrv()
 
 	bool succeed = true;
 	succeed &= setFunctionPtr(B_InitDrvPtr, "B_InitDrv");
-	succeed &= setFunctionPtr(B_AdjustPrivilegePtr, "B_AdjustPrivilege");
 	succeed &= setFunctionPtr(B_GetInitResultPtr, "B_GetInitResult");
 	succeed &= setFunctionPtr(B_GetExpirationPtr, "B_GetExpiration");
 	succeed &= setFunctionPtr(B_AttachProcessPtr, "B_AttachProcess");
@@ -154,11 +152,6 @@ BFDrv::BFDrv()
 	UnlinkModule(reinterpret_cast<unsigned char*>(module->codeBase));
 	UnlinkModule(reinterpret_cast<unsigned char*>(hModule));
 #endif
-}
-
-bool BFDrv::B_AdjustPrivilege()
-{
-	return B_AdjustPrivilegePtr();
 }
 
 B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb, std::vector<const char*> delectList)

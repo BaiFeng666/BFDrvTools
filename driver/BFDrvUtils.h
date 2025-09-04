@@ -104,8 +104,6 @@ class BFDrv
 public:
 	BFDrv();
 
-	bool B_AdjustPrivilege();
-
 	///初始化驱动
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
