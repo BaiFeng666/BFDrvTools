@@ -39,6 +39,7 @@ int main()
 {
 	BFDrv Drv;
 	//Drv.B_DisablePrint(true);//禁用一些提示输出
+	//Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
 
 	/*初始化驱动 输入卡密
 	* 为了更多人能用上驱动 所以是自适应式计费法
@@ -81,9 +82,9 @@ int main()
 	//获取模块基址大小
 	ULONG size = 0;
 	ULONG size2 = 0;
-	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);//会附加 不推荐用
+	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);
 	auto moduleBase2 = Drv.B_GetMainModuleAddress();
-	auto moduleBase3 = Drv.B_GetModuleBaseAddressNoAttach("SimpleExample.exe", &size2);//推荐用这个
+	auto moduleBase3 = Drv.B_GetModuleBaseAddressNoAttach("SimpleExample.exe", &size2);
 	std::cout << "附加模块基址: " << std::hex << moduleBase << " 大小: " << size << "\n";
 	std::cout << "无附加获取模块基址2: " << std::hex << moduleBase2 << "\n";
 	std::cout << "无附加获取模块基址3: " << std::hex << moduleBase3 << "大小: " << size2 << "\n";
@@ -313,13 +314,28 @@ int main()
 	//Drv.B_DisableCallback_NMI();
 	//system("pause");
 
+	/*
 	//关闭指定驱动内核回调 可以同时关闭多个驱动 目前限制了最大关闭的回调数量是32个
 	//注意：有的驱动会检测自身回调是否存在、修改，所以隔一段时间可能会被他恢复过去
-	//Drv.B_DisableCallback("xxx.sys");
-	//Drv.B_DisableCallback("xxx2.sys");
-	//Drv.B_DisableCallback("xxx3.sys");
+	Drv.B_DisableCallback("xxx.sys");
+	Drv.B_DisableCallback("xxx2.sys");
+	Drv.B_DisableCallback("xxx3.sys");
 	//恢复所有关闭的内核回调
-	//Drv.B_RestoreCallback();
+	Drv.B_RestoreCallback();
+	*/
+
+	/*
+	//加载任意无签名驱动
+	//关闭签名检测
+	Drv.B_DSEHook(true);
+	
+	//这里执行你的加载驱动操作
+	//尽量快速 不然会触发PG
+
+	//恢复签名检测
+	Drv.B_DSEHook(false);
+	*/
+	
 
 	std::cout << "结束\n";
 	system("pause");

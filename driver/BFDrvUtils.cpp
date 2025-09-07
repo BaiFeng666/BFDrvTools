@@ -65,6 +65,7 @@ using B_RWKernelMemoryFunc = FunctionPtr<bool, ULONG64, void*, ULONG, int>; B_RW
 using B_HideMemoryFunc = FunctionPtr<bool, ULONG64, ULONG64, HideMem>; B_HideMemoryFunc B_HideMemoryPtr = nullptr;
 using B_DisableCallback_NMIFunc = FunctionPtr<bool>; B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
 using B_DisablePrintFunc = FunctionPtr<void, bool>; B_DisablePrintFunc B_DisablePrintPtr = nullptr;
+using B_FileOverrideFunc = FunctionPtr<void, bool>; B_FileOverrideFunc B_FileOverridePtr = nullptr;
 using B_TestModeFunc = FunctionPtr<void, bool>; B_TestModeFunc B_TestModePtr = nullptr;
 using B_DisableCallbackFunc = FunctionPtr<void, const char*>; B_DisableCallbackFunc B_DisableCallbackPtr = nullptr;
 using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_RestoreCallbackPtr = nullptr;
@@ -73,6 +74,7 @@ using B_CheckCr3ValidWithPhyFunc = FunctionPtr<void, bool>; B_CheckCr3ValidWithP
 using B_SuspendProcessFunc = FunctionPtr<bool, bool, int>; B_SuspendProcessFunc B_SuspendProcessPtr = nullptr;
 using B_ProtectCEFunc = FunctionPtr<bool, const char*, HWND>; B_ProtectCEFunc B_ProtectCEPtr = nullptr;
 using B_GetAllTebFunc = FunctionPtr<std::vector<ULONG64>>; B_GetAllTebFunc B_GetAllTebPtr = nullptr;
+using B_DSEHookFunc = FunctionPtr<bool, bool>; B_DSEHookFunc B_DSEHookPtr = nullptr;
 
 BFDrv::BFDrv()
 {
@@ -134,6 +136,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_HideMemoryPtr, "B_HideMemory");
 	succeed &= setFunctionPtr(B_DisableCallback_NMIPtr, "B_DisableCallback_NMI");
 	succeed &= setFunctionPtr(B_DisablePrintPtr, "B_DisablePrint");
+	succeed &= setFunctionPtr(B_FileOverridePtr, "B_FileOverride");
 	succeed &= setFunctionPtr(B_TestModePtr, "B_TestMode");
 	succeed &= setFunctionPtr(B_DisableCallbackPtr, "B_DisableCallback");
 	succeed &= setFunctionPtr(B_RestoreCallbackPtr, "B_RestoreCallback");
@@ -142,6 +145,7 @@ BFDrv::BFDrv()
 	succeed &= setFunctionPtr(B_SuspendProcessPtr, "B_SuspendProcess");
 	succeed &= setFunctionPtr(B_ProtectCEPtr, "B_ProtectCE");
 	succeed &= setFunctionPtr(B_GetAllTebPtr, "B_GetAllTeb");
+	succeed &= setFunctionPtr(B_DSEHookPtr, "B_DSEHook");
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -383,6 +387,11 @@ void BFDrv::B_TestMode(bool value)
 	return B_TestModePtr(value);
 }
 
+void BFDrv::B_FileOverride(bool enable)
+{
+	return B_FileOverridePtr(enable);
+}
+
 void BFDrv::B_DisableCallback(const char* driver_name)
 {
 	return B_DisableCallbackPtr(driver_name);
@@ -416,4 +425,9 @@ bool BFDrv::B_ProtectCE(const char* ce_process_name, HWND ce_hwnd)
 std::vector<ULONG64> BFDrv::B_GetAllTeb()
 {
 	return B_GetAllTebPtr();
+}
+
+bool BFDrv::B_DSEHook(bool enable)
+{
+	return B_DSEHookPtr(enable);
 }

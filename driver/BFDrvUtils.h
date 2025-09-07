@@ -418,6 +418,9 @@ public:
 
 	void B_TestMode(bool value);
 
+	//首次安装驱动之前设置，可以解决EAC的File Miss报错拦截 默认关闭
+	void B_FileOverride(bool enable);
+
 	/// <summary>
 	/// 关闭指定驱动的内核回调
 	/// 目前支持关闭的回调有:
@@ -475,5 +478,13 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	std::vector<ULONG64> B_GetAllTeb();
+
+	/// <summary>
+	/// 开启后可以加载任意无签名的驱动
+	/// 注意加载完后尽快关闭 不然容易触发PG
+	/// </summary>
+	/// <param name="enable"></param>
+	/// <returns></returns>
+	bool B_DSEHook(bool enable);
 };
 
