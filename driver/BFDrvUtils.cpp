@@ -88,6 +88,9 @@ BFDrv::BFDrv()
 	if (!B_LoadDynamicLibraryPtr(&hModule, BFDrv_Dynamic) || !hModule)
 		throw std::runtime_error("Failed to load DLL");
 
+	ZeroMemory(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
+	ZeroMemory(B_MemoryModule, sizeof B_MemoryModule);
+
 	auto setFunctionPtr = [&](auto& funcPtr, const char* funcName) {
 		funcPtr = reinterpret_cast<std::decay_t<decltype(funcPtr)>>(GetProcAddress(hModule, funcName));
 		return funcPtr != nullptr;
