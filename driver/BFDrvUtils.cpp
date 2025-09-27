@@ -22,59 +22,62 @@
 template<typename Ret, typename... Args>
 using FunctionPtr = Ret(WINAPI*)(Args...);
 
-using B_LoadDynamicLibraryFn = FunctionPtr<bool, HMODULE*, LPVOID>; B_LoadDynamicLibraryFn B_LoadDynamicLibraryPtr = nullptr;
+#define DECLARE_FUNC_PTR(name, ret, ...) \
+    using name##Func = FunctionPtr<ret, ##__VA_ARGS__>; \
+    name##Func name##Ptr = nullptr;
 
-using B_InitDrvFunc = FunctionPtr<B_STATUS, const char*, B_InstallMode, bool, std::vector<const char*>>; B_InitDrvFunc B_InitDrvPtr = nullptr;
-using B_GetInitResultFunc = FunctionPtr<const char*>; B_GetInitResultFunc B_GetInitResultPtr = nullptr;
-using B_GetExpirationFunc = FunctionPtr<const char*>; B_GetExpirationFunc B_GetExpirationPtr = nullptr;
-using B_AttachProcessFunc = FunctionPtr<bool, int>; B_AttachProcessFunc B_AttachProcessPtr = nullptr;
-using B_GetWindowsBuildNumberFunc = FunctionPtr<int>; B_GetWindowsBuildNumberFunc B_GetWindowsBuildNumberPtr = nullptr;
-using B_GetMainModuleAddressFunc = FunctionPtr<ULONG64>; B_GetMainModuleAddressFunc B_GetMainModuleAddressPtr = nullptr;
-using B_GetModuleBaseAddressFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetModuleBaseAddressFunc B_GetModuleBaseAddressPtr = nullptr;
-using B_GetKernelModuleFunc = FunctionPtr<ULONG64, const char*, ULONG*>; B_GetKernelModuleFunc B_GetKernelModulePtr = nullptr;
-using B_GetModuleBaseAddressNoAttachFunc = B_GetModuleBaseAddressFunc; B_GetModuleBaseAddressNoAttachFunc B_GetModuleBaseAddressNoAttachPtr = nullptr;
-using B_ReadMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_ReadMemoryFunc B_ReadMemoryPtr = nullptr;
-using B_WriteMemoryFunc = FunctionPtr<bool, ULONG64, void*, size_t, RWMode, ULONG64>; B_WriteMemoryFunc B_WriteMemoryPtr = nullptr;
-using B_AllocMemoryFunc = FunctionPtr<ULONG64, size_t>; B_AllocMemoryFunc B_AllocMemoryPtr = nullptr;
-using B_FreeMemoryFunc = FunctionPtr<bool, ULONG64>; B_FreeMemoryFunc B_FreeMemoryPtr = nullptr;
-using B_ProtectMemoryFunc = FunctionPtr<bool, ULONG64, DWORD, DWORD64>; B_ProtectMemoryFunc B_ProtectMemoryPtr = nullptr;
-using B_MouseMoveFunc = FunctionPtr<void, int, int, MoveType>; B_MouseMoveFunc B_MouseMovePtr = nullptr;
-using B_MouseCtlFunc = FunctionPtr<void, MouseKey, MouseStatus>; B_MouseCtlFunc B_MouseCtlPtr = nullptr;
-using B_KeyCtlFunc = FunctionPtr<void, int, KeyStatus>; B_KeyCtlFunc B_KeyCtlPtr = nullptr;
-using B_KeyCtlCharFunc = FunctionPtr<void, char, KeyStatus>; B_KeyCtlCharFunc B_KeyCtlCharPtr = nullptr;
-using B_KeyClickFunc = FunctionPtr<void, int>; B_KeyClickFunc B_KeyClickPtr = nullptr;
-using B_KeyClickCharFunc = FunctionPtr<void, char>; B_KeyClickCharFunc B_KeyClickCharPtr = nullptr;
-using B_ProtectProcessFunc = FunctionPtr<bool, bool, int>; B_ProtectProcessFunc B_ProtectProcessPtr = nullptr;
-using B_ProtectProcessV2Func = B_ProtectProcessFunc; B_ProtectProcessV2Func B_ProtectProcessV2Ptr = nullptr;
-using B_HideProcessFunc = FunctionPtr<bool, bool, int>; B_HideProcessFunc B_HideProcessPtr = nullptr;
-using B_HideWindowFunc = FunctionPtr<bool, ULONG64, HideWindowType>; B_HideWindowFunc B_HideWindowPtr = nullptr;
-using B_GetModuleExportFuncAddressFunc = FunctionPtr<ULONG64, ULONG64, const char*>; B_GetModuleExportFuncAddressFunc B_GetModuleExportFuncAddressPtr = nullptr;
-using B_InjectDllFunc = FunctionPtr<std::pair<ULONG64, ULONG64>, unsigned char*, size_t, InjectType,bool, bool, bool>; B_InjectDllFunc B_InjectDllPtr = nullptr;
-using B_ProtectWindowFunc = FunctionPtr<void, bool, ULONG, bool>; B_ProtectWindowFunc B_ProtectWindowPtr = nullptr;
-using B_GetProcessRealCr3Func = FunctionPtr<ULONG64>; B_GetProcessRealCr3Func B_GetProcessRealCr3Ptr = nullptr;
-using B_GetProcessRealCr3AttachFunc = FunctionPtr<ULONG64>; B_GetProcessRealCr3AttachFunc B_GetProcessRealCr3AttachPtr = nullptr;
-using B_ForceDeleteFileFunc = FunctionPtr<bool, const char*>; B_ForceDeleteFileFunc B_ForceDeleteFilePtr = nullptr;
-using B_FindPatternV1Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode>; B_FindPatternV1Func B_FindPatternV1Ptr = nullptr;
-using B_FindPatternV2Func = FunctionPtr<ULONG64, ULONG64, ULONG64, const char*, RWMode>; B_FindPatternV2Func B_FindPatternV2Ptr = nullptr;
-using B_AOBScanV1Func = FunctionPtr<std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV1Func B_AOBScanV1Ptr = nullptr;
-using B_AOBScanV2Func = FunctionPtr<std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode>; B_AOBScanV2Func B_AOBScanV2Ptr = nullptr;
-using B_QueryMemoryFunc = FunctionPtr<bool, ULONG64, MEMORY_BASIC_INFORMATION*>; B_QueryMemoryFunc B_QueryMemoryPtr = nullptr;
-using B_DumpToFileFunc = FunctionPtr<bool, ULONG64, const char*, RWMode>; B_DumpToFileFunc B_DumpToFilePtr = nullptr;
-using B_GetDriverBuildTimeFunc = FunctionPtr<std::string>; B_GetDriverBuildTimeFunc B_GetDriverBuildTimePtr = nullptr;
-using B_RWKernelMemoryFunc = FunctionPtr<bool, ULONG64, void*, ULONG, int>; B_RWKernelMemoryFunc B_RWKernelMemoryPtr = nullptr;
-using B_HideMemoryFunc = FunctionPtr<bool, ULONG64, ULONG64, HideMem>; B_HideMemoryFunc B_HideMemoryPtr = nullptr;
-using B_DisableCallback_NMIFunc = FunctionPtr<bool>; B_DisableCallback_NMIFunc B_DisableCallback_NMIPtr = nullptr;
-using B_DisablePrintFunc = FunctionPtr<void, bool>; B_DisablePrintFunc B_DisablePrintPtr = nullptr;
-using B_FileOverrideFunc = FunctionPtr<void, bool>; B_FileOverrideFunc B_FileOverridePtr = nullptr;
-using B_TestModeFunc = FunctionPtr<void, bool>; B_TestModeFunc B_TestModePtr = nullptr;
-using B_DisableCallbackFunc = FunctionPtr<void, const char*>; B_DisableCallbackFunc B_DisableCallbackPtr = nullptr;
-using B_RestoreCallbackFunc = FunctionPtr<void>; B_RestoreCallbackFunc B_RestoreCallbackPtr = nullptr;
-using B_RemoveVADFunc = FunctionPtr<void, bool>; B_RemoveVADFunc B_RemoveVADPtr = nullptr;
-using B_CheckCr3ValidWithPhyFunc = FunctionPtr<void, bool>; B_CheckCr3ValidWithPhyFunc B_CheckCr3ValidWithPhyPtr = nullptr;
-using B_SuspendProcessFunc = FunctionPtr<bool, bool, int>; B_SuspendProcessFunc B_SuspendProcessPtr = nullptr;
-using B_ProtectCEFunc = FunctionPtr<bool, const char*, HWND>; B_ProtectCEFunc B_ProtectCEPtr = nullptr;
-using B_GetAllTebFunc = FunctionPtr<std::vector<ULONG64>>; B_GetAllTebFunc B_GetAllTebPtr = nullptr;
-using B_DSEHookFunc = FunctionPtr<bool, bool>; B_DSEHookFunc B_DSEHookPtr = nullptr;
+DECLARE_FUNC_PTR(B_LoadDynamicLibrary, bool, HMODULE*, LPVOID)
+DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool, std::vector<const char*>)
+DECLARE_FUNC_PTR(B_GetInitResult, const char*)
+DECLARE_FUNC_PTR(B_GetExpiration, const char*)
+DECLARE_FUNC_PTR(B_AttachProcess, bool, int)
+DECLARE_FUNC_PTR(B_GetWindowsBuildNumber, int)
+DECLARE_FUNC_PTR(B_GetMainModuleAddress, ULONG64)
+DECLARE_FUNC_PTR(B_GetModuleBaseAddress, ULONG64, const char*, ULONG*)
+DECLARE_FUNC_PTR(B_GetKernelModule, ULONG64, const char*, ULONG*)
+DECLARE_FUNC_PTR(B_GetModuleBaseAddressNoAttach, ULONG64, const char*, ULONG*)
+DECLARE_FUNC_PTR(B_ReadMemory, bool, ULONG64, void*, size_t, RWMode, ULONG64)
+DECLARE_FUNC_PTR(B_WriteMemory, bool, ULONG64, void*, size_t, RWMode, ULONG64)
+DECLARE_FUNC_PTR(B_AllocMemory, ULONG64, size_t)
+DECLARE_FUNC_PTR(B_FreeMemory, bool, ULONG64)
+DECLARE_FUNC_PTR(B_ProtectMemory, bool, ULONG64, DWORD, DWORD64)
+DECLARE_FUNC_PTR(B_MouseMove, void, int, int, MoveType)
+DECLARE_FUNC_PTR(B_MouseCtl, void, MouseKey, MouseStatus)
+DECLARE_FUNC_PTR(B_KeyCtl, void, int, KeyStatus, bool)
+DECLARE_FUNC_PTR(B_KeyCtlChar, void, char, KeyStatus, bool)
+DECLARE_FUNC_PTR(B_KeyClick, void, int)
+DECLARE_FUNC_PTR(B_KeyClickChar, void, char)
+DECLARE_FUNC_PTR(B_ProtectProcess, bool, bool, int)
+DECLARE_FUNC_PTR(B_ProtectProcessV2, bool, bool, int)
+DECLARE_FUNC_PTR(B_HideProcess, bool, bool, int)
+DECLARE_FUNC_PTR(B_HideWindow, bool, ULONG64, HideWindowType)
+DECLARE_FUNC_PTR(B_GetModuleExportFuncAddress, ULONG64, ULONG64, const char*)
+DECLARE_FUNC_PTR(B_InjectDll, std::pair<ULONG64, ULONG64>, unsigned char*, size_t, InjectType, bool, bool, bool)
+DECLARE_FUNC_PTR(B_ProtectWindow, void, bool, ULONG, bool)
+DECLARE_FUNC_PTR(B_GetProcessRealCr3, ULONG64)
+DECLARE_FUNC_PTR(B_GetProcessRealCr3Attach, ULONG64)
+DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const char*)
+DECLARE_FUNC_PTR(B_FindPatternV1, ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode)
+DECLARE_FUNC_PTR(B_FindPatternV2, ULONG64, ULONG64, ULONG64, const char*, RWMode)
+DECLARE_FUNC_PTR(B_AOBScanV1, std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode)
+DECLARE_FUNC_PTR(B_AOBScanV2, std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode)
+DECLARE_FUNC_PTR(B_QueryMemory, bool, ULONG64, MEMORY_BASIC_INFORMATION*)
+DECLARE_FUNC_PTR(B_DumpToFile, bool, ULONG64, const char*, RWMode)
+DECLARE_FUNC_PTR(B_GetDriverBuildTime, std::string)
+DECLARE_FUNC_PTR(B_RWKernelMemory, bool, ULONG64, void*, ULONG, int)
+DECLARE_FUNC_PTR(B_HideMemory, bool, ULONG64, ULONG64, HideMem)
+DECLARE_FUNC_PTR(B_DisableCallback_NMI, bool)
+DECLARE_FUNC_PTR(B_DisablePrint, void, bool)
+DECLARE_FUNC_PTR(B_FileOverride, void, bool)
+DECLARE_FUNC_PTR(B_TestMode, void, bool)
+DECLARE_FUNC_PTR(B_DisableCallback, void, const char*)
+DECLARE_FUNC_PTR(B_RestoreCallback, void)
+DECLARE_FUNC_PTR(B_RemoveVAD, void, bool)
+DECLARE_FUNC_PTR(B_CheckCr3ValidWithPhy, void, bool)
+DECLARE_FUNC_PTR(B_SuspendProcess, bool, bool, int)
+DECLARE_FUNC_PTR(B_ProtectCE, bool, const char*, HWND)
+DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
+DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 
 BFDrv::BFDrv()
 {
@@ -82,7 +85,7 @@ BFDrv::BFDrv()
 	if (!handle) throw std::runtime_error("Dll Load is NULL");
 
 	HMODULE hModule = nullptr;
-	B_LoadDynamicLibraryPtr = reinterpret_cast<B_LoadDynamicLibraryFn>(MemoryGetProcAddress(handle, "B_LoadDynamicLibrary"));
+	B_LoadDynamicLibraryPtr = reinterpret_cast<B_LoadDynamicLibraryFunc>(MemoryGetProcAddress(handle, "B_LoadDynamicLibrary"));
 	if (!B_LoadDynamicLibraryPtr) throw std::runtime_error("LDL is NULL");
 
 	if (!B_LoadDynamicLibraryPtr(&hModule, BFDrv_Dynamic) || !hModule)
@@ -96,59 +99,61 @@ BFDrv::BFDrv()
 		return funcPtr != nullptr;
 		};
 
+#define SET_FUNC_PTR(name) \
+    succeed &= setFunctionPtr(name##Ptr, #name);
 
 	bool succeed = true;
-	succeed &= setFunctionPtr(B_InitDrvPtr, "B_InitDrv");
-	succeed &= setFunctionPtr(B_GetInitResultPtr, "B_GetInitResult");
-	succeed &= setFunctionPtr(B_GetExpirationPtr, "B_GetExpiration");
-	succeed &= setFunctionPtr(B_AttachProcessPtr, "B_AttachProcess");
-	succeed &= setFunctionPtr(B_GetWindowsBuildNumberPtr, "B_GetWindowsBuildNumber");
-	succeed &= setFunctionPtr(B_GetMainModuleAddressPtr, "B_GetMainModuleAddress");
-	succeed &= setFunctionPtr(B_GetModuleBaseAddressPtr, "B_GetModuleBaseAddress");
-	succeed &= setFunctionPtr(B_GetKernelModulePtr, "B_GetKernelModule");
-	succeed &= setFunctionPtr(B_GetModuleBaseAddressNoAttachPtr, "B_GetModuleBaseAddressNoAttach");
-	succeed &= setFunctionPtr(B_ReadMemoryPtr, "B_ReadMemory");
-	succeed &= setFunctionPtr(B_WriteMemoryPtr, "B_WriteMemory");
-	succeed &= setFunctionPtr(B_AllocMemoryPtr, "B_AllocMemory");
-	succeed &= setFunctionPtr(B_FreeMemoryPtr, "B_FreeMemory");
-	succeed &= setFunctionPtr(B_ProtectMemoryPtr, "B_ProtectMemory");
-	succeed &= setFunctionPtr(B_MouseMovePtr, "B_MouseMove");
-	succeed &= setFunctionPtr(B_MouseCtlPtr, "B_MouseCtl");
-	succeed &= setFunctionPtr(B_KeyCtlPtr, "B_KeyCtl");
-	succeed &= setFunctionPtr(B_KeyCtlCharPtr, "B_KeyCtlChar");
-	succeed &= setFunctionPtr(B_KeyClickPtr, "B_KeyClick");
-	succeed &= setFunctionPtr(B_KeyClickCharPtr, "B_KeyClickChar");
-	succeed &= setFunctionPtr(B_ProtectProcessPtr, "B_ProtectProcess");
-	succeed &= setFunctionPtr(B_ProtectProcessV2Ptr, "B_ProtectProcessV2");
-	succeed &= setFunctionPtr(B_HideProcessPtr, "B_HideProcess");
-	succeed &= setFunctionPtr(B_HideWindowPtr, "B_HideWindow");
-	succeed &= setFunctionPtr(B_GetModuleExportFuncAddressPtr, "B_GetModuleExportFuncAddress");
-	succeed &= setFunctionPtr(B_InjectDllPtr, "B_InjectDll");
-	succeed &= setFunctionPtr(B_ProtectWindowPtr, "B_ProtectWindow");
-	succeed &= setFunctionPtr(B_GetProcessRealCr3Ptr, "B_GetProcessRealCr3");
-	succeed &= setFunctionPtr(B_GetProcessRealCr3AttachPtr, "B_GetProcessRealCr3Attach");
-	succeed &= setFunctionPtr(B_ForceDeleteFilePtr, "B_ForceDeleteFile");
-	succeed &= setFunctionPtr(B_FindPatternV1Ptr, "B_FindPatternV1");
-	succeed &= setFunctionPtr(B_FindPatternV2Ptr, "B_FindPatternV2");
-	succeed &= setFunctionPtr(B_AOBScanV1Ptr, "B_AOBScanV1");
-	succeed &= setFunctionPtr(B_AOBScanV2Ptr, "B_AOBScanV2");
-	succeed &= setFunctionPtr(B_DumpToFilePtr, "B_DumpToFile");
-	succeed &= setFunctionPtr(B_QueryMemoryPtr, "B_QueryMemory");
-	succeed &= setFunctionPtr(B_GetDriverBuildTimePtr, "B_GetDriverBuildTime");
-	succeed &= setFunctionPtr(B_RWKernelMemoryPtr, "B_RWKernelMemory");
-	succeed &= setFunctionPtr(B_HideMemoryPtr, "B_HideMemory");
-	succeed &= setFunctionPtr(B_DisableCallback_NMIPtr, "B_DisableCallback_NMI");
-	succeed &= setFunctionPtr(B_DisablePrintPtr, "B_DisablePrint");
-	succeed &= setFunctionPtr(B_FileOverridePtr, "B_FileOverride");
-	succeed &= setFunctionPtr(B_TestModePtr, "B_TestMode");
-	succeed &= setFunctionPtr(B_DisableCallbackPtr, "B_DisableCallback");
-	succeed &= setFunctionPtr(B_RestoreCallbackPtr, "B_RestoreCallback");
-	succeed &= setFunctionPtr(B_RemoveVADPtr, "B_RemoveVAD");
-	succeed &= setFunctionPtr(B_CheckCr3ValidWithPhyPtr, "B_CheckCr3ValidWithPhy");
-	succeed &= setFunctionPtr(B_SuspendProcessPtr, "B_SuspendProcess");
-	succeed &= setFunctionPtr(B_ProtectCEPtr, "B_ProtectCE");
-	succeed &= setFunctionPtr(B_GetAllTebPtr, "B_GetAllTeb");
-	succeed &= setFunctionPtr(B_DSEHookPtr, "B_DSEHook");
+	SET_FUNC_PTR(B_InitDrv)
+	SET_FUNC_PTR(B_GetInitResult)
+	SET_FUNC_PTR(B_GetExpiration)
+	SET_FUNC_PTR(B_AttachProcess)
+	SET_FUNC_PTR(B_GetWindowsBuildNumber)
+	SET_FUNC_PTR(B_GetMainModuleAddress)
+	SET_FUNC_PTR(B_GetModuleBaseAddress)
+	SET_FUNC_PTR(B_GetKernelModule)
+	SET_FUNC_PTR(B_GetModuleBaseAddressNoAttach)
+	SET_FUNC_PTR(B_ReadMemory)
+	SET_FUNC_PTR(B_WriteMemory)
+	SET_FUNC_PTR(B_AllocMemory)
+	SET_FUNC_PTR(B_FreeMemory)
+	SET_FUNC_PTR(B_ProtectMemory)
+	SET_FUNC_PTR(B_MouseMove)
+	SET_FUNC_PTR(B_MouseCtl)
+	SET_FUNC_PTR(B_KeyCtl)
+	SET_FUNC_PTR(B_KeyCtlChar)
+	SET_FUNC_PTR(B_KeyClick)
+	SET_FUNC_PTR(B_KeyClickChar)
+	SET_FUNC_PTR(B_ProtectProcess)
+	SET_FUNC_PTR(B_ProtectProcessV2)
+	SET_FUNC_PTR(B_HideProcess)
+	SET_FUNC_PTR(B_HideWindow)
+	SET_FUNC_PTR(B_GetModuleExportFuncAddress)
+	SET_FUNC_PTR(B_InjectDll)
+	SET_FUNC_PTR(B_ProtectWindow)
+	SET_FUNC_PTR(B_GetProcessRealCr3)
+	SET_FUNC_PTR(B_GetProcessRealCr3Attach)
+	SET_FUNC_PTR(B_ForceDeleteFile)
+	SET_FUNC_PTR(B_FindPatternV1)
+	SET_FUNC_PTR(B_FindPatternV2)
+	SET_FUNC_PTR(B_AOBScanV1)
+	SET_FUNC_PTR(B_AOBScanV2)
+	SET_FUNC_PTR(B_QueryMemory)
+	SET_FUNC_PTR(B_DumpToFile)
+	SET_FUNC_PTR(B_GetDriverBuildTime)
+	SET_FUNC_PTR(B_RWKernelMemory)
+	SET_FUNC_PTR(B_HideMemory)
+	SET_FUNC_PTR(B_DisableCallback_NMI)
+	SET_FUNC_PTR(B_DisablePrint)
+	SET_FUNC_PTR(B_FileOverride)
+	SET_FUNC_PTR(B_TestMode)
+	SET_FUNC_PTR(B_DisableCallback)
+	SET_FUNC_PTR(B_RestoreCallback)
+	SET_FUNC_PTR(B_RemoveVAD)
+	SET_FUNC_PTR(B_CheckCr3ValidWithPhy)
+	SET_FUNC_PTR(B_SuspendProcess)
+	SET_FUNC_PTR(B_ProtectCE)
+	SET_FUNC_PTR(B_GetAllTeb)
+	SET_FUNC_PTR(B_DSEHook)
 
 	if (!succeed) throw std::runtime_error("Failed to set function");
 
@@ -248,14 +253,14 @@ void BFDrv::B_MouseCtl(MouseKey key, MouseStatus status)
 	return B_MouseCtlPtr(key, status);
 }
 
-void BFDrv::B_KeyCtl(int vKey, KeyStatus status)
+void BFDrv::B_KeyCtl(int vKey, KeyStatus status, bool extendedKey)
 {
-	return B_KeyCtlPtr(vKey, status);
+	return B_KeyCtlPtr(vKey, status, extendedKey);
 }
 
-void BFDrv::B_KeyCtl(char key, KeyStatus status)
+void BFDrv::B_KeyCtl(char key, KeyStatus status, bool extendedKey)
 {
-	return B_KeyCtlCharPtr(key, status);
+	return B_KeyCtlCharPtr(key, status, extendedKey);
 }
 
 void BFDrv::B_KeyClick(int vKey)

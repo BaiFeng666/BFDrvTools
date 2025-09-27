@@ -193,7 +193,21 @@ int main()
 		Drv.B_KeyClick('a');
 		//Drv.B_KeyClick(0x61);
 		Sleep(500);
-	}*/
+	}
+	
+	//关于拓展键的使用举例：方向键左上右下
+	Drv.B_KeyCtl(0x25, KeyStatus::DOWN, true);
+	Drv.B_KeyCtl(0x25, KeyStatus::UP, true);
+
+	Drv.B_KeyCtl(0x26, KeyStatus::DOWN, true);
+	Drv.B_KeyCtl(0x26, KeyStatus::UP, true);
+
+	Drv.B_KeyCtl(0x27, KeyStatus::DOWN, true);
+	Drv.B_KeyCtl(0x27, KeyStatus::UP, true);
+
+	Drv.B_KeyCtl(0x28, KeyStatus::DOWN, true);
+	Drv.B_KeyCtl(0x28, KeyStatus::UP, true);
+	*/
 
 	std::cout << "即将 保护/隐藏自身 防止CE等调试工具附加程序 任务管理器也无法查看\n";
 	system("pause");

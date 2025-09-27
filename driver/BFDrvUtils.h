@@ -237,11 +237,13 @@ public:
 	void B_MouseCtl(MouseKey key, MouseStatus status);
 
 	//VK虚拟键值
-	void B_KeyCtl(int vKey, KeyStatus status);
+	//extendedKey: 扩展键（Extended Key）​​，例如 方向键 Right Alt、Right Ctrl、Num Lock、Insert、Delete、Home、End、Page Up、Page Down等
+	//例如方向键上：Drv.B_KeyCtl(0x26, KeyStatus::DOWN, true);
+	void B_KeyCtl(int vKey, KeyStatus status, bool extendedKey = false);
 
 	//例如
 	//B_KeyCtl('a', KeyStatus::DOWN); //按下 a 键
-	void B_KeyCtl(char key, KeyStatus status);
+	void B_KeyCtl(char key, KeyStatus status, bool extendedKey = false);
 
 	//VK虚拟键值
 	void B_KeyClick(int vKey);
