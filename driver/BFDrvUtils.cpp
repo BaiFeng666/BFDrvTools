@@ -27,7 +27,7 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
     name##Func name##Ptr = nullptr;
 
 DECLARE_FUNC_PTR(B_LoadDynamicLibrary, bool, HMODULE*, LPVOID)
-DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool, std::vector<const char*>)
+DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool)
 DECLARE_FUNC_PTR(B_GetInitResult, const char*)
 DECLARE_FUNC_PTR(B_GetExpiration, const char*)
 DECLARE_FUNC_PTR(B_AttachProcess, bool, int)
@@ -166,9 +166,9 @@ BFDrv::BFDrv()
 #endif
 }
 
-B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb, std::vector<const char*> delectList)
+B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb)
 {
-	return B_InitDrvPtr(key, mode, ignorePdb, delectList);
+	return B_InitDrvPtr(key, mode, ignorePdb);
 }
 
 const char* BFDrv::B_GetInitResult()

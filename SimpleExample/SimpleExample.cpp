@@ -47,14 +47,7 @@ int main()
 	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
 	* 其他机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
 	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限*/
-
-	/*首次安装时可以检测一些驱动是否在运行 如果在运行就取消安装驱动的行为 安全性提高
-	* 这里随意写了几个 根据你的需要自定义填写 模糊匹配
-	* 不需要的话该参数直接不填 例如 std::vector<const char*> delectDriverList = { };
-	*/
-	std::vector<const char*> delectDriverList = { "WeGame","ACE-", "AntiCheat", "BEDaisy" };
-
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false, delectDriverList);
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 

@@ -107,10 +107,9 @@ public:
 	///初始化驱动
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
-	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2）
-	///@param delectList 加载时检测到关键驱动取消加载，不需要就不用填
+	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2
 	///@return 是否初始化成功
-	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false, std::vector<const char*> delectList = {});
+	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false);
 
 	/// <summary>
 	/// 获取初始化结果
