@@ -20,7 +20,6 @@ enum B_STATUS : ULONG
 	BF_ERR_AUTH_INIT,		//连接服务器失败，国外无法连接服务器可以挂代理
 	BF_ERR_LOGIN,			//登录失败，具体原因查看调用B_GetInitResult()
 	BF_ERR_COMM,			//通信初始化失败
-	BF_ERR_DETECT_DRIVER,	//检测到监管驱动在运行
 	BF_ERR_INIT_DRIVER,		//初始化驱动失败，具体原因查看调用B_GetInitResult()
 };
 
@@ -107,9 +106,9 @@ public:
 	///初始化驱动
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
-	///@param ignorePdb 忽略下载PDB 如果电脑无法下载PDB符号文件 仍然可以加载驱动 （已知无pdb情况下无法使用B_ProtectProcessV2
+	///@param forcePdb 是否强制要求PDB加载 开启后PDB加载失败则取消安装（已知无pdb情况下无法使用B_ProtectProcessV2
 	///@return 是否初始化成功
-	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool ignorePdb = false);
+	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool forcePdb = true);
 
 	/// <summary>
 	/// 获取初始化结果
@@ -135,12 +134,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	int B_GetWindowsBuildNumber();
-
-	/// <summary>
-	/// 驱动最后编译时间
-	/// </summary>
-	/// <returns>编译时间</returns>
-	std::string B_GetDriverBuildTime();
 
 	/// <summary>
 	/// 获取主模块基址，何谓主模块？记事本里它是notepad.exe，CS2里它是cs2.exe，以此类推
@@ -180,10 +173,9 @@ public:
 
 	/*
 	读写内存
-	有5种读写模式 MDL MM KE PHY PHY (B_PhyReadMemoryWithCr3在下面)
-	速度 KE > MDL > MM > PHY
+	推荐 PHY > MM > KE > MDL
 
-	推荐使用PHY、MM
+	速度 KE > MDL > MM > PHY
 
 	*如果你不加载Pdb符号文件，那么KE和MDL在读取长度过大的数据（例如字符串）或者不安全的地址时可能会蓝屏*
 
@@ -247,7 +239,8 @@ public:
 	//VK虚拟键值
 	void B_KeyClick(int vKey);
 
-	//
+	//例如
+	//B_KeyClick('a'); //点击 a 键
 	void B_KeyClick(char key);
 
 
@@ -275,10 +268,7 @@ public:
 	/*
 	断链保护+隐藏进程
 	全局句柄表中抹除进程
-
-	建议在被保护的进程推出前恢复
-	（目前支持退出进程自动恢复，无需手动恢复，前提是退出进程底层函数需要调用NtTerminateProcess）
-
+	需要在被保护的进程推出前恢复(首个参数写false即是恢复) 不然会蓝屏
 	支持多进程保护隐藏 至多支持32个进程
 	*/
 	bool B_ProtectProcessV2(bool protect, int pid);
@@ -287,10 +277,6 @@ public:
 	/*
 	内核级全局隐藏进程
 	任务管理器无法看到你
-	隐藏自身进程例子:
-	B_HideProcess(true, GetCurrentProcessId());
-	保护其他进程例子:
-	B_HideProcess(true, 1234);
 
 	注意：
 	只隐藏最后一次传入的进程名
@@ -299,8 +285,8 @@ public:
 	B_HideProcess(true, 456);
 	那么只会保护PID为456的进程
 
-	该隐藏是全局保护 除非重启电脑 不然会一直隐藏着
-	所以建议退出程序前取消隐藏 HideProcess(false, xxx);
+	该隐藏是全局保护 除非重启电脑 不然会一直隐藏着 除非手动取消隐藏
+	取消隐藏 HideProcess(false, xxx);
 	*/
 	bool B_HideProcess(bool hide, int pid);
 

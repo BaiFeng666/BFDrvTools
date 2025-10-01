@@ -41,13 +41,11 @@ int main()
 	//Drv.B_DisablePrint(true);//禁用一些提示输出
 	//Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
 
-	/*初始化驱动 输入卡密
-	* 为了更多人能用上驱动 所以是自适应式计费法
-	* 卡密计时方式： 时间 + 异地登录扣时
-	* 初次登录绑定开发主机 开发主机上随意登录调试不会扣时间
-	* 其他机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
-	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限，后续调用B_InitDrv()无需管理员权限*/
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
+	/*初始化驱动 第一个参数填卡密
+	* 自适应式计费法 计时方式： 时间 + 异地登录扣时
+	* 初次登录绑定开发主机 除开发主机外的机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
+	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限*/
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, true);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
@@ -62,9 +60,6 @@ int main()
 
 	auto winVer = Drv.B_GetWindowsBuildNumber();
 	std::cout << "系统版本: " << winVer << "\n";
-
-	auto lastBuildTime = Drv.B_GetDriverBuildTime();
-	std::cout << "最后编译时间: " << lastBuildTime << "\n";
 
 	int localPid = GetCurrentProcessId();
 	HANDLE hProcess = GetCurrentProcess();

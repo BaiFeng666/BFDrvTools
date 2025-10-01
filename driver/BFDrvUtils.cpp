@@ -63,7 +63,6 @@ DECLARE_FUNC_PTR(B_AOBScanV1, std::vector<ULONG64>, const char*, const char*, UL
 DECLARE_FUNC_PTR(B_AOBScanV2, std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode)
 DECLARE_FUNC_PTR(B_QueryMemory, bool, ULONG64, MEMORY_BASIC_INFORMATION*)
 DECLARE_FUNC_PTR(B_DumpToFile, bool, ULONG64, const char*, RWMode)
-DECLARE_FUNC_PTR(B_GetDriverBuildTime, std::string)
 DECLARE_FUNC_PTR(B_RWKernelMemory, bool, ULONG64, void*, ULONG, int)
 DECLARE_FUNC_PTR(B_HideMemory, bool, ULONG64, ULONG64, HideMem)
 DECLARE_FUNC_PTR(B_DisableCallback_NMI, bool)
@@ -139,7 +138,6 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_AOBScanV2)
 	SET_FUNC_PTR(B_QueryMemory)
 	SET_FUNC_PTR(B_DumpToFile)
-	SET_FUNC_PTR(B_GetDriverBuildTime)
 	SET_FUNC_PTR(B_RWKernelMemory)
 	SET_FUNC_PTR(B_HideMemory)
 	SET_FUNC_PTR(B_DisableCallback_NMI)
@@ -189,11 +187,6 @@ const char* BFDrv::B_GetExpiration()
 int BFDrv::B_GetWindowsBuildNumber()
 {
 	return B_GetWindowsBuildNumberPtr();
-}
-
-std::string BFDrv::B_GetDriverBuildTime()
-{
-	return B_GetDriverBuildTimePtr();
 }
 
 ULONG64 BFDrv::B_GetMainModuleAddress()
