@@ -16,7 +16,6 @@
 
 #include <stdexcept>
 #include <fstream>
-#include "B_MemoryModule.c"
 #include "BFDrv_Dynamic.c"
 
 template<typename Ret, typename... Args>
@@ -26,7 +25,6 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
     using name##Func = FunctionPtr<ret, ##__VA_ARGS__>; \
     name##Func name##Ptr = nullptr;
 
-DECLARE_FUNC_PTR(B_LoadDynamicLibrary, bool, HMODULE*, LPVOID)
 DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool)
 DECLARE_FUNC_PTR(B_GetInitResult, const char*)
 DECLARE_FUNC_PTR(B_GetExpiration, const char*)
@@ -80,21 +78,13 @@ DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 
 BFDrv::BFDrv()
 {
-	HMEMORYMODULE handle = MemoryLoadLibrary(B_MemoryModule, sizeof B_MemoryModule);
+	HMEMORYMODULE handle = MemoryLoadLibrary(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
 	if (!handle) throw std::runtime_error("Dll Load is NULL");
 
-	HMODULE hModule = nullptr;
-	B_LoadDynamicLibraryPtr = reinterpret_cast<B_LoadDynamicLibraryFunc>(MemoryGetProcAddress(handle, "B_LoadDynamicLibrary"));
-	if (!B_LoadDynamicLibraryPtr) throw std::runtime_error("LDL is NULL");
-
-	if (!B_LoadDynamicLibraryPtr(&hModule, BFDrv_Dynamic) || !hModule)
-		throw std::runtime_error("Failed to load DLL");
-
 	ZeroMemory(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
-	ZeroMemory(B_MemoryModule, sizeof B_MemoryModule);
 
 	auto setFunctionPtr = [&](auto& funcPtr, const char* funcName) {
-		funcPtr = reinterpret_cast<std::decay_t<decltype(funcPtr)>>(GetProcAddress(hModule, funcName));
+		funcPtr = reinterpret_cast<std::decay_t<decltype(funcPtr)>>(MemoryGetProcAddress(handle, funcName));
 		return funcPtr != nullptr;
 		};
 
@@ -157,10 +147,8 @@ BFDrv::BFDrv()
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
 	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(module->codeBase));
-	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(hModule));
 #ifdef _WIN64
 	UnlinkModule(reinterpret_cast<unsigned char*>(module->codeBase));
-	UnlinkModule(reinterpret_cast<unsigned char*>(hModule));
 #endif
 }
 
