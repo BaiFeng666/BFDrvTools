@@ -28,6 +28,7 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
 DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool)
 DECLARE_FUNC_PTR(B_GetInitResult, const char*)
 DECLARE_FUNC_PTR(B_GetExpiration, const char*)
+DECLARE_FUNC_PTR(B_EnableComm2, bool)
 DECLARE_FUNC_PTR(B_AttachProcess, bool, int)
 DECLARE_FUNC_PTR(B_GetWindowsBuildNumber, int)
 DECLARE_FUNC_PTR(B_GetMainModuleAddress, ULONG64)
@@ -54,7 +55,7 @@ DECLARE_FUNC_PTR(B_InjectDll, std::pair<ULONG64, ULONG64>, unsigned char*, size_
 DECLARE_FUNC_PTR(B_ProtectWindow, void, bool, ULONG, bool)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3, ULONG64)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3Attach, ULONG64)
-DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const char*)
+DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const wchar_t*)
 DECLARE_FUNC_PTR(B_FindPatternV1, ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode)
 DECLARE_FUNC_PTR(B_FindPatternV2, ULONG64, ULONG64, ULONG64, const char*, RWMode)
 DECLARE_FUNC_PTR(B_AOBScanV1, std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode)
@@ -72,14 +73,17 @@ DECLARE_FUNC_PTR(B_RestoreCallback, void)
 DECLARE_FUNC_PTR(B_RemoveVAD, void, bool)
 DECLARE_FUNC_PTR(B_CheckCr3ValidWithPhy, void, bool)
 DECLARE_FUNC_PTR(B_SuspendProcess, bool, bool, int)
-DECLARE_FUNC_PTR(B_ProtectCE, bool, const char*, HWND)
+DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t*, HWND)
 DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
 DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 
 BFDrv::BFDrv()
 {
-	HMEMORYMODULE handle = MemoryLoadLibrary(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
-	if (!handle) throw std::runtime_error("Dll Load is NULL");
+	auto handle = MemoryLoadLibrary(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
+	if (!handle)  {
+		MessageBoxW(0, L"DynamicLibrary load failed", L"Init Error", MB_OK);
+		exit(1);
+	}
 
 	ZeroMemory(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
 
@@ -95,6 +99,7 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_InitDrv)
 	SET_FUNC_PTR(B_GetInitResult)
 	SET_FUNC_PTR(B_GetExpiration)
+	SET_FUNC_PTR(B_EnableComm2)
 	SET_FUNC_PTR(B_AttachProcess)
 	SET_FUNC_PTR(B_GetWindowsBuildNumber)
 	SET_FUNC_PTR(B_GetMainModuleAddress)
@@ -143,7 +148,10 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_GetAllTeb)
 	SET_FUNC_PTR(B_DSEHook)
 
-	if (!succeed) throw std::runtime_error("Failed to set function");
+	if (!succeed) {
+		MessageBoxW(0, L"Failed to set function", L"Init Error", MB_OK);
+		exit(1);
+	}
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
 	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(module->codeBase));
@@ -170,6 +178,11 @@ bool BFDrv::B_AttachProcess(int pid)
 const char* BFDrv::B_GetExpiration()
 {
 	return B_GetExpirationPtr();
+}
+
+bool BFDrv::B_EnableComm2()
+{
+	return B_EnableComm2Ptr();
 }
 
 int BFDrv::B_GetWindowsBuildNumber()
@@ -311,7 +324,7 @@ void BFDrv::B_ProtectWindow(bool protectWindow, ULONG protectWindowPid, bool pro
 	return B_ProtectWindowPtr(protectWindow, protectWindowPid, protectGlobal);
 }
 
-bool BFDrv::B_ForceDeleteFile(const char* filePath)
+bool BFDrv::B_ForceDeleteFile(const wchar_t* filePath)
 {
 	return B_ForceDeleteFilePtr(filePath);
 }
@@ -406,7 +419,7 @@ bool BFDrv::B_SuspendProcess(bool is_suspend, int pid)
 	return B_SuspendProcessPtr(is_suspend, pid);
 }
 
-bool BFDrv::B_ProtectCE(const char* ce_process_name, HWND ce_hwnd)
+bool BFDrv::B_ProtectCE(const wchar_t* ce_process_name, HWND ce_hwnd)
 {
 	return B_ProtectCEPtr(ce_process_name, ce_hwnd);
 }

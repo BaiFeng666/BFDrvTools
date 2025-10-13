@@ -55,6 +55,10 @@ int main()
 		return 0;
 	}
 
+	//if (!Drv.B_EnableComm2()) {
+	//	std::cout << "开启通信模式二失败 pdb可能没有加载\n";
+	//}
+
 	auto timeOver = Drv.B_GetExpiration();
 	std::cout << "截至时间" << timeOver << "\n";
 

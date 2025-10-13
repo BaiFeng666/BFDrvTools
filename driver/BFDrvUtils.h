@@ -128,6 +128,9 @@ public:
 	/// </summary>
 	/// <returns>时间</returns>
 	const char* B_GetExpiration();
+
+	// 启用第二种通信模式 必须要pdb加载
+	bool B_EnableComm2();
 	
 	/// <summary>
 	/// 获取系统版本
@@ -338,7 +341,7 @@ public:
 
 	//B_ForceDeleteFile("D:\\test.dll");
 	//如果要输入中文 必须要把字符编码转为utf-8
-	bool B_ForceDeleteFile(const char* filePath);
+	bool B_ForceDeleteFile(const wchar_t* filePath);
 
 	/*特征码定位 掩码版本
 	* 效率低 只能返回第一个匹配的地址 但不会漏搜索
@@ -431,7 +434,7 @@ public:
 	/// 在APC注入之前设置它（需要参数hide_mem开启）
 	/// 危险操作，如果你不知道你在做什么，不要调用它
 	/// 当APC注入时，隐藏内存的同时将移除分配的内存VAD节点
-	/// 已知关闭被移除VAD节点的进程会蓝屏，不知道长时间会不会触发PG
+	/// 已知关闭被移除VAD节点的进程可能会蓝屏
 	/// </summary>
 	void B_RemoveVAD(bool enable);
 
@@ -458,7 +461,7 @@ public:
 	/// <param name="ce_process_name">进程名 例如: CheatEngine.exe </param>
 	/// <param name="ce_hwnd">窗口句柄 可以通过FindWindow获取</param>
 	/// <returns></returns>
-	bool B_ProtectCE(const char* ce_process_name, HWND ce_hwnd);
+	bool B_ProtectCE(const wchar_t* ce_process_name, HWND ce_hwnd);
 
 	/// <summary>
 	/// 获取进程每条线程的Teb
