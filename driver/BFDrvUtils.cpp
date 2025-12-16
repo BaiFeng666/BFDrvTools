@@ -77,6 +77,9 @@ DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t*, HWND)
 DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
 DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 
+DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void*)
+DECLARE_FUNC_PTR(B_ReadPhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
+
 BFDrv::BFDrv()
 {
 	auto handle = MemoryLoadLibrary(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
@@ -147,6 +150,8 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_ProtectCE)
 	SET_FUNC_PTR(B_GetAllTeb)
 	SET_FUNC_PTR(B_DSEHook)
+	SET_FUNC_PTR(B_GetMemoryInfo__)
+	SET_FUNC_PTR(B_ReadPhyMemoryDirect)
 
 	if (!succeed) {
 		MessageBoxW(0, L"Failed to set function", L"Init Error", MB_OK);
@@ -432,4 +437,14 @@ std::vector<ULONG64> BFDrv::B_GetAllTeb()
 bool BFDrv::B_DSEHook(bool enable)
 {
 	return B_DSEHookPtr(enable);
+}
+
+bool BFDrv::B_GetMemoryInfo__(void* data)
+{
+	return B_GetMemoryInfo__Ptr(data);
+}
+
+bool BFDrv::B_ReadPhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size)
+{
+	return B_ReadPhyMemoryDirectPtr(phy_addr, buffer, size);
 }

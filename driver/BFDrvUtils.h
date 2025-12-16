@@ -476,5 +476,10 @@ public:
 	/// <param name="enable"></param>
 	/// <returns></returns>
 	bool B_DSEHook(bool enable);
+
+
+
+	bool B_GetMemoryInfo__(void* data);
+	bool B_ReadPhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size);
 };
 
