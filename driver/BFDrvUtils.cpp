@@ -79,6 +79,7 @@ DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 
 DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void*)
 DECLARE_FUNC_PTR(B_ReadPhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
+DECLARE_FUNC_PTR(B_WritePhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
 
 BFDrv::BFDrv()
 {
@@ -152,6 +153,7 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_DSEHook)
 	SET_FUNC_PTR(B_GetMemoryInfo__)
 	SET_FUNC_PTR(B_ReadPhyMemoryDirect)
+	SET_FUNC_PTR(B_WritePhyMemoryDirect)
 
 	if (!succeed) {
 		MessageBoxW(0, L"Failed to set function", L"Init Error", MB_OK);
@@ -447,4 +449,9 @@ bool BFDrv::B_GetMemoryInfo__(void* data)
 bool BFDrv::B_ReadPhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size)
 {
 	return B_ReadPhyMemoryDirectPtr(phy_addr, buffer, size);
+}
+
+bool BFDrv::B_WritePhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size)
+{
+	return B_WritePhyMemoryDirectPtr(phy_addr, buffer, size);
 }

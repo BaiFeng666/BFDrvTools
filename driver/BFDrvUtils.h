@@ -481,5 +481,6 @@ public:
 
 	bool B_GetMemoryInfo__(void* data);
 	bool B_ReadPhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size);
+	bool B_WritePhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size);
 };
 
