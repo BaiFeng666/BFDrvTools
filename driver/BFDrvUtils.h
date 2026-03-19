@@ -98,6 +98,13 @@ enum InjectType : ULONG
 	IT_DX12//支持x64 劫持dx12注入 可以注入主流dx12引擎的游戏
 };
 
+enum PdbMode : ULONG
+{
+	Pdb_Optional = 0, //可选加载PDB 有PDB就加载 没有就算了
+	Pdb_Force,		  //强制加载PDB 没有PDB则初始化失败
+	Pdb_Cancel,		  //不加载PDB
+};
+
 class BFDrv
 {
 public:
@@ -106,9 +113,9 @@ public:
 	///初始化驱动
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
-	///@param forcePdb 是否强制要求PDB加载 开启后PDB加载失败则取消安装（已知无pdb情况下无法使用B_ProtectProcessV2
+	///@param 加载PDB方式（无pdb情况下 部分函数可能失效甚至蓝屏）
 	///@return 是否初始化成功
-	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, bool forcePdb = true);
+	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, PdbMode pdbMode = PdbMode::Pdb_Optional);
 
 	/// <summary>
 	/// 获取初始化结果
@@ -476,6 +483,13 @@ public:
 	/// <param name="enable"></param>
 	/// <returns></returns>
 	bool B_DSEHook(bool enable);
+
+	/// <summary>
+	/// 进阶玩法自定义加载壳 可以跟我要加载壳子 自定义混淆/签名
+	/// 高级的玩法举例：云端混淆+签名 代码中远程下载最终二进制......
+	/// </summary>
+	/// <param name="data"></param>
+	void B_CustomSigLoader(std::vector<unsigned char> data);
 
 
 

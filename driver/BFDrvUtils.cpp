@@ -25,7 +25,7 @@ using FunctionPtr = Ret(WINAPI*)(Args...);
     using name##Func = FunctionPtr<ret, ##__VA_ARGS__>; \
     name##Func name##Ptr = nullptr;
 
-DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, bool)
+DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, ULONG)
 DECLARE_FUNC_PTR(B_GetInitResult, const char*)
 DECLARE_FUNC_PTR(B_GetExpiration, const char*)
 DECLARE_FUNC_PTR(B_EnableComm2, bool)
@@ -76,6 +76,7 @@ DECLARE_FUNC_PTR(B_SuspendProcess, bool, bool, int)
 DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t*, HWND)
 DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
 DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
+DECLARE_FUNC_PTR(B_CustomSigLoader, void, std::vector<unsigned char>)
 
 DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void*)
 DECLARE_FUNC_PTR(B_ReadPhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
@@ -151,6 +152,7 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_ProtectCE)
 	SET_FUNC_PTR(B_GetAllTeb)
 	SET_FUNC_PTR(B_DSEHook)
+	SET_FUNC_PTR(B_CustomSigLoader)
 	SET_FUNC_PTR(B_GetMemoryInfo__)
 	SET_FUNC_PTR(B_ReadPhyMemoryDirect)
 	SET_FUNC_PTR(B_WritePhyMemoryDirect)
@@ -167,9 +169,9 @@ BFDrv::BFDrv()
 #endif
 }
 
-B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, bool ignorePdb)
+B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, PdbMode pdbMode)
 {
-	return B_InitDrvPtr(key, mode, ignorePdb);
+	return B_InitDrvPtr(key, mode, pdbMode);
 }
 
 const char* BFDrv::B_GetInitResult()
@@ -439,6 +441,11 @@ std::vector<ULONG64> BFDrv::B_GetAllTeb()
 bool BFDrv::B_DSEHook(bool enable)
 {
 	return B_DSEHookPtr(enable);
+}
+
+void BFDrv::B_CustomSigLoader(std::vector<unsigned char> data)
+{
+	return B_CustomSigLoaderPtr(data);
 }
 
 bool BFDrv::B_GetMemoryInfo__(void* data)

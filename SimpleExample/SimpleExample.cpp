@@ -41,11 +41,16 @@ int main()
 	//Drv.B_DisablePrint(true);//禁用一些提示输出
 	//Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
 
+	// 进阶玩法自定义加载壳 可以跟我要加载壳子 你自己 混淆/签名
+	// 高级的玩法举例：云端混淆+签名 代码中远程下载最终二进制......
+	//std::vector<unsigned char> data{ LoaderEx, LoaderEx + sizeof(LoaderEx) };
+	//Drv.B_CustomSigLoader(data);
+
 	/*初始化驱动 第一个参数填卡密
 	* 自适应式计费法 计时方式： 时间 + 异地登录扣时
 	* 初次登录绑定开发主机 除开发主机外的机器登录会扣2分钟（检测到其他机器有开发者行为的 一次扣十分钟 防止卡密分享）
 	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限*/
-	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, false);
+	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, PdbMode::Pdb_Optional);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
