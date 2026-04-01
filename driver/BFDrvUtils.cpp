@@ -77,6 +77,7 @@ DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t*, HWND)
 DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
 DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 DECLARE_FUNC_PTR(B_CustomSigLoader, void, std::vector<unsigned char>)
+DECLARE_FUNC_PTR(B_KillProcess, bool, int)
 
 DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void*)
 DECLARE_FUNC_PTR(B_ReadPhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
@@ -153,6 +154,7 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_GetAllTeb)
 	SET_FUNC_PTR(B_DSEHook)
 	SET_FUNC_PTR(B_CustomSigLoader)
+	SET_FUNC_PTR(B_KillProcess)
 	SET_FUNC_PTR(B_GetMemoryInfo__)
 	SET_FUNC_PTR(B_ReadPhyMemoryDirect)
 	SET_FUNC_PTR(B_WritePhyMemoryDirect)
@@ -446,6 +448,11 @@ bool BFDrv::B_DSEHook(bool enable)
 void BFDrv::B_CustomSigLoader(std::vector<unsigned char> data)
 {
 	return B_CustomSigLoaderPtr(data);
+}
+
+bool BFDrv::B_KillProcess(int pid)
+{
+	return B_KillProcessPtr(pid);
 }
 
 bool BFDrv::B_GetMemoryInfo__(void* data)

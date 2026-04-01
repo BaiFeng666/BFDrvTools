@@ -38,7 +38,7 @@ DWORD GetProcessID(const char* ProcessName)
 int main()
 {
 	BFDrv Drv;
-	//Drv.B_DisablePrint(true);//禁用一些提示输出
+	//Drv.B_DisablePrint(true);//禁用驱动加载时候的输出信息
 	//Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
 
 	// 进阶玩法自定义加载壳 可以跟我要加载壳子 你自己 混淆/签名
@@ -233,7 +233,7 @@ int main()
 
 	int notepadPid = GetProcessID("notepad.exe");
 	if (notepadPid) {
-		printf("notepad localPid: %d\n", notepadPid);
+		printf("notepad pid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
 		std::cout << "即将 暂停进程\n";
@@ -292,6 +292,9 @@ int main()
 		std::cout << "即将 取消保护进程V2\n";
 		system("pause");
 		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出前建议恢复
+
+		//终止进程
+		//Drv.B_KillProcess(notepadPid);
 	}
 
 	Drv.B_AttachProcess(localPid);

@@ -491,6 +491,12 @@ public:
 	/// <param name="data"></param>
 	void B_CustomSigLoader(std::vector<unsigned char> data);
 
+	/// <summary>
+	/// 强制终止进程
+	/// </summary>
+	/// <param name="pid"></param>
+	bool B_KillProcess(int pid);
+
 
 
 	bool B_GetMemoryInfo__(void* data);
