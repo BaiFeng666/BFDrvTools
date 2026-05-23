@@ -56,10 +56,7 @@ DECLARE_FUNC_PTR(B_ProtectWindow, void, bool, ULONG, bool)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3, ULONG64)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3Attach, ULONG64)
 DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const wchar_t*)
-DECLARE_FUNC_PTR(B_FindPatternV1, ULONG64, ULONG64, ULONG64, const char*, const char*, RWMode)
-DECLARE_FUNC_PTR(B_FindPatternV2, ULONG64, ULONG64, ULONG64, const char*, RWMode)
-DECLARE_FUNC_PTR(B_AOBScanV1, std::vector<ULONG64>, const char*, const char*, ULONG64, ULONG64, RWMode)
-DECLARE_FUNC_PTR(B_AOBScanV2, std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode)
+DECLARE_FUNC_PTR(B_AOBScan, std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode)
 DECLARE_FUNC_PTR(B_QueryMemory, bool, ULONG64, MEMORY_BASIC_INFORMATION*)
 DECLARE_FUNC_PTR(B_DumpToFile, bool, ULONG64, const char*, RWMode)
 DECLARE_FUNC_PTR(B_RWKernelMemory, bool, ULONG64, void*, ULONG, int)
@@ -133,10 +130,7 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_GetProcessRealCr3)
 	SET_FUNC_PTR(B_GetProcessRealCr3Attach)
 	SET_FUNC_PTR(B_ForceDeleteFile)
-	SET_FUNC_PTR(B_FindPatternV1)
-	SET_FUNC_PTR(B_FindPatternV2)
-	SET_FUNC_PTR(B_AOBScanV1)
-	SET_FUNC_PTR(B_AOBScanV2)
+	SET_FUNC_PTR(B_AOBScan)
 	SET_FUNC_PTR(B_QueryMemory)
 	SET_FUNC_PTR(B_DumpToFile)
 	SET_FUNC_PTR(B_RWKernelMemory)
@@ -340,24 +334,9 @@ bool BFDrv::B_ForceDeleteFile(const wchar_t* filePath)
 	return B_ForceDeleteFilePtr(filePath);
 }
 
-ULONG64 BFDrv::B_FindPatternV1(ULONG64 addr, ULONG64 size, const char* pattern, const char* mask, RWMode mode)
+std::vector<ULONG64> BFDrv::B_AOBScan(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode)
 {
-	return B_FindPatternV1Ptr(addr, size, pattern, mask, mode);
-}
-
-ULONG64 BFDrv::B_FindPatternV2(ULONG64 addr, ULONG64 size, const char* pattern, RWMode mode)
-{
-	return B_FindPatternV2Ptr(addr, size, pattern, mode);
-}
-
-std::vector<ULONG64> BFDrv::B_AOBScanV1(const char* pattern, const char* mask, ULONG64 addr, ULONG64 size, RWMode mode)
-{
-	return B_AOBScanV1Ptr(pattern, mask, addr, size, mode);
-}
-
-std::vector<ULONG64> BFDrv::B_AOBScanV2(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode)
-{
-	return B_AOBScanV2Ptr(pattern, addr, size, mode);
+	return B_AOBScanPtr(pattern, addr, size, mode);
 }
 
 bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi)

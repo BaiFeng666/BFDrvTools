@@ -13,19 +13,17 @@
 #include <iostream>
 #include <string.h>
 #include <TlHelp32.h>
-#include <atlconv.h>
 #include "../driver/BFDrvUtils.h"
 #include "../driver/TestDLL.c"
 
-DWORD GetProcessID(const char* ProcessName)
+DWORD GetProcessID(const wchar_t* ProcessName)
 {
 	PROCESSENTRY32 ProcessInfoPE;
 	ProcessInfoPE.dwSize = sizeof(PROCESSENTRY32);
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(15, 0);
 	Process32First(hSnapshot, &ProcessInfoPE);
-	USES_CONVERSION;
 	do {
-		if (wcscmp(ProcessInfoPE.szExeFile, A2W(ProcessName)) == 0)
+		if (wcscmp(ProcessInfoPE.szExeFile, ProcessName) == 0)
 		{
 			CloseHandle(hSnapshot);
 			return ProcessInfoPE.th32ProcessID;
@@ -48,7 +46,7 @@ int main()
 
 	/*初始化驱动 第一个参数填卡密
 	* 自适应式计费法 计时方式： 时间 + 异地登录扣时
-	* 初次登录绑定开发主机 除开发主机外的机器登录会扣60一分钟
+	* 初次登录绑定开发主机 除开发主机外的机器登录会扣60秒
 	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限*/
 	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, PdbMode::Pdb_Optional);
 
@@ -231,7 +229,7 @@ int main()
 		Drv.B_HideWindow((ULONG64)hWnd, HideWindowType::None);
 	}
 
-	int notepadPid = GetProcessID("notepad.exe");
+	int notepadPid = GetProcessID(L"notepad.exe");
 	if (notepadPid) {
 		printf("notepad pid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
@@ -262,16 +260,10 @@ int main()
 		ULONG size = 0;
 		auto moduleBase = Drv.B_GetModuleBaseAddress("notepad.exe", &size);
 
-		auto r3 = Drv.B_AOBScanV1("\xBF\x00\x00\x00\x00\x8B\x05", "x????xx",
-			moduleBase, size);
-
-		auto r4 = Drv.B_AOBScanV2("BF ? ? ? ? 8B 05", moduleBase, size);
-
-		for (auto x : r3)
-			printf("B_AOBScanV1 搜索结果: %llx\n", x);
+		auto r4 = Drv.B_AOBScan("BF ? ? ? ? 8B 05", moduleBase, size);
 
 		for (auto x : r4)
-			printf("B_AOBScanV2 搜索结果: %llx\n", x);
+			printf("B_AOBScan 搜索结果: %llx\n", x);
 
 		//保护窗口注意 写的是窗口的进程的PID
 		//有时候会有多个同名进程 窗口各自属于的进程不相同 例如控制台 别写错PID了
@@ -318,25 +310,6 @@ int main()
 	int kvalue;
 	Drv.B_RWKernelMemory(kernelBase, &kvalue, 4, 0);
 	std::cout << "read ntoskrnl.exe 4 bytes value: " << kvalue << "\n";
-
-	//如果路径带中文 字符串要转成utf8编码
-	//if (!Drv.B_ForceDeleteFile("C:\\Users\\18361\\Desktop\\test.txt")) {
-	//	std::cout << "强删文件失败\n";
-	//}
-
-	//std::cout << "关闭NMI回调检测\n";
-	//Drv.B_DisableCallback_NMI();
-	//system("pause");
-
-	/*
-	//关闭指定驱动内核回调 可以同时关闭多个驱动 目前限制了最大关闭的回调数量是32个
-	//注意：有的驱动会检测自身回调是否存在、修改，所以隔一段时间可能会被他恢复过去
-	Drv.B_DisableCallback("xxx.sys");
-	Drv.B_DisableCallback("xxx2.sys");
-	Drv.B_DisableCallback("xxx3.sys");
-	//恢复所有关闭的内核回调
-	Drv.B_RestoreCallback();
-	*/
 
 	/*
 	//加载任意无签名驱动

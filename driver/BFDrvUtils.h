@@ -350,42 +350,10 @@ public:
 	//如果要输入中文 必须要把字符编码转为utf-8
 	bool B_ForceDeleteFile(const wchar_t* filePath);
 
-	/*特征码定位 掩码版本
-	* 效率低 只能返回第一个匹配的地址 但不会漏搜索
-	* addr: 搜索起始位置
-	* size: 搜索范围大小
-	* pattern: 特征码
-	* mask: 掩码
-	* mode: 读内存模式
-	* 举例:
-	* auto result = B_FindPatternV1(addr, size, "\xE8\x70\x02\x00\x00\x48\x8B\x4C\x24\x70", "xxx??xxxxx", RWMode::Phy);
+	/*特征码定位 E源码里CV过来的算法 用就完了
+	* 举例: auto result = B_AOBScan("E8 70 02 ? ? 48 8B 4C 24 70", moduleBase, size);
 	*/
-	ULONG64 B_FindPatternV1(ULONG64 addr, ULONG64 size, const char* pattern, const char* mask, RWMode mode = RWMode::Phy);
-
-	/*特征码定位
-	* 效率低 只能返回第一个匹配的地址 但不会漏搜索
-	* addr: 搜索起始位置
-	* size: 搜索范围大小
-	* pattern: 特征码 注意和V1的格式不一样
-	* mode: 读内存模式
-	* 举例:
-	* auto result = B_FindPatternV1(addr, size, "E8 70 02 ? ? 48 8B 4C 24 70", RWMode::Phy);
-	*/
-	ULONG64 B_FindPatternV2(ULONG64 addr, ULONG64 size, const char* pattern, RWMode mode = RWMode::Phy);
-
-	/*特征码定位
-	* CE源码里CV过来的 用就完了
-	* 举例:
-	* auto result = B_AOBScanV1("\xE8\x70\x02\x00\x00\x48\x8B\x4C\x24\x70", "xxx??xxxxx", moduleBase, size, RWMode::Phy);
-	*/
-	std::vector<ULONG64> B_AOBScanV1(const char* pattern, const char* mask, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
-
-	/*特征码定位
-	* CE源码里CV过来的 用就完了
-	* 举例:
-	* auto result = B_AOBScanV2("E8 70 02 ? ? 48 8B 4C 24 70", moduleBase, size);
-	*/
-	std::vector<ULONG64> B_AOBScanV2(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
+	std::vector<ULONG64> B_AOBScan(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
 
 	//查询内存
 	//当作VirtualQueryEx来用
