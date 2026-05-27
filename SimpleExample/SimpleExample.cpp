@@ -1,13 +1,12 @@
 ﻿/*
-* BFDriver官方驱动群 410342663
-* 周150 月450
-* 免责声明及使用条款:
-* 本驱动仅用于保护游戏软件和正规商业软件使用!
-* 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
-* 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
-* 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
-* 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
-*/
+ * BFDriver官方驱动群 410342663
+ * 免责声明及使用条款:
+ * 本驱动仅用于保护游戏软件和正规商业软件使用!
+ * 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
+ * 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
+ * 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
+ * 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
+ */
 
 #include <Windows.h>
 #include <iostream>
@@ -16,13 +15,14 @@
 #include "../driver/BFDrvUtils.h"
 #include "../driver/TestDLL.c"
 
-DWORD GetProcessID(const wchar_t* ProcessName)
+DWORD GetProcessID(const wchar_t *ProcessName)
 {
 	PROCESSENTRY32 ProcessInfoPE;
 	ProcessInfoPE.dwSize = sizeof(PROCESSENTRY32);
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(15, 0);
 	Process32First(hSnapshot, &ProcessInfoPE);
-	do {
+	do
+	{
 		if (wcscmp(ProcessInfoPE.szExeFile, ProcessName) == 0)
 		{
 			CloseHandle(hSnapshot);
@@ -36,31 +36,32 @@ DWORD GetProcessID(const wchar_t* ProcessName)
 int main()
 {
 	BFDrv Drv;
-	//Drv.B_DisablePrint(true);//禁用驱动加载时候的输出信息
-	//Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
+	// Drv.B_DisablePrint(true);//禁用驱动加载时候的输出信息
+	// Drv.B_FileOverride(true);//针对EAC的File Miss报错拦截 默认关闭
 
 	// 进阶玩法自定义加载壳 可以跟我要加载壳子 你自己 混淆/签名
 	// 高级的玩法举例：云端混淆+签名 代码中远程下载最终二进制......
-	//std::vector<unsigned char> data{ LoaderEx, LoaderEx + sizeof(LoaderEx) };
-	//Drv.B_CustomSigLoader(data);
+	// std::vector<unsigned char> data{ LoaderEx, LoaderEx + sizeof(LoaderEx) };
+	// Drv.B_CustomSigLoader(data);
 
 	/*初始化驱动 第一个参数填卡密
-	* 自适应式计费法 计时方式： 时间 + 异地登录扣时
-	* 初次登录绑定开发主机 除开发主机外的机器登录会扣60秒
-	* 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限*/
+	 * 自适应式计费法 计时方式： 时间 + 异地登录扣时
+	 * 初次登录绑定开发主机 除开发主机外的机器登录会扣60秒
+	 * 电脑开机后首次调用B_InitDrv()会安装驱动，所以需要管理员权限*/
 	auto result = Drv.B_InitDrv("", B_InstallMode::NtLoadDriver, PdbMode::Pdb_Optional);
 
 	std::cout << Drv.B_GetInitResult() << "\n";
 
-	if (result != BF_OK) {
+	if (result != BF_OK)
+	{
 		std::cout << "初始化失败, 原因: 0x" << result << "\n";
 		system("pause");
 		return 0;
 	}
 
-	//if (!Drv.B_EnableComm2()) {
+	// if (!Drv.B_EnableComm2()) {
 	//	std::cout << "开启通信模式二失败 pdb可能没有加载\n";
-	//}
+	// }
 
 	auto timeOver = Drv.B_GetExpiration();
 	std::cout << "截至时间" << timeOver << "\n";
@@ -71,10 +72,10 @@ int main()
 	int localPid = GetCurrentProcessId();
 	HANDLE hProcess = GetCurrentProcess();
 
-	//操作进程前必须要附加
+	// 操作进程前必须要附加
 	Drv.B_AttachProcess(localPid);
 
-	//获取模块基址大小
+	// 获取模块基址大小
 	ULONG size = 0;
 	ULONG size2 = 0;
 	auto moduleBase = Drv.B_GetModuleBaseAddress("SimpleExample.exe", &size);
@@ -88,10 +89,10 @@ int main()
 	auto IsBadReadPtr = Drv.B_GetModuleExportFuncAddress(kernelDll, "IsBadReadPtr");
 	printf("获取模块导出函数 IsbadReadPtr: %llx\n", IsBadReadPtr);
 
-	//读写测试
+	// 读写测试
 	uintptr_t readValue = 0;
 
-	ReadProcessMemory(hProcess, (void*)moduleBase, &readValue, sizeof(readValue), 0);
+	ReadProcessMemory(hProcess, (void *)moduleBase, &readValue, sizeof(readValue), 0);
 	std::cout << "API read value: " << std::hex << readValue << "\n";
 
 	readValue = 0;
@@ -114,10 +115,10 @@ int main()
 	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy);
 	std::cout << "Phy read value: " << std::hex << readValue << "\n";
 
-	//无视CR3加密读取数值
+	// 无视CR3加密读取数值
 	readValue = 0;
-	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); //执行一次即可 自己将返回值保存下来用于后续读取
-	//static ULONG64 cr3 = Drv.B_GetProcessRealCr3Attach();//同上 但是会附加 尽量别用
+	static ULONG64 cr3 = Drv.B_GetProcessRealCr3(); // 执行一次即可 自己将返回值保存下来用于后续读取
+	// static ULONG64 cr3 = Drv.B_GetProcessRealCr3Attach();//同上 但是会附加 尽量别用
 	std::cout << "-----> cr3 value: " << std::hex << cr3 << "\n";
 	readValue = Drv.B_ReadMem<uintptr_t>(moduleBase, RWMode::Phy, cr3);
 	std::cout << "Phy CR3 read value: " << std::hex << readValue << "\n";
@@ -152,7 +153,7 @@ int main()
 	Drv.B_WriteMem((ULONG64)&writeValue, &newValue, sizeof(newValue), RWMode::Phy, cr3);
 	std::cout << "Fake CR3 write value: " << std::dec << writeValue << "\n";
 
-	//保护CE
+	// 保护CE
 	/*int ce_pid = GetProcessID("MyCE.exe");
 		printf("ce pid: %d\n", ce_pid);
 	if (ce_pid) {
@@ -166,7 +167,7 @@ int main()
 		}
 	}*/
 
-	//内核键鼠模拟
+	// 内核键鼠模拟
 	/*
 	std::cout << "鼠标移动测试 向右移动十次 间隔200ms\n";
 	//鼠标移动
@@ -189,7 +190,7 @@ int main()
 		//Drv.B_KeyClick(0x61);
 		Sleep(500);
 	}
-	
+
 	//关于拓展键的使用举例：方向键左上右下
 	Drv.B_KeyCtl(0x25, KeyStatus::DOWN, true);
 	Drv.B_KeyCtl(0x25, KeyStatus::UP, true);
@@ -215,12 +216,14 @@ int main()
 	Drv.B_ProtectProcess(false, GetCurrentProcessId());
 	Drv.B_HideProcess(false, GetCurrentProcessId());
 
-	HWND hWnd = 0;//自己获取要反截图的窗口句柄
-	if (hWnd) {
+	HWND hWnd = 0; // 自己获取要反截图的窗口句柄
+	if (hWnd)
+	{
 		std::cout << "HWND: " << hWnd << "\n";
 		std::cout << "即将 内核反截图\n";
 		system("pause");
-		if (!Drv.B_HideWindow((ULONG64)hWnd, HideWindowType::Excludefromcapture)) {
+		if (!Drv.B_HideWindow((ULONG64)hWnd, HideWindowType::Excludefromcapture))
+		{
 			std::cout << "内核反截图失败\n";
 		}
 
@@ -230,7 +233,8 @@ int main()
 	}
 
 	int notepadPid = GetProcessID(L"notepad.exe");
-	if (notepadPid) {
+	if (notepadPid)
+	{
 		printf("notepad pid: %d\n", notepadPid);
 		Drv.B_AttachProcess(notepadPid);
 
@@ -241,19 +245,21 @@ int main()
 		system("pause");
 		Drv.B_SuspendProcess(false, notepadPid);
 
-		//Drv.B_RemoveVAD(true);//移除VAD，如果你不知道它的作用不要调用它
-		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC, true, true, true);//内存注入
-		//Drv.B_InjectDll("C:\\TestDll.dll", IT_APC, true, true, true)	//路径注入
-		//Drv.B_RemoveVAD(false);//关闭移除VAD
-		if (inject_result.first != 0) {	
+		// Drv.B_RemoveVAD(true);//移除VAD，如果你不知道它的作用不要调用它
+		auto inject_result = Drv.B_InjectDll(TestDLL, sizeof TestDLL, IT_APC, true, true, true); // 内存注入
+		// Drv.B_InjectDll("C:\\TestDll.dll", IT_APC, true, true, true)	//路径注入
+		// Drv.B_RemoveVAD(false);//关闭移除VAD
+		if (inject_result.first != 0)
+		{
 			printf("Dll 注入成功\n");
 			printf("dll在目标进程中的基址：%llx，大小：%llx\n", inject_result.first, inject_result.second);
 
-			//如果你参数开启了hide_mem 那么会将dll内存改为只读类型
-			//你可以手动修改它的内存属性 例如我改成不可访问类型
-			//Drv.B_HideMemory(inject_result.first, inject_result.second, HideMem::HM_NOACCESS);
+			// 如果你参数开启了hide_mem 那么会将dll内存改为只读类型
+			// 你可以手动修改它的内存属性 例如我改成不可访问类型
+			// Drv.B_HideMemory(inject_result.first, inject_result.second, HideMem::HM_NOACCESS);
 		}
-		else {
+		else
+		{
 			printf("Dll 注入失败\n");
 		}
 
@@ -265,8 +271,8 @@ int main()
 		for (auto x : r4)
 			printf("B_AOBScan 搜索结果: %llx\n", x);
 
-		//保护窗口注意 写的是窗口的进程的PID
-		//有时候会有多个同名进程 窗口各自属于的进程不相同 例如控制台 别写错PID了
+		// 保护窗口注意 写的是窗口的进程的PID
+		// 有时候会有多个同名进程 窗口各自属于的进程不相同 例如控制台 别写错PID了
 		std::cout << "即将 保护窗口\n";
 		system("pause");
 		Drv.B_ProtectWindow(true, notepadPid);
@@ -275,23 +281,23 @@ int main()
 		system("pause");
 		Drv.B_ProtectWindow(false, notepadPid);
 
-
-		//保护、隐藏进程V2
+		// 保护、隐藏进程V2
 		std::cout << "即将 保护进程V2\n";
 		system("pause");
 		Drv.B_ProtectProcessV2(true, notepadPid);
 
 		std::cout << "即将 取消保护进程V2\n";
 		system("pause");
-		Drv.B_ProtectProcessV2(false, notepadPid); //在进程退出前建议恢复
+		Drv.B_ProtectProcessV2(false, notepadPid); // 在进程退出前建议恢复
 
-		//终止进程
-		//Drv.B_KillProcess(notepadPid);
+		// 终止进程
+		// Drv.B_KillProcess(notepadPid);
 	}
 
 	Drv.B_AttachProcess(localPid);
 	PVOID allocMem = VirtualAlloc(NULL, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	if (allocMem) {
+	if (allocMem)
+	{
 		printf("即将隐藏内存 allocMem: %p\n", allocMem);
 		system("pause");
 		printf("内存改为只读属性\n");
@@ -301,7 +307,6 @@ int main()
 		Drv.B_HideMemory((ULONG64)allocMem, 0x1000, HideMem::HM_EXECUTE_READWRITE);
 		system("pause");
 	}
-
 
 	ULONG ksize;
 	auto kernelBase = Drv.B_GetKernelModule("ntoskrnl.exe", &ksize);
@@ -315,14 +320,13 @@ int main()
 	//加载任意无签名驱动
 	//关闭签名检测
 	Drv.B_DSEHook(true);
-	
+
 	//这里执行你的加载驱动操作
 	//尽量快速 不然会触发PG
 
 	//恢复签名检测
 	Drv.B_DSEHook(false);
 	*/
-	
 
 	std::cout << "结束\n";
 	system("pause");

@@ -1,13 +1,12 @@
 ﻿/*
-* BFDriver官方驱动群 410342663
-* 周150 月450
-* 免责声明及使用条款:
-* 本驱动仅用于保护游戏软件和正规商业软件使用!
-* 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
-* 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
-* 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
-* 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
-*/
+ * BFDriver官方驱动群 410342663
+ * 免责声明及使用条款:
+ * 本驱动仅用于保护游戏软件和正规商业软件使用!
+ * 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
+ * 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
+ * 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
+ * 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
+ */
 #pragma once
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -16,11 +15,11 @@
 
 enum B_STATUS : ULONG
 {
-	BF_OK = 0,				//成功
-	BF_ERR_AUTH_INIT,		//连接服务器失败，国外无法连接服务器可以挂代理
-	BF_ERR_LOGIN,			//登录失败，具体原因查看调用B_GetInitResult()
-	BF_ERR_COMM,			//通信初始化失败
-	BF_ERR_INIT_DRIVER,		//初始化驱动失败，具体原因查看调用B_GetInitResult()
+	BF_OK = 0,			// 成功
+	BF_ERR_AUTH_INIT,	// 连接服务器失败，国外无法连接服务器可以挂代理
+	BF_ERR_LOGIN,		// 登录失败，具体原因查看调用B_GetInitResult()
+	BF_ERR_COMM,		// 通信初始化失败
+	BF_ERR_INIT_DRIVER, // 初始化驱动失败，具体原因查看调用B_GetInitResult()
 };
 
 enum B_InstallMode
@@ -31,11 +30,11 @@ enum B_InstallMode
 
 enum class RWMode
 {
-	MmCopy,	//无附加 调用内核Api
-	Mdl,	//附加 MDL
-	Phy,	//无附加 物理地址读写
-	Ke,		//附加
-	KeSafe,	//附加 相比Ke更安全 读取不安全地址不会蓝屏
+	MmCopy, // 无附加 调用内核Api
+	Mdl,	// 附加 MDL
+	Phy,	// 无附加 物理地址读写
+	Ke,		// 附加
+	KeSafe, // 附加 相比Ke更安全 读取不安全地址不会蓝屏
 };
 
 enum class MoveType
@@ -69,10 +68,9 @@ enum KeyStatus
 enum class HideWindowType
 {
 	None,
-	Excludefromcapture,//透明
-	Monitor//黑色
+	Excludefromcapture, // 透明
+	Monitor				// 黑色
 };
-
 
 enum HideMem : ULONG
 {
@@ -90,19 +88,19 @@ enum HideMem : ULONG
 
 enum InjectType : ULONG
 {
-	IT_NORMAL = 0,//支持x64/x32 通用驱动映射注入
-	IT_APC,//支持x64 内核APC注入+隐藏内存 通杀各种游戏
-	IT_RIP,//支持x64 内核RIP劫持注入 注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD
-	IT_RIPV2,//支持x64 内核RIP劫持注入
-	IT_DX11,//支持x64 劫持dx11注入 可以注入主流dx11引擎的游戏
-	IT_DX12//支持x64 劫持dx12注入 可以注入主流dx12引擎的游戏
+	IT_NORMAL = 0, // 支持x64/x32 通用驱动映射注入
+	IT_APC,		   // 支持x64 内核APC注入+隐藏内存 通杀各种游戏
+	IT_RIP,		   // 支持x64 内核RIP劫持注入 注入Dll有要求，属性->代码生成-> 运行库 -> MT/MD
+	IT_RIPV2,	   // 支持x64 内核RIP劫持注入
+	IT_DX11,	   // 支持x64 劫持dx11注入 可以注入主流dx11引擎的游戏
+	IT_DX12		   // 支持x64 劫持dx12注入 可以注入主流dx12引擎的游戏
 };
 
 enum PdbMode : ULONG
 {
-	Pdb_Optional = 0, //可选加载PDB 有PDB就加载 没有就算了
-	Pdb_Force,		  //强制加载PDB 没有PDB则初始化失败
-	Pdb_Cancel,		  //不加载PDB
+	Pdb_Optional = 0, // 可选加载PDB 有PDB就加载 没有就算了
+	Pdb_Force,		  // 强制加载PDB 没有PDB则初始化失败
+	Pdb_Cancel,		  // 不加载PDB
 };
 
 class BFDrv
@@ -110,18 +108,18 @@ class BFDrv
 public:
 	BFDrv();
 
-	///初始化驱动
+	/// 初始化驱动
 	///@param key 填写卡密
 	///@param mode 加载方式 NtLoadDriver更安全 Normal兼容性更好
 	///@param 加载PDB方式（无pdb情况下 部分函数可能失效甚至蓝屏）
 	///@return 是否初始化成功
-	B_STATUS B_InitDrv(const char* key, B_InstallMode mode = B_InstallMode::NtLoadDriver, PdbMode pdbMode = PdbMode::Pdb_Optional);
+	B_STATUS B_InitDrv(const char *key, B_InstallMode mode = B_InstallMode::NtLoadDriver, PdbMode pdbMode = PdbMode::Pdb_Optional);
 
 	/// <summary>
 	/// 获取初始化结果
 	/// </summary>
 	/// <returns></returns>
-	const char* B_GetInitResult();
+	const char *B_GetInitResult();
 
 	/// <summary>
 	/// 选择要操作的进程
@@ -134,11 +132,11 @@ public:
 	/// 卡密到期时间
 	/// </summary>
 	/// <returns>时间</returns>
-	const char* B_GetExpiration();
+	const char *B_GetExpiration();
 
 	// 启用第二种通信模式 必须要pdb加载
 	bool B_EnableComm2();
-	
+
 	/// <summary>
 	/// 获取系统版本
 	/// </summary>
@@ -159,7 +157,7 @@ public:
 	/// <param name="moduleName">模块名称</param>
 	/// <param name="pSize">如果不需要获取模块大小 那么第二个参数填nullptr</param>
 	/// <returns>模块基址</returns>
-	ULONG64 B_GetModuleBaseAddress(const char* moduleName, ULONG* pSize = nullptr);
+	ULONG64 B_GetModuleBaseAddress(const char *moduleName, ULONG *pSize = nullptr);
 
 	/// <summary>
 	/// 无附加获取模块基址、大小  建议用这个
@@ -168,7 +166,7 @@ public:
 	/// <param name="moduleName"></param>
 	/// <param name="pSize"></param>
 	/// <returns></returns>
-	ULONG64 B_GetModuleBaseAddressNoAttach(const char* moduleName, ULONG* pSize = nullptr);
+	ULONG64 B_GetModuleBaseAddressNoAttach(const char *moduleName, ULONG *pSize = nullptr);
 
 	/// <summary>
 	/// 获取模块导出函数
@@ -176,10 +174,10 @@ public:
 	/// <param name="ModuleAddr">模块基址</param>
 	/// <param name="funcName">导出函数名</param>
 	/// <returns>函数地址</returns>
-	ULONG64 B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char* funcName);
+	ULONG64 B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char *funcName);
 
-	bool B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
-	bool B_WriteMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
+	bool B_ReadMemory(ULONG64 addr, void *buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
+	bool B_WriteMemory(ULONG64 addr, void *buffer, size_t size, RWMode mode, ULONG64 cr3 = 0);
 
 	/*
 	读写内存
@@ -211,9 +209,9 @@ public:
 	}
 
 	template <typename Type>
-	bool B_WriteMem(ULONG64 addr, Type* type, size_t size, RWMode mode, ULONG64 cr3 = 0)
+	bool B_WriteMem(ULONG64 addr, Type *type, size_t size, RWMode mode, ULONG64 cr3 = 0)
 	{
-		return B_WriteMemory(addr, (void*)type, size, mode, cr3);
+		return B_WriteMemory(addr, (void *)type, size, mode, cr3);
 	}
 
 	// 分配内存
@@ -222,37 +220,36 @@ public:
 	// 建议：刚分配的内存使用Ke读一下值，这样可以触发缺页从而让系统分配物理地址，后续就可以使用Phy了
 	ULONG64 B_AllocMemory(size_t size);
 
-	//释放内存
+	// 释放内存
 	bool B_FreeMemory(ULONG64 addr);
 
-	//保护内存
+	// 保护内存
 	bool B_ProtectMemory(ULONG64 addr, DWORD newProtect, DWORD64 size);
 
-	//移动鼠标
-	//有相对移动和绝对值移动
+	// 移动鼠标
+	// 有相对移动和绝对值移动
 	void B_MouseMove(int x, int y, MoveType type);
 
-	//鼠标控制
-	//鼠标按键选项 UP弹起/DOWN按下
-	//MouseKey为WHEEL时 UP往上滚动  DOWN往下滚动
+	// 鼠标控制
+	// 鼠标按键选项 UP弹起/DOWN按下
+	// MouseKey为WHEEL时 UP往上滚动  DOWN往下滚动
 	void B_MouseCtl(MouseKey key, MouseStatus status);
 
-	//VK虚拟键值
-	//extendedKey: 扩展键（Extended Key）​​，例如 方向键 Right Alt、Right Ctrl、Num Lock、Insert、Delete、Home、End、Page Up、Page Down等
-	//例如方向键上：Drv.B_KeyCtl(0x26, KeyStatus::DOWN, true);
+	// VK虚拟键值
+	// extendedKey: 扩展键（Extended Key）​​，例如 方向键 Right Alt、Right Ctrl、Num Lock、Insert、Delete、Home、End、Page Up、Page Down等
+	// 例如方向键上：Drv.B_KeyCtl(0x26, KeyStatus::DOWN, true);
 	void B_KeyCtl(int vKey, KeyStatus status, bool extendedKey = false);
 
-	//例如
-	//B_KeyCtl('a', KeyStatus::DOWN); //按下 a 键
+	// 例如
+	// B_KeyCtl('a', KeyStatus::DOWN); //按下 a 键
 	void B_KeyCtl(char key, KeyStatus status, bool extendedKey = false);
 
-	//VK虚拟键值
+	// VK虚拟键值
 	void B_KeyClick(int vKey);
 
-	//例如
-	//B_KeyClick('a'); //点击 a 键
+	// 例如
+	// B_KeyClick('a'); //点击 a 键
 	void B_KeyClick(char key);
-
 
 	/*
 	内核级全局保护进程
@@ -283,7 +280,6 @@ public:
 	*/
 	bool B_ProtectProcessV2(bool protect, int pid);
 
-
 	/*
 	内核级全局隐藏进程
 	任务管理器无法看到你
@@ -300,7 +296,7 @@ public:
 	*/
 	bool B_HideProcess(bool hide, int pid);
 
-	//内核反截图
+	// 内核反截图
 	bool B_HideWindow(ULONG64 hWnd, HideWindowType type);
 
 	/// <summary>
@@ -312,9 +308,9 @@ public:
 	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 针对rip注入</param>
 	/// <returns>dll在目标进程中的基址、大小，失败则返回0，你可以手动调用B_HideMemory来改变注入dll的隐藏属性</returns>
-	std::pair<ULONG64, ULONG64> B_InjectDll(const char* dll_path, InjectType type,
-		bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
-	
+	std::pair<ULONG64, ULONG64> B_InjectDll(const char *dll_path, InjectType type,
+											bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
+
 	/// <summary>
 	/// 注入 传入内存
 	/// </summary>
@@ -325,14 +321,14 @@ public:
 	/// <param name="clear_pe">清理PE痕迹</param>
 	/// <param name="clear_shellcode">清理shellcode痕迹 针对rip注入</param>
 	/// <returns>dll在目标进程中的基址、大小，失败则返回0，你可以手动调用B_HideMemory来改变注入dll的隐藏属性</returns>
-	std::pair<ULONG64, ULONG64> B_InjectDll(unsigned char* dll_data, ULONG64 dll_size, InjectType type,
-		bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
+	std::pair<ULONG64, ULONG64> B_InjectDll(unsigned char *dll_data, ULONG64 dll_size, InjectType type,
+											bool hide_mem = false, bool clear_pe = false, bool clear_shellcode = false);
 
-	//调用之前先附加要读写的进程
-	//注意 获取一次就行，除非你的游戏像EAC一样动态加密CR3，那就开个while(true) Sleep(1) 线程持续获取 赋值给一个全局变量
+	// 调用之前先附加要读写的进程
+	// 注意 获取一次就行，除非你的游戏像EAC一样动态加密CR3，那就开个while(true) Sleep(1) 线程持续获取 赋值给一个全局变量
 	ULONG64 B_GetProcessRealCr3();
 
-	//依旧是读取一次即可 但是会附加 少用
+	// 依旧是读取一次即可 但是会附加 少用
 	ULONG64 B_GetProcessRealCr3Attach();
 
 	/*
@@ -346,44 +342,44 @@ public:
 	*/
 	void B_ProtectWindow(bool protectWindow, ULONG protectWindowPid, bool protectGlobal = false);
 
-	//B_ForceDeleteFile("D:\\test.dll");
-	//如果要输入中文 必须要把字符编码转为utf-8
-	bool B_ForceDeleteFile(const wchar_t* filePath);
+	// B_ForceDeleteFile("D:\\test.dll");
+	// 如果要输入中文 必须要把字符编码转为utf-8
+	bool B_ForceDeleteFile(const wchar_t *filePath);
 
 	/*特征码定位 E源码里CV过来的算法 用就完了
-	* 举例: auto result = B_AOBScan("E8 70 02 ? ? 48 8B 4C 24 70", moduleBase, size);
-	*/
-	std::vector<ULONG64> B_AOBScan(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
+	 * 举例: auto result = B_AOBScan("E8 70 02 ? ? 48 8B 4C 24 70", moduleBase, size);
+	 */
+	std::vector<ULONG64> B_AOBScan(const char *pattern, ULONG64 addr, ULONG64 size, RWMode mode = RWMode::Phy);
 
-	//查询内存
-	//当作VirtualQueryEx来用
-	bool B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi);
+	// 查询内存
+	// 当作VirtualQueryEx来用
+	bool B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION *mbi);
 
-	//dump模块到文件
-	//参数1填模块基址
-	//filePath 填要保存的文件
-	bool B_DumpToFile(ULONG64 moduleBase, const char* filePath, RWMode mode = RWMode::MmCopy);
+	// dump模块到文件
+	// 参数1填模块基址
+	// filePath 填要保存的文件
+	bool B_DumpToFile(ULONG64 moduleBase, const char *filePath, RWMode mode = RWMode::MmCopy);
 
 	// 获取内核模块基址、大小
-	ULONG64 B_GetKernelModule(const char* moduleName, ULONG* pSize = nullptr);
+	ULONG64 B_GetKernelModule(const char *moduleName, ULONG *pSize = nullptr);
 
-	//读写内核空间
-	// type: 0 read / type: 1 write
-	bool B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type);
+	// 读写内核空间
+	//  type: 0 read / type: 1 write
+	bool B_RWKernelMemory(ULONG64 addr, void *buffer, ULONG size, int type);
 
-	//隐藏内存 注意隐藏的内存是以页面对齐(0x1000) 
-	//比如改为只读：HM_READONLY 或者不可访问 HM_NOACCESS
+	// 隐藏内存 注意隐藏的内存是以页面对齐(0x1000)
+	// 比如改为只读：HM_READONLY 或者不可访问 HM_NOACCESS
 	bool B_HideMemory(ULONG64 addr, ULONG64 size, HideMem attr);
 
-	//关闭NMI回调检测
+	// 关闭NMI回调检测
 	bool B_DisableCallback_NMI();
 
-	//关闭一些相关提示输出
+	// 关闭一些相关提示输出
 	void B_DisablePrint(bool value);
 
 	void B_TestMode(bool value);
 
-	//首次安装驱动之前设置，可以解决EAC的File Miss报错拦截 默认关闭
+	// 首次安装驱动之前设置，可以解决EAC的File Miss报错拦截 默认关闭
 	void B_FileOverride(bool enable);
 
 	/// <summary>
@@ -398,7 +394,7 @@ public:
 	/// DriverVerificationCallback
 	/// </summary>
 	/// <param name="driver_name">指定要关闭回调的驱动</param>
-	void B_DisableCallback(const char* driver_name);
+	void B_DisableCallback(const char *driver_name);
 
 	/// <summary>
 	/// 恢复所有由B_DisableCallback关闭的内核回调
@@ -436,7 +432,7 @@ public:
 	/// <param name="ce_process_name">进程名 例如: CheatEngine.exe </param>
 	/// <param name="ce_hwnd">窗口句柄 可以通过FindWindow获取</param>
 	/// <returns></returns>
-	bool B_ProtectCE(const wchar_t* ce_process_name, HWND ce_hwnd);
+	bool B_ProtectCE(const wchar_t *ce_process_name, HWND ce_hwnd);
 
 	/// <summary>
 	/// 获取进程每条线程的Teb
@@ -465,10 +461,7 @@ public:
 	/// <param name="pid"></param>
 	bool B_KillProcess(int pid);
 
-
-
-	bool B_GetMemoryInfo__(void* data);
+	bool B_GetMemoryInfo__(void *data);
 	bool B_ReadPhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size);
 	bool B_WritePhyMemoryDirect(ULONG64 phy_addr, PVOID buffer, ULONG size);
 };
-

@@ -1,42 +1,41 @@
 ﻿/*
-* BFDriver官方驱动群 410342663
-* 周150 月450
-* 免责声明及使用条款:
-* 本驱动仅用于保护游戏软件和正规商业软件使用!
-* 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
-* 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
-* 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
-* 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
-*/
+ * BFDriver官方驱动群 410342663
+ * 免责声明及使用条款:
+ * 本驱动仅用于保护游戏软件和正规商业软件使用!
+ * 不得将本驱动用于,木马,病毒,外挂,恶意插件,等非法软件!
+ * 一切损失及涉及的法律责任自负,驱动开发者不负任何责任及费用!
+ * 驱动开发者有本驱动保护产品著作权,他人不得对本驱动保护产品进行修改,破解,买卖!
+ * 使用本驱动编写任何软件,软件版权归软件作者所有,一切软件商业活动均与驱动开发者无关!
+ */
 #include "BFDrvUtils.h"
-#pragma warning (disable:4005)
+#pragma warning(disable : 4005)
 #include "MemoryModule.h"
 #include <cstdio>
-#pragma comment(lib,"ntdll.lib")
+#pragma comment(lib, "ntdll.lib")
 
 #include <stdexcept>
 #include <fstream>
 #include "BFDrv_Dynamic.c"
 
-template<typename Ret, typename... Args>
-using FunctionPtr = Ret(WINAPI*)(Args...);
+template <typename Ret, typename... Args>
+using FunctionPtr = Ret(WINAPI *)(Args...);
 
-#define DECLARE_FUNC_PTR(name, ret, ...) \
-    using name##Func = FunctionPtr<ret, ##__VA_ARGS__>; \
-    name##Func name##Ptr = nullptr;
+#define DECLARE_FUNC_PTR(name, ret, ...)                \
+	using name##Func = FunctionPtr<ret, ##__VA_ARGS__>; \
+	name##Func name##Ptr = nullptr;
 
-DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char*, B_InstallMode, ULONG)
-DECLARE_FUNC_PTR(B_GetInitResult, const char*)
-DECLARE_FUNC_PTR(B_GetExpiration, const char*)
+DECLARE_FUNC_PTR(B_InitDrv, B_STATUS, const char *, B_InstallMode, ULONG)
+DECLARE_FUNC_PTR(B_GetInitResult, const char *)
+DECLARE_FUNC_PTR(B_GetExpiration, const char *)
 DECLARE_FUNC_PTR(B_EnableComm2, bool)
 DECLARE_FUNC_PTR(B_AttachProcess, bool, int)
 DECLARE_FUNC_PTR(B_GetWindowsBuildNumber, int)
 DECLARE_FUNC_PTR(B_GetMainModuleAddress, ULONG64)
-DECLARE_FUNC_PTR(B_GetModuleBaseAddress, ULONG64, const char*, ULONG*)
-DECLARE_FUNC_PTR(B_GetKernelModule, ULONG64, const char*, ULONG*)
-DECLARE_FUNC_PTR(B_GetModuleBaseAddressNoAttach, ULONG64, const char*, ULONG*)
-DECLARE_FUNC_PTR(B_ReadMemory, bool, ULONG64, void*, size_t, RWMode, ULONG64)
-DECLARE_FUNC_PTR(B_WriteMemory, bool, ULONG64, void*, size_t, RWMode, ULONG64)
+DECLARE_FUNC_PTR(B_GetModuleBaseAddress, ULONG64, const char *, ULONG *)
+DECLARE_FUNC_PTR(B_GetKernelModule, ULONG64, const char *, ULONG *)
+DECLARE_FUNC_PTR(B_GetModuleBaseAddressNoAttach, ULONG64, const char *, ULONG *)
+DECLARE_FUNC_PTR(B_ReadMemory, bool, ULONG64, void *, size_t, RWMode, ULONG64)
+DECLARE_FUNC_PTR(B_WriteMemory, bool, ULONG64, void *, size_t, RWMode, ULONG64)
 DECLARE_FUNC_PTR(B_AllocMemory, ULONG64, size_t)
 DECLARE_FUNC_PTR(B_FreeMemory, bool, ULONG64)
 DECLARE_FUNC_PTR(B_ProtectMemory, bool, ULONG64, DWORD, DWORD64)
@@ -50,53 +49,55 @@ DECLARE_FUNC_PTR(B_ProtectProcess, bool, bool, int)
 DECLARE_FUNC_PTR(B_ProtectProcessV2, bool, bool, int)
 DECLARE_FUNC_PTR(B_HideProcess, bool, bool, int)
 DECLARE_FUNC_PTR(B_HideWindow, bool, ULONG64, HideWindowType)
-DECLARE_FUNC_PTR(B_GetModuleExportFuncAddress, ULONG64, ULONG64, const char*)
-DECLARE_FUNC_PTR(B_InjectDll, std::pair<ULONG64, ULONG64>, unsigned char*, size_t, InjectType, bool, bool, bool)
+DECLARE_FUNC_PTR(B_GetModuleExportFuncAddress, ULONG64, ULONG64, const char *)
+DECLARE_FUNC_PTR(B_InjectDll, std::pair<ULONG64, ULONG64>, unsigned char *, size_t, InjectType, bool, bool, bool)
 DECLARE_FUNC_PTR(B_ProtectWindow, void, bool, ULONG, bool)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3, ULONG64)
 DECLARE_FUNC_PTR(B_GetProcessRealCr3Attach, ULONG64)
-DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const wchar_t*)
-DECLARE_FUNC_PTR(B_AOBScan, std::vector<ULONG64>, const char*, ULONG64, ULONG64, RWMode)
-DECLARE_FUNC_PTR(B_QueryMemory, bool, ULONG64, MEMORY_BASIC_INFORMATION*)
-DECLARE_FUNC_PTR(B_DumpToFile, bool, ULONG64, const char*, RWMode)
-DECLARE_FUNC_PTR(B_RWKernelMemory, bool, ULONG64, void*, ULONG, int)
+DECLARE_FUNC_PTR(B_ForceDeleteFile, bool, const wchar_t *)
+DECLARE_FUNC_PTR(B_AOBScan, std::vector<ULONG64>, const char *, ULONG64, ULONG64, RWMode)
+DECLARE_FUNC_PTR(B_QueryMemory, bool, ULONG64, MEMORY_BASIC_INFORMATION *)
+DECLARE_FUNC_PTR(B_DumpToFile, bool, ULONG64, const char *, RWMode)
+DECLARE_FUNC_PTR(B_RWKernelMemory, bool, ULONG64, void *, ULONG, int)
 DECLARE_FUNC_PTR(B_HideMemory, bool, ULONG64, ULONG64, HideMem)
 DECLARE_FUNC_PTR(B_DisableCallback_NMI, bool)
 DECLARE_FUNC_PTR(B_DisablePrint, void, bool)
 DECLARE_FUNC_PTR(B_FileOverride, void, bool)
 DECLARE_FUNC_PTR(B_TestMode, void, bool)
-DECLARE_FUNC_PTR(B_DisableCallback, void, const char*)
+DECLARE_FUNC_PTR(B_DisableCallback, void, const char *)
 DECLARE_FUNC_PTR(B_RestoreCallback, void)
 DECLARE_FUNC_PTR(B_RemoveVAD, void, bool)
 DECLARE_FUNC_PTR(B_CheckCr3ValidWithPhy, void, bool)
 DECLARE_FUNC_PTR(B_SuspendProcess, bool, bool, int)
-DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t*, HWND)
+DECLARE_FUNC_PTR(B_ProtectCE, bool, const wchar_t *, HWND)
 DECLARE_FUNC_PTR(B_GetAllTeb, std::vector<ULONG64>)
 DECLARE_FUNC_PTR(B_DSEHook, bool, bool)
 DECLARE_FUNC_PTR(B_CustomSigLoader, void, std::vector<unsigned char>)
 DECLARE_FUNC_PTR(B_KillProcess, bool, int)
 
-DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void*)
+DECLARE_FUNC_PTR(B_GetMemoryInfo__, bool, void *)
 DECLARE_FUNC_PTR(B_ReadPhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
 DECLARE_FUNC_PTR(B_WritePhyMemoryDirect, bool, ULONG64, PVOID, ULONG)
 
 BFDrv::BFDrv()
 {
 	auto handle = MemoryLoadLibrary(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
-	if (!handle)  {
+	if (!handle)
+	{
 		MessageBoxW(0, L"DynamicLibrary load failed", L"Init Error", MB_OK);
 		exit(1);
 	}
 
 	ZeroMemory(BFDrv_Dynamic, sizeof BFDrv_Dynamic);
 
-	auto setFunctionPtr = [&](auto& funcPtr, const char* funcName) {
+	auto setFunctionPtr = [&](auto &funcPtr, const char *funcName)
+	{
 		funcPtr = reinterpret_cast<std::decay_t<decltype(funcPtr)>>(MemoryGetProcAddress(handle, funcName));
 		return funcPtr != nullptr;
-		};
+	};
 
 #define SET_FUNC_PTR(name) \
-    succeed &= setFunctionPtr(name##Ptr, #name);
+	succeed &= setFunctionPtr(name##Ptr, #name);
 
 	bool succeed = true;
 	SET_FUNC_PTR(B_InitDrv)
@@ -153,24 +154,25 @@ BFDrv::BFDrv()
 	SET_FUNC_PTR(B_ReadPhyMemoryDirect)
 	SET_FUNC_PTR(B_WritePhyMemoryDirect)
 
-	if (!succeed) {
+	if (!succeed)
+	{
 		MessageBoxW(0, L"Failed to set function", L"Init Error", MB_OK);
 		exit(1);
 	}
 
 	PMEMORYMODULE module = (PMEMORYMODULE)handle;
-	ClearPEHeadersEx(reinterpret_cast<unsigned char*>(module->codeBase));
+	ClearPEHeadersEx(reinterpret_cast<unsigned char *>(module->codeBase));
 #ifdef _WIN64
-	UnlinkModule(reinterpret_cast<unsigned char*>(module->codeBase));
+	UnlinkModule(reinterpret_cast<unsigned char *>(module->codeBase));
 #endif
 }
 
-B_STATUS BFDrv::B_InitDrv(const char* key, B_InstallMode mode, PdbMode pdbMode)
+B_STATUS BFDrv::B_InitDrv(const char *key, B_InstallMode mode, PdbMode pdbMode)
 {
 	return B_InitDrvPtr(key, mode, pdbMode);
 }
 
-const char* BFDrv::B_GetInitResult()
+const char *BFDrv::B_GetInitResult()
 {
 	return B_GetInitResultPtr();
 }
@@ -180,7 +182,7 @@ bool BFDrv::B_AttachProcess(int pid)
 	return B_AttachProcessPtr(pid);
 }
 
-const char* BFDrv::B_GetExpiration()
+const char *BFDrv::B_GetExpiration()
 {
 	return B_GetExpirationPtr();
 }
@@ -200,30 +202,32 @@ ULONG64 BFDrv::B_GetMainModuleAddress()
 	return B_GetMainModuleAddressPtr();
 }
 
-ULONG64 BFDrv::B_GetModuleBaseAddress(const char* moduleName, ULONG* pSize)
+ULONG64 BFDrv::B_GetModuleBaseAddress(const char *moduleName, ULONG *pSize)
 {
 	return B_GetModuleBaseAddressPtr(moduleName, pSize);
 }
 
-ULONG64 BFDrv::B_GetModuleBaseAddressNoAttach(const char* moduleName, ULONG* pSize)
+ULONG64 BFDrv::B_GetModuleBaseAddressNoAttach(const char *moduleName, ULONG *pSize)
 {
 	return B_GetModuleBaseAddressNoAttachPtr(moduleName, pSize);
 }
 
-ULONG64 BFDrv::B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char* funcName)
+ULONG64 BFDrv::B_GetModuleExportFuncAddress(ULONG64 ModuleAddr, const char *funcName)
 {
 	return B_GetModuleExportFuncAddressPtr(ModuleAddr, funcName);
 }
 
-bool BFDrv::B_ReadMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
+bool BFDrv::B_ReadMemory(ULONG64 addr, void *buffer, size_t size, RWMode mode, ULONG64 cr3)
 {
-	if ((addr & 0xFFFF000000000000) != 0) return false;
+	if ((addr & 0xFFFF000000000000) != 0)
+		return false;
 	return B_ReadMemoryPtr(addr, buffer, size, mode, cr3);
 }
 
-bool BFDrv::B_WriteMemory(ULONG64 addr, void* buffer, size_t size, RWMode mode, ULONG64 cr3)
+bool BFDrv::B_WriteMemory(ULONG64 addr, void *buffer, size_t size, RWMode mode, ULONG64 cr3)
 {
-	if ((addr & 0xFFFF000000000000) != 0) return false;
+	if ((addr & 0xFFFF000000000000) != 0)
+		return false;
 	return B_WriteMemoryPtr(addr, buffer, size, mode, cr3);
 }
 
@@ -292,22 +296,24 @@ bool BFDrv::B_HideWindow(ULONG64 hWnd, HideWindowType type)
 	return B_HideWindowPtr(hWnd, type);
 }
 
-std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(const char* dll_path, InjectType type, bool hide_mem, bool clear_pe, bool clear_shellcode)
+std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(const char *dll_path, InjectType type, bool hide_mem, bool clear_pe, bool clear_shellcode)
 {
 	std::fstream file(dll_path, std::ios::in | std::ios::binary);
 	if (!file.is_open())
-		return { 0,0 };
+		return {0, 0};
 	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	file.close();
-	return B_InjectDll((unsigned char*)str.data(), str.size(), type, hide_mem, clear_pe, clear_shellcode);
+	return B_InjectDll((unsigned char *)str.data(), str.size(), type, hide_mem, clear_pe, clear_shellcode);
 }
 
-std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(unsigned char* dll_data, ULONG64 dll_size, InjectType type, bool hide_mem, bool clear_pe, bool clear_shellcode)
+std::pair<ULONG64, ULONG64> BFDrv::B_InjectDll(unsigned char *dll_data, ULONG64 dll_size, InjectType type, bool hide_mem, bool clear_pe, bool clear_shellcode)
 {
 	auto result = B_InjectDllPtr(dll_data, dll_size, type, hide_mem, clear_pe, clear_shellcode);
-	if (result.first && result.second) {
-		if (hide_mem && type != IT_APC) {//APC的隐藏在内核中进行
-			//开始隐藏 可以根据需要修改内存的属性HideMem
+	if (result.first && result.second)
+	{
+		if (hide_mem && type != IT_APC)
+		{ // APC的隐藏在内核中进行
+			// 开始隐藏 可以根据需要修改内存的属性HideMem
 			B_HideMemory(result.first, result.second, HideMem::HM_READONLY);
 		}
 	}
@@ -329,32 +335,32 @@ void BFDrv::B_ProtectWindow(bool protectWindow, ULONG protectWindowPid, bool pro
 	return B_ProtectWindowPtr(protectWindow, protectWindowPid, protectGlobal);
 }
 
-bool BFDrv::B_ForceDeleteFile(const wchar_t* filePath)
+bool BFDrv::B_ForceDeleteFile(const wchar_t *filePath)
 {
 	return B_ForceDeleteFilePtr(filePath);
 }
 
-std::vector<ULONG64> BFDrv::B_AOBScan(const char* pattern, ULONG64 addr, ULONG64 size, RWMode mode)
+std::vector<ULONG64> BFDrv::B_AOBScan(const char *pattern, ULONG64 addr, ULONG64 size, RWMode mode)
 {
 	return B_AOBScanPtr(pattern, addr, size, mode);
 }
 
-bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION* mbi)
+bool BFDrv::B_QueryMemory(ULONG64 addr, MEMORY_BASIC_INFORMATION *mbi)
 {
 	return B_QueryMemoryPtr(addr, mbi);
 }
 
-bool BFDrv::B_DumpToFile(ULONG64 moduleBase, const char* filePath, RWMode mode)
+bool BFDrv::B_DumpToFile(ULONG64 moduleBase, const char *filePath, RWMode mode)
 {
 	return B_DumpToFilePtr(moduleBase, filePath, mode);
 }
 
-ULONG64 BFDrv::B_GetKernelModule(const char* moduleName, ULONG* pSize)
+ULONG64 BFDrv::B_GetKernelModule(const char *moduleName, ULONG *pSize)
 {
 	return B_GetKernelModulePtr(moduleName, pSize);
 }
 
-bool BFDrv::B_RWKernelMemory(ULONG64 addr, void* buffer, ULONG size, int type)
+bool BFDrv::B_RWKernelMemory(ULONG64 addr, void *buffer, ULONG size, int type)
 {
 	return B_RWKernelMemoryPtr(addr, buffer, size, type);
 }
@@ -384,7 +390,7 @@ void BFDrv::B_FileOverride(bool enable)
 	return B_FileOverridePtr(enable);
 }
 
-void BFDrv::B_DisableCallback(const char* driver_name)
+void BFDrv::B_DisableCallback(const char *driver_name)
 {
 	return B_DisableCallbackPtr(driver_name);
 }
@@ -409,7 +415,7 @@ bool BFDrv::B_SuspendProcess(bool is_suspend, int pid)
 	return B_SuspendProcessPtr(is_suspend, pid);
 }
 
-bool BFDrv::B_ProtectCE(const wchar_t* ce_process_name, HWND ce_hwnd)
+bool BFDrv::B_ProtectCE(const wchar_t *ce_process_name, HWND ce_hwnd)
 {
 	return B_ProtectCEPtr(ce_process_name, ce_hwnd);
 }
@@ -434,7 +440,7 @@ bool BFDrv::B_KillProcess(int pid)
 	return B_KillProcessPtr(pid);
 }
 
-bool BFDrv::B_GetMemoryInfo__(void* data)
+bool BFDrv::B_GetMemoryInfo__(void *data)
 {
 	return B_GetMemoryInfo__Ptr(data);
 }
